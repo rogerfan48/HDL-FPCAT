@@ -4,8 +4,11 @@ import os
 def png_to_coe(input_path, output_path):
     """
     Convert PNG image to COE file format.
-    First bit: 1 for transparent, 0 for non-transparent
-    Second bit: 1 for black, 0 for white
+    Output encoding:
+    11: transparent
+    10: red
+    01: black
+    00: white
     """
     try:
         # Check if input file exists
@@ -32,20 +35,20 @@ def png_to_coe(input_path, output_path):
                 for i, pixel in enumerate(pixels):
                     r, g, b, a = pixel
                     
-                    # Determine transparency (first bit)
-                    # Alpha channel < 128 means transparent
-                    is_transparent = '1' if a < 128 else '0'
+                    # Initialize with white (00)
+                    bit_value = '00'
                     
-                    # Determine color (second bit)
-                    # For non-transparent pixels, check if it's black or white
-                    # Consider a pixel black if its average RGB value is less than 128
-                    is_black = '0'  # Default for transparent pixels
-                    if a >= 128:  # Only check color for non-transparent pixels
-                        avg_color = (r + g + b) / 3
-                        is_black = '1' if avg_color < 128 else '0'
-                    
-                    # Combine bits
-                    bit_value = is_transparent + is_black
+                    # Check transparency first
+                    if a < 128:
+                        bit_value = '11'  # Transparent
+                    else:
+                        # For non-transparent pixels, check colors
+                        if r > 200 and g < 100 and b < 100:
+                            bit_value = '10'  # Red (high R, low G and B)
+                        else:
+                            # Check for black/white
+                            avg_color = (r + g + b) / 3
+                            bit_value = '01' if avg_color < 128 else '00'  # 01 for black, 00 for white
                     
                     # Write to file with proper formatting
                     if i == total_pixels - 1:
@@ -61,8 +64,13 @@ def png_to_coe(input_path, output_path):
         return False
 
 def main():
-    print("PNG to COE Converter")
-    print("-" * 20)
+    print("PNG to COE Converter (with Red Color Support)")
+    print("Encoding:")
+    print("11: Transparent")
+    print("10: Red")
+    print("01: Black")
+    print("00: White")
+    print("-" * 40)
     
     while True:
         # Get input file name
@@ -84,7 +92,7 @@ def main():
         
         # Convert file
         png_to_coe(input_file, output_file)
-        print("-" * 20)  # Separator line
+        print("-" * 40)  # Separator line
 
 if __name__ == "__main__":
     main()
