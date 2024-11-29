@@ -52,7 +52,7 @@ module Pixel_Gen (
 S_START: begin
     if (h_cnt>=10'd170 && h_cnt<10'd470 && v_cnt>=10'd150 && v_cnt<10'd250 && FPCAT_value==1'b1) begin
         {vgaRed, vgaGreen, vgaBlue} = 12'hfff;      // Title
-    end if (h_cnt>=10'd220 && h_cnt<10'd420 && v_cnt>=10'd280 && v_cnt<10'd320 && GAME_START_value==1'b1) begin
+    end else if (h_cnt>=10'd220 && h_cnt<10'd420 && v_cnt>=10'd280 && v_cnt<10'd320 && GAME_START_value==1'b1) begin
         {vgaRed, vgaGreen, vgaBlue} = 12'hfff;      // Game Start
     end else if (h_cnt>=10'd200 && h_cnt<10'd440 && v_cnt>=10'd270 && v_cnt<10'd330) begin
         if (mouseInStart) {vgaRed, vgaGreen, vgaBlue} = 12'h632;

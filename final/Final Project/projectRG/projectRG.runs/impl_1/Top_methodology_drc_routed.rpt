@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-| Date         : Sat Nov 30 01:43:57 2024
+| Date         : Sat Nov 30 02:03:29 2024
 | Host         : RGWIN running 64-bit major release  (build 9200)
 | Command      : report_methodology -file Top_methodology_drc_routed.rpt -pb Top_methodology_drc_routed.pb -rpx Top_methodology_drc_routed.rpx
 | Design       : Top
@@ -23,11 +23,11 @@ Table of Contents
           Floorplan: design_1
       Design limits: <entire design considered>
              Max violations: <unlimited>
-             Violations found: 42
+             Violations found: 43
 +-----------+------------------+--------------------------------+------------+
 | Rule      | Severity         | Description                    | Violations |
 +-----------+------------------+--------------------------------+------------+
-| TIMING-17 | Critical Warning | Non-clocked sequential cell    | 23         |
+| TIMING-17 | Critical Warning | Non-clocked sequential cell    | 24         |
 | TIMING-18 | Warning          | Missing input or output delay  | 15         |
 | TIMING-20 | Warning          | Non-clocked latch              | 3          |
 | LATCH-1   | Advisory         | Existing latches in the design | 1          |
@@ -37,115 +37,120 @@ Table of Contents
 -----------------
 TIMING-17#1 Critical Warning
 Non-clocked sequential cell  
-The clock pin Pixel_Gen/mem_GAME_START_0/U0/inst_blk_mem_gen/gnbram.gnativebmg.native_blk_mem_gen/valid.cstr/ramloop[0].ram.r/prim_init.ram/DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM18.ram/CLKARDCLK is not reached by a timing clock
+The clock pin Pixel_Gen/mem_FPCAT_0/U0/inst_blk_mem_gen/gnbram.gnativebmg.native_blk_mem_gen/valid.cstr/ramloop[0].ram.r/prim_init.ram/DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM18.ram/CLKARDCLK is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#2 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/hsync_i_reg/C is not reached by a timing clock
+The clock pin Pixel_Gen/mem_GAME_START_0/U0/inst_blk_mem_gen/gnbram.gnativebmg.native_blk_mem_gen/valid.cstr/ramloop[0].ram.r/prim_init.ram/DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM18.ram/CLKARDCLK is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#3 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[0]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/hsync_i_reg/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#4 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[1]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[0]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#5 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[2]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[1]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#6 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[3]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[2]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#7 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[4]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[3]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#8 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[5]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[4]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#9 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[6]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[5]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#10 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[7]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[6]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#11 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[8]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[7]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#12 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/line_cnt_reg[9]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[8]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#13 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[0]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/line_cnt_reg[9]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#14 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[1]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/pixel_cnt_reg[0]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#15 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[2]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/pixel_cnt_reg[1]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#16 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[3]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/pixel_cnt_reg[2]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#17 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[4]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/pixel_cnt_reg[3]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#18 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[5]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/pixel_cnt_reg[4]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#19 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[6]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/pixel_cnt_reg[5]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#20 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[7]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/pixel_cnt_reg[6]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#21 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[8]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/pixel_cnt_reg[7]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#22 Critical Warning
 Non-clocked sequential cell  
-The clock pin VGA_Ctrl/pixel_cnt_reg[9]/C is not reached by a timing clock
+The clock pin VGA_Ctrl/pixel_cnt_reg[8]/C is not reached by a timing clock
 Related violations: <none>
 
 TIMING-17#23 Critical Warning
+Non-clocked sequential cell  
+The clock pin VGA_Ctrl/pixel_cnt_reg[9]/C is not reached by a timing clock
+Related violations: <none>
+
+TIMING-17#24 Critical Warning
 Non-clocked sequential cell  
 The clock pin VGA_Ctrl/vsync_i_reg/C is not reached by a timing clock
 Related violations: <none>
