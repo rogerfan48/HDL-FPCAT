@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 ------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-| Date         : Sat Nov 30 00:52:55 2024
+| Date         : Sat Nov 30 01:43:27 2024
 | Host         : RGWIN running 64-bit major release  (build 9200)
 | Command      : report_control_sets -verbose -file Top_control_sets_placed.rpt
 | Design       : Top
@@ -58,12 +58,12 @@ Table of Contents
 +--------------+-----------------------+------------------------+-----------------+--------------+
 | Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
 +--------------+-----------------------+------------------------+-----------------+--------------+
-| No           | No                    | No                     |             124 |           44 |
+| No           | No                    | No                     |             124 |           43 |
 | No           | No                    | Yes                    |               0 |            0 |
 | No           | Yes                   | No                     |             102 |           34 |
-| Yes          | No                    | No                     |              53 |           16 |
+| Yes          | No                    | No                     |              53 |           19 |
 | Yes          | No                    | Yes                    |               0 |            0 |
-| Yes          | Yes                   | No                     |              29 |           14 |
+| Yes          | Yes                   | No                     |              29 |           15 |
 +--------------+-----------------------+------------------------+-----------------+--------------+
 
 
@@ -73,30 +73,30 @@ Table of Contents
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------------------------+------------------+----------------+--------------+
 |                Clock Signal               |                        Enable Signal                       |                        Set/Reset Signal                        | Slice Load Count | Bel Load Count | Bels / Slice |
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------------------------+------------------+----------------+--------------+
-|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/FSM_onehot_state_reg[0]_1 | Mouse_Ctrl/MC1/Inst_Ps2Interface/FSM_onehot_state_reg[31]      |                2 |              2 |         1.00 |
-|  Clk_Div_4/Q[0]                           |                                                            | rst_IBUF                                                       |                2 |              2 |         1.00 |
-|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/FSM_onehot_state_reg[0]_1 |                                                                |                2 |              3 |         1.50 |
+|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/FSM_onehot_state_reg[0]_1 | Mouse_Ctrl/MC1/Inst_Ps2Interface/FSM_onehot_state_reg[31]      |                1 |              2 |         2.00 |
+|  Clk_Div_4/Q[0]                           |                                                            | rst_IBUF                                                       |                1 |              2 |         2.00 |
 |  FSM_sequential_next_scene_reg[2]_i_2_n_0 |                                                            |                                                                |                1 |              3 |         3.00 |
-|  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/clk_inter0                    |                1 |              4 |         4.00 |
+|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/FSM_onehot_state_reg[0]_1 |                                                                |                3 |              3 |         1.00 |
 |  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/data_inter0                   |                1 |              4 |         4.00 |
+|  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/clk_inter0                    |                1 |              4 |         4.00 |
 |  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/shift_frame               | Mouse_Ctrl/MC1/Inst_Ps2Interface/reset_bit_count               |                2 |              4 |         2.00 |
+|  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/delay_100us_count[13]_i_1_n_0 |                3 |              5 |         1.67 |
 |  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/delay_20us_count[5]_i_1_n_0   |                2 |              5 |         2.50 |
-|  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/delay_100us_count[13]_i_1_n_0 |                2 |              5 |         2.50 |
-|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/FSM_onehot_state_reg[0]_3 | Mouse_Ctrl/MC1/left_down_i_1_n_0                               |                2 |              5 |         2.50 |
+|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/FSM_onehot_state_reg[0]_3 | Mouse_Ctrl/MC1/left_down_i_1_n_0                               |                3 |              5 |         1.67 |
 |  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/delay_20us_count[10]_i_1_n_0  |                2 |              6 |         3.00 |
 |  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/delay_63clk_count[6]_i_1_n_0  |                2 |              7 |         3.50 |
-|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/write_data_0                                |                                                                |                2 |              8 |         4.00 |
 |  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/FSM_onehot_state_reg[0]_2 | Mouse_Ctrl/MC1/x_inc[7]_i_1_n_0                                |                2 |              8 |         4.00 |
 |  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/load_rx_data              |                                                                |                1 |              8 |         8.00 |
+|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/write_data_0                                |                                                                |                3 |              8 |         2.67 |
 |  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/delay_100us_count[12]_i_1_n_0 |                4 |              9 |         2.25 |
-|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/frame[9]_i_1_n_0          |                                                                |                2 |             10 |         5.00 |
-|  Clk_Div_4/Q[0]                           |                                                            | VGA_Ctrl/pixel_cnt[9]_i_1_n_0                                  |                3 |             10 |         3.33 |
-|  Clk_Div_4/Q[0]                           | VGA_Ctrl/ah_cnt_0                                          | VGA_Ctrl/line_cnt[9]_i_1_n_0                                   |                6 |             10 |         1.67 |
-|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/x_new_reg_n_0                               |                                                                |                5 |             12 |         2.40 |
-|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/y_new_reg_n_0                               |                                                                |                4 |             12 |         3.00 |
-|  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/reset_timeout_cnt                               |                8 |             24 |         3.00 |
+|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/Inst_Ps2Interface/frame[9]_i_1_n_0          |                                                                |                3 |             10 |         3.33 |
+|  Clk_Div_4/Q[0]                           |                                                            | VGA_Ctrl/pixel_cnt[9]_i_1_n_0                                  |                4 |             10 |         2.50 |
+|  Clk_Div_4/Q[0]                           | VGA_Ctrl/ah_cnt_0                                          | VGA_Ctrl/line_cnt[9]_i_1_n_0                                   |                7 |             10 |         1.43 |
+|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/y_new_reg_n_0                               |                                                                |                5 |             12 |         2.40 |
+|  clk_IBUF_BUFG                            | Mouse_Ctrl/MC1/x_new_reg_n_0                               |                                                                |                4 |             12 |         3.00 |
+|  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/reset_timeout_cnt                               |                7 |             24 |         3.43 |
 |  clk_IBUF_BUFG                            |                                                            | Mouse_Ctrl/MC1/periodic_check_cnt[0]_i_1_n_0                   |                7 |             26 |         3.71 |
-|  clk_IBUF_BUFG                            |                                                            |                                                                |               43 |            121 |         2.81 |
+|  clk_IBUF_BUFG                            |                                                            |                                                                |               42 |            121 |         2.88 |
 +-------------------------------------------+------------------------------------------------------------+----------------------------------------------------------------+------------------+----------------+--------------+
 
 

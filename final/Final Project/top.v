@@ -36,7 +36,7 @@ module Top (
     reg [2:0] scene;
     reg [2:0] next_scene;
 
-    wire mouseInStart = (mouseX>=10'd200 && mouseX<10'd440 && mouseY>=10'd270 && mouseY<10'd320);
+    wire mouseInStart = (mouseX>=10'd200 && mouseX<10'd440 && mouseY>=10'd270 && mouseY<10'd330);
     Pixel_Gen Pixel_Gen (
         .clk(clk_25MHz),
         .h_cnt(h_cnt),

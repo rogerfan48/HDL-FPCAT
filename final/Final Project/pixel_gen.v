@@ -34,6 +34,16 @@ module Pixel_Gen (
         .douta(FPCAT_value) // output wire [0 : 0] douta 1位元的輸出資料
     );
 
+    wire [10:0] GAME_START_addr = (((av_cnt-280)/2)*100 + ((ah_cnt-220)/2)) % 2000;
+    wire GAME_START_value;
+    mem_GAME_START mem_GAME_START_0 (
+        .clka(clk),                 // input wire clka
+        .wea(0),                    // input wire [0 : 0] wea
+        .addra(GAME_START_addr),    // input wire [10 : 0] addra
+        .dina(0),                   // input wire [0 : 0] dina
+        .douta(GAME_START_value)    // output wire [0 : 0] douta
+    );
+
     always@(*) begin
         if(!valid)                     {vgaRed, vgaGreen, vgaBlue} = 12'h0;
         else if (enable_mouse_display) {vgaRed, vgaGreen, vgaBlue} = mouse_pixel;
@@ -41,13 +51,10 @@ module Pixel_Gen (
             case(scene)
 S_START: begin
     if (h_cnt>=10'd170 && h_cnt<10'd470 && v_cnt>=10'd150 && v_cnt<10'd250 && FPCAT_value==1'b1) begin
-        // Title
-        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
-    end else if (h_cnt>=10'd0 && h_cnt<10'd5 && v_cnt>=10'd250 && v_cnt<10'd255) begin
-        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;  // test-left
-    end else if (h_cnt>=10'd638 && h_cnt<10'd639 && v_cnt>=10'd250 && v_cnt<10'd255) begin
-        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;  // test-right
-    end else if (h_cnt>=10'd200 && h_cnt<10'd440 && v_cnt>=10'd270 && v_cnt<10'd320) begin
+        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;      // Title
+    end if (h_cnt>=10'd220 && h_cnt<10'd420 && v_cnt>=10'd280 && v_cnt<10'd320 && GAME_START_value==1'b1) begin
+        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;      // Game Start
+    end else if (h_cnt>=10'd200 && h_cnt<10'd440 && v_cnt>=10'd270 && v_cnt<10'd330) begin
         if (mouseInStart) {vgaRed, vgaGreen, vgaBlue} = 12'h632;
         else              {vgaRed, vgaGreen, vgaBlue} = 12'h521;
     end else begin
