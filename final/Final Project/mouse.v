@@ -5,7 +5,7 @@ module Mouse (
     output enable_mouse_display,
     output [9:0] MOUSE_X_POS,
     output [9:0] MOUSE_Y_POS,
-    output MOUSE_LEFT,
+    output MOUSE_LEFT_OP,
     // output MOUSE_MIDDLE,
     // output MOUSE_RIGHT,
     // output MOUSE_NEW_EVENT,
@@ -17,6 +17,9 @@ module Mouse (
 );
 
     wire [3:0] MOUSE_Z_POS;
+    wire MOUSE_LEFT_DB;
+    Debounce DB_L (clk, MOUSE_LEFT_ORI, MOUSE_LEFT_DB);
+    One_Palse OP_L (clk, MOUSE_LEFT_DB, MOUSE_LEFT_OP);
     
     MouseCtl #(
         .SYSCLK_FREQUENCY_HZ(108000000),
@@ -28,7 +31,7 @@ module Mouse (
         .xpos(MOUSE_X_POS),
         .ypos(MOUSE_Y_POS),
         .zpos(MOUSE_Z_POS),
-        .left(MOUSE_LEFT),
+        .left(MOUSE_LEFT_ORI),
         .middle(MOUSE_MIDDLE),
         .right(MOUSE_RIGHT),
         .new_event(MOUSE_NEW_EVENT),

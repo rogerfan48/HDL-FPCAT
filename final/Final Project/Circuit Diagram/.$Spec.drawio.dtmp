@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
   <diagram name="Page-1" id="tBIAlemMxgHySIvlNtww">
-    <mxGraphModel dx="372" dy="222" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1200" math="0" shadow="0">
+    <mxGraphModel dx="977" dy="708" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1200" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -104,7 +104,7 @@
           <mxGeometry x="1000" width="640" height="480" as="geometry" />
         </mxCell>
         <mxCell id="5hbl4wRv4H9p2pOyox1n-42" value="&lt;font style=&quot;font-size: 70px;&quot;&gt;FPCAT&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=default;dashed=1;fontSize=70;" parent="1" vertex="1">
-          <mxGeometry x="1160" y="150" width="320" height="70" as="geometry" />
+          <mxGeometry x="1170" y="150" width="300" height="100" as="geometry" />
         </mxCell>
         <mxCell id="5hbl4wRv4H9p2pOyox1n-43" value="&lt;font style=&quot;font-size: 30px;&quot;&gt;GAME START&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontSize=30;" parent="1" vertex="1">
           <mxGeometry x="1200" y="270" width="240" height="50" as="geometry" />
