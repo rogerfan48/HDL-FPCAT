@@ -1,7 +1,9 @@
 module Pixel_Gen (
     input clk,
     input [9:0] h_cnt,
+    input [9:0] ah_cnt,
     input [9:0] v_cnt,
+    input [9:0] av_cnt,
     input [9:0] mouseX,
     input [9:0] mouseY,
     input valid,
@@ -22,14 +24,14 @@ module Pixel_Gen (
     parameter S_WIN = 3'd5;
     parameter S_LOSE = 3'd6;
 
-    wire [10:0] FPCAT_addr = (((v_cnt-150)/5)*60 + ((h_cnt-170)/5)) % 1200;
+    wire [10:0] FPCAT_addr = (((av_cnt-150)/5)*60 + ((ah_cnt-170)/5)) % 1200;
     wire FPCAT_value;
     mem_FPCAT mem_FPCAT_0 (
-        .clka(clk),    // input wire clka 輸入時鐘信號
-        .wea(1'b0),      // input wire [0 : 0] wea 1位元的寫入使能信號
-        .addra(FPCAT_addr),  // input wire [10 : 0] addra 11位元的位址信號[10:0]
-        .dina(1'b0),    // input wire [0 : 0] dina 1位元的輸入資料
-        .douta(FPCAT_value)   // output wire [0 : 0] douta 1位元的輸出資料
+        .clka(clk),         // input wire clka 輸入時鐘信號
+        .wea(0),            // input wire [0 : 0] wea 1位元的寫入使能信號
+        .addra(FPCAT_addr), // input wire [10 : 0] addra 11位元的位址信號[10:0]
+        .dina(0),           // input wire [0 : 0] dina 1位元的輸入資料
+        .douta(FPCAT_value) // output wire [0 : 0] douta 1位元的輸出資料
     );
 
     always@(*) begin
@@ -38,11 +40,16 @@ module Pixel_Gen (
         else begin
             case(scene)
 S_START: begin
-    if (h_cnt>=10'd200 && h_cnt<10'd440 && v_cnt>=10'd270 && v_cnt<10'd320) begin
+    if (h_cnt>=10'd170 && h_cnt<10'd470 && v_cnt>=10'd150 && v_cnt<10'd250 && FPCAT_value==1'b1) begin
+        // Title
+        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
+    end else if (h_cnt>=10'd0 && h_cnt<10'd5 && v_cnt>=10'd250 && v_cnt<10'd255) begin
+        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;  // test-left
+    end else if (h_cnt>=10'd638 && h_cnt<10'd639 && v_cnt>=10'd250 && v_cnt<10'd255) begin
+        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;  // test-right
+    end else if (h_cnt>=10'd200 && h_cnt<10'd440 && v_cnt>=10'd270 && v_cnt<10'd320) begin
         if (mouseInStart) {vgaRed, vgaGreen, vgaBlue} = 12'h632;
         else              {vgaRed, vgaGreen, vgaBlue} = 12'h521;
-    end else if (h_cnt>=10'd170 && h_cnt<10'd470 && v_cnt>=10'd150 && v_cnt<10'd250 && FPCAT_value==1'b1) begin
-        {vgaRed, vgaGreen, vgaBlue} = 12'hfff;
     end else begin
         {vgaRed, vgaGreen, vgaBlue} = 12'h0;
     end

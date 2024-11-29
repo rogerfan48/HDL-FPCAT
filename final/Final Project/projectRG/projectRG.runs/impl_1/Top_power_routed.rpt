@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-| Date             : Fri Nov 29 22:37:15 2024
+| Date             : Sat Nov 30 00:53:26 2024
 | Host             : RGWIN running 64-bit major release  (build 9200)
 | Command          : report_power -file Top_power_routed.rpt -pb Top_power_summary_routed.pb -rpx Top_power_routed.rpx
 | Design           : Top
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.093        |
+| Total On-Chip Power (W)  | 0.092        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.021        |
+| Dynamic (W)              | 0.020        |
 | Device Static (W)        | 0.072        |
 | Effective TJA (C/W)      | 5.0          |
 | Max Ambient (C)          | 84.5         |
@@ -52,18 +52,17 @@ Table of Contents
 +----------------+-----------+----------+-----------+-----------------+
 | On-Chip        | Power (W) | Used     | Available | Utilization (%) |
 +----------------+-----------+----------+-----------+-----------------+
-| Clocks         |     0.002 |        3 |       --- |             --- |
-| Slice Logic    |     0.008 |     2412 |       --- |             --- |
-|   LUT as Logic |     0.007 |     1425 |     20800 |            6.85 |
+| Clocks         |     0.003 |        3 |       --- |             --- |
+| Slice Logic    |     0.009 |     2434 |       --- |             --- |
+|   LUT as Logic |     0.008 |     1435 |     20800 |            6.90 |
 |   CARRY4       |    <0.001 |      271 |      8150 |            3.33 |
-|   Register     |    <0.001 |      309 |     41600 |            0.74 |
-|   F7/F8 Muxes  |    <0.001 |        5 |     32600 |            0.02 |
+|   Register     |    <0.001 |      308 |     41600 |            0.74 |
 |   Others       |     0.000 |       23 |       --- |             --- |
-| Signals        |     0.008 |     1900 |       --- |             --- |
+| Signals        |     0.008 |     1914 |       --- |             --- |
 | Block RAM      |    <0.001 |      0.5 |        50 |            1.00 |
-| I/O            |     0.002 |       18 |       106 |           16.98 |
+| I/O            |    <0.001 |       18 |       106 |           16.98 |
 | Static Power   |     0.072 |          |           |                 |
-| Total          |     0.093 |          |           |                 |
+| Total          |     0.092 |          |           |                 |
 +----------------+-----------+----------+-----------+-----------------+
 
 
@@ -73,7 +72,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.029 |       0.019 |      0.010 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.029 |       0.020 |      0.010 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.013 |       0.000 |      0.013 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.001 |       0.000 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -139,14 +138,15 @@ Table of Contents
 3.1 By Hierarchy
 ----------------
 
-+--------------+-----------+
-| Name         | Power (W) |
-+--------------+-----------+
-| Top          |     0.021 |
-|   Mouse_Ctrl |     0.003 |
-|     MC1      |     0.003 |
-|   Pixel_Gen  |     0.002 |
-|   VGA_Ctrl   |     0.009 |
-+--------------+-----------+
++-------------------------+-----------+
+| Name                    | Power (W) |
++-------------------------+-----------+
+| Top                     |     0.020 |
+|   Mouse_Ctrl            |     0.004 |
+|     MC1                 |     0.004 |
+|       Inst_Ps2Interface |     0.001 |
+|   Pixel_Gen             |     0.001 |
+|   VGA_Ctrl              |     0.010 |
++-------------------------+-----------+
 
 

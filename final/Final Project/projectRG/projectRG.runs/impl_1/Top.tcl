@@ -139,7 +139,7 @@ OPTRACE "set parameters" START { }
 OPTRACE "set parameters" END { }
 OPTRACE "add files" START { }
   add_files -quiet {{C:/Users/sweri/Desktop/HD/final/Final Project/projectRG/projectRG.runs/synth_1/Top.dcp}}
-  read_ip -quiet {{c:/Users/sweri/Desktop/HD/final/Final Project/projectRG/projectRG.srcs/sources_1/ip/mem_FPCAT/mem_FPCAT.xci}}
+  read_ip -quiet {{C:/Users/sweri/Desktop/HD/final/Final Project/projectRG/projectRG.srcs/sources_1/ip/mem_FPCAT/mem_FPCAT.xci}}
 OPTRACE "read constraints: implementation" START { }
   read_xdc {{C:/Users/sweri/Desktop/HD/final/Final Project/cons.xdc}}
 OPTRACE "read constraints: implementation" END { }

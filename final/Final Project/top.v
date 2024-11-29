@@ -15,8 +15,10 @@ module Top (
 
     wire valid;
     wire clk_frame;
-    wire [9:0] h_cnt;  //640
-    wire [9:0] v_cnt;  //480
+    wire [9:0] h_cnt;   //640
+    wire [9:0] ah_cnt;  //640
+    wire [9:0] v_cnt;   //480
+    wire [9:0] av_cnt;  //480
 
     wire enable_mouse_display;
     wire [9:0] mouseX, mouseY;
@@ -36,9 +38,11 @@ module Top (
 
     wire mouseInStart = (mouseX>=10'd200 && mouseX<10'd440 && mouseY>=10'd270 && mouseY<10'd320);
     Pixel_Gen Pixel_Gen (
-        .clk(clk),
+        .clk(clk_25MHz),
         .h_cnt(h_cnt),
+        .ah_cnt(ah_cnt),
         .v_cnt(v_cnt),
+        .av_cnt(av_cnt),
         .mouseX(mouseX),
         .mouseY(mouseY),
         .valid(valid),
@@ -58,7 +62,9 @@ module Top (
         .vsync(vsync),
         .valid(valid),
         .h_cnt(h_cnt),
+        .ah_cnt(ah_cnt),
         .v_cnt(v_cnt),
+        .av_cnt(av_cnt),
         .clk_frame(clk_frame)
     );
 
@@ -78,7 +84,7 @@ module Top (
     );
 
     // Scene
-    always @(posedge clk_frame) begin
+    always @(posedge clk) begin
         if (rst) scene <= S_START;
         else     scene <= next_scene;
     end

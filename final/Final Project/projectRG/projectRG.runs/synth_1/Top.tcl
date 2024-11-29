@@ -89,7 +89,7 @@ set_property ip_output_repo {c:/Users/sweri/Desktop/HD/final/Final Project/proje
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
-add_files {{c:/Users/sweri/Desktop/HD/final/Final Project/Images/Words/FPCAT_60x20.coe}}
+add_files {{C:/Users/sweri/Desktop/HD/final/Final Project/Images/Words/FPCAT_60x20.coe}}
 read_verilog -library xil_defaultlib {
   {C:/Users/sweri/Desktop/HD/final/Final Project/mouse.v}
   {C:/Users/sweri/Desktop/HD/final/Final Project/pixel_gen.v}
@@ -102,7 +102,7 @@ read_vhdl -library xil_defaultlib {
   {C:/Users/sweri/Desktop/HD/final/Final Project/Mouse Interface/MouseDisplay.vhd}
   {C:/Users/sweri/Desktop/HD/final/Final Project/Mouse Interface/Ps2Interface.vhd}
 }
-read_ip -quiet {{c:/Users/sweri/Desktop/HD/final/Final Project/projectRG/projectRG.srcs/sources_1/ip/mem_FPCAT/mem_FPCAT.xci}}
+read_ip -quiet {{C:/Users/sweri/Desktop/HD/final/Final Project/projectRG/projectRG.srcs/sources_1/ip/mem_FPCAT/mem_FPCAT.xci}}
 set_property used_in_implementation false [get_files -all {{c:/Users/sweri/Desktop/HD/final/Final Project/projectRG/projectRG.gen/sources_1/ip/mem_FPCAT/mem_FPCAT_ooc.xdc}}]
 
 OPTRACE "Adding files" END { }

@@ -5,6 +5,8 @@ module VGA_Control (
     output hsync, vsync, valid,
     output [9:0] h_cnt,
     output [9:0] v_cnt,
+    output reg [9:0] ah_cnt,
+    output reg [9:0] av_cnt,
     output reg clk_frame
     );
     
@@ -67,4 +69,19 @@ module VGA_Control (
     
     assign h_cnt = (pixel_cnt < HD) ? pixel_cnt : 10'd0;
     assign v_cnt = (line_cnt < VD) ? line_cnt : 10'd0;
+    always @(*) begin
+        if (pixel_cnt < 638) begin
+            ah_cnt = pixel_cnt + 2;
+            av_cnt = line_cnt;
+        end else if (pixel_cnt == 798) begin
+            ah_cnt = 10'd0;
+            av_cnt = line_cnt + 1;
+        end else if (pixel_cnt == 799) begin
+            ah_cnt = 10'd1;
+            av_cnt = line_cnt + 1;
+        end else begin
+            ah_cnt = 10'd0;
+            av_cnt = line_cnt;
+        end
+    end
 endmodule
