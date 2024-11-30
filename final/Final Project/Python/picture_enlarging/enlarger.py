@@ -1,7 +1,7 @@
 from PIL import Image
 
 # Function to enlarge the image
-def enlarge_image(input_path, output_path, new_size=(40, 20)):
+def enlarge_image(input_path, output_path, new_size=(20, 100)):
     try:
         # Open the input image
         with Image.open(input_path) as img:
