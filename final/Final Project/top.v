@@ -37,7 +37,10 @@ module Top (
     reg [2:0] next_scene;
 
     wire mouseInStart = (mouseX>=10'd200 && mouseX<10'd440 && mouseY>=10'd270 && mouseY<10'd330);
-    Pixel_Gen Pixel_Gen (
+    wire mouseInLevel1 = (mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd80 && mouseY<10'd140);
+    wire mouseInLevel2 = (mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd200 && mouseY<10'd260);
+    wire mouseInLevel3 = (mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd320 && mouseY<10'd380);
+    Render Render (
         .clk(clk_25MHz),
         .h_cnt(h_cnt),
         .ah_cnt(ah_cnt),
@@ -50,6 +53,9 @@ module Top (
         .mouse_pixel(MOUSE_PIXEL),
         .scene(scene),
         .mouseInStart(mouseInStart),
+        .mouseInLevel1(mouseInLevel1),
+        .mouseInLevel2(mouseInLevel2),
+        .mouseInLevel3(mouseInLevel3),
         .vgaRed(vgaRed),
         .vgaGreen(vgaGreen),
         .vgaBlue(vgaBlue)
@@ -90,36 +96,32 @@ module Top (
     end
     always @(*) begin
         case (scene)
-S_START: begin
-    if (mouseL && mouseInStart)
-        next_scene <= S_MENU;
-    else next_scene <= S_START;
-end
-S_MENU: begin
-    if (mouseL && mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd80 && mouseY<10'd140)
-        next_scene <= S_PLAY1;
-    else if (mouseL && mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd200 && mouseY<10'd260)
-        next_scene <= S_PLAY2;
-    else if (mouseL && mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd320 && mouseY<10'd380)
-        next_scene <= S_PLAY3;
-    else next_scene <= S_MENU;
-end
-S_PLAY1: begin
-
-end
-S_PLAY2: begin
-
-end
-S_PLAY3: begin
-
-end
-S_WIN: begin
-
-end
-S_LOSE: begin
-
-end
-default: next_scene <= scene;
+            S_START: begin
+                if (mouseL && mouseInStart) next_scene <= S_MENU;
+                else                        next_scene <= S_START;
+            end
+            S_MENU: begin
+                if (mouseL && mouseInLevel1)        next_scene <= S_PLAY1;
+                else if (mouseL && mouseInLevel2)   next_scene <= S_PLAY2;
+                else if (mouseL && mouseInLevel3)   next_scene <= S_PLAY3;
+                else                                next_scene <= S_MENU;
+            end
+            S_PLAY1: begin
+                next_scene <= scene;
+            end
+            S_PLAY2: begin
+                next_scene <= scene;
+            end
+            S_PLAY3: begin
+                next_scene <= scene;
+            end
+            S_WIN: begin
+                next_scene <= scene;
+            end
+            S_LOSE: begin
+                next_scene <= scene;
+            end
+            default: next_scene <= scene;
         endcase
     end
 endmodule
