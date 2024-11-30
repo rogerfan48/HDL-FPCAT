@@ -14,6 +14,7 @@ module Render (
     input mouseInLevel1,
     input mouseInLevel2,
     input mouseInLevel3,
+    input [9:0] mouseInFrame,
     output reg [3:0] vgaRed,
     output reg [3:0] vgaGreen,
     output reg [3:0] vgaBlue
@@ -32,6 +33,9 @@ module Render (
     wire [11:0] pixel_menu;
     Render_Menu Render_Menu (clk, h_cnt, ah_cnt, v_cnt, av_cnt,
         mouseInLevel1, mouseInLevel2, mouseInLevel3, pixel_menu);
+    wire [11:0] pixel_play;
+    Render_Play Render_Play (clk, h_cnt, ah_cnt, v_cnt, av_cnt,
+        mouseInFrame, pixel_play);
 
     always@(*) begin
         if(!valid)                     {vgaRed, vgaGreen, vgaBlue} = 12'h0;
@@ -40,9 +44,9 @@ module Render (
             case(scene)
                 S_START: {vgaRed, vgaGreen, vgaBlue} = pixel_start;
                 S_MENU:  {vgaRed, vgaGreen, vgaBlue} = pixel_menu;
-                S_PLAY1: {vgaRed, vgaGreen, vgaBlue} = 12'h0;
-                S_PLAY2: {vgaRed, vgaGreen, vgaBlue} = 12'h0;
-                S_PLAY3: {vgaRed, vgaGreen, vgaBlue} = 12'h0;
+                S_PLAY1: {vgaRed, vgaGreen, vgaBlue} = pixel_play;
+                S_PLAY2: {vgaRed, vgaGreen, vgaBlue} = pixel_play;
+                S_PLAY3: {vgaRed, vgaGreen, vgaBlue} = pixel_play;
                 S_WIN:   {vgaRed, vgaGreen, vgaBlue} = 12'h0;
                 S_LOSE:  {vgaRed, vgaGreen, vgaBlue} = 12'h0;
                 default: {vgaRed, vgaGreen, vgaBlue} = 12'h0;
