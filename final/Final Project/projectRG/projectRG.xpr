@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="61" Path="C:/Users/sweri/Desktop/HD/final/Final Project/projectRG/projectRG.xpr">
+<Project Version="7" Minor="61" Path="C:/Users/johnn/Desktop/HDL/Hardware-Design/final/Final Project/projectRG/projectRG.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="22048284b4f74db9b22a37bbf180b517"/>
