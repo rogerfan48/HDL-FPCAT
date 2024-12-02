@@ -140,14 +140,28 @@ endmodule
 
 /*
 
-enemy: 
-[
-    [1]: exist
-    [12]: y
-    [12]: x
-    [7]: hp
-    [3]: type
-    [2]: speed_counter
-]
+TODO:
+top:
+    gen_army_0~7
+    tower_atk
+    6_clk
+    game_cnt: [11:0] unit: 6_clk
+    repel_cd = 10;
+    repel_speed = 3;
+
+6 ip:
+    mem_Enemy_Queue_1: {timestamp[12b], type[3b]}
+    mem_Enemy_Queue_2: {timestamp[12b], type[3b]}
+    mem_Enemy_Queue_3: {timestamp[12b], type[3b]}
+    mem_Enemy_Instance: {exist[1b], type[3b], x[10b], y[10b], hp[12b], state[4b], state_cnt[4b], beDamaged[12b]}
+    mem_Army_Instance:  {exist[1b], type[3b], x[10b], y[10b], hp[12b], state[4b], state_cnt[4b], beDamaged[12b]}
+    mem_Enemy_Stats: {hp[12b], atk[9b], atk_cd[3b], speed[5b]}
+    mem_Army_Stats: {hp[12b], atk[9b], atk_cd[4b], speed[5b]}
+
+state: 0[null], 1[move], 2[atk0], 3[atk1], 4[atk2], 5[atk3], 6[repel]
+
+module Game_Engine
+    v_cnt==490: gen_En
+    491: gen_Ar
 
 */
