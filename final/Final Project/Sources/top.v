@@ -155,8 +155,8 @@ top:
     mem_Enemy_Queue_3: {timestamp[12b], type[3b]}
     mem_Enemy_Instance: {exist[1b], type[3b], x[10b], y[10b], hp[12b], state[4b], state_cnt[4b], beDamaged[12b]}
     mem_Army_Instance:  {exist[1b], type[3b], x[10b], y[10b], hp[12b], state[4b], state_cnt[4b], beDamaged[12b]}
-    mem_Enemy_Stats: {hp[12b], atk[9b], atk_cd[3b], speed[5b]}
-    mem_Army_Stats: {hp[12b], atk[9b], atk_cd[4b], speed[5b]}
+    mem_Enemy_Stats: {hp[12b], atk[9b], atk_cd[4b], speed[5b], range[8b]}
+    mem_Army_Stats: {hp[12b], atk[9b], atk_cd[4b], speed[5b], range[8b]}
 
 state: 0[null], 1[move], 2[atk0], 3[atk1], 4[atk2], 5[atk3], 6[repel]
 
