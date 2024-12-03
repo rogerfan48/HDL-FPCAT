@@ -16,11 +16,20 @@ memory_initialization_vector=
 
 011111010000_111110100_1011_00110_01100100,        //2000_500_11_6_100  (龍貓)
 
-//Joker cat
-//Fish cat
-//trap cat
-//jay cat
-//bomb cat
-//CY cat
-//hacker cat
-//elephant cat
+//              original    x2      diff(x2)
+// Joker cat:   20x20       40x40    2
+// Fish cat:    20x20       40x40    2
+// trap cat:    16x12       32x24    0
+// jay cat:     20x20       40x40   12
+// bomb cat:    15x10       30x20    0
+// CY cat:      20x25       40x50   10
+// hacker cat:  20x25       40x50   10
+// elephant cat:40x24       80x48    8
+0101000 0101000 00010
+0101000 0101000 00010
+0100000 0011000 00000
+0101000 0101000 01100
+0011110 0010100 00000
+0101000 0110010 01010
+0101000 0110010 01010
+1010000 0110000 01000

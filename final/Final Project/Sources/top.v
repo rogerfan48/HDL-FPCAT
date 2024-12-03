@@ -61,6 +61,8 @@ module Top (
 
     wire [14:0] money;
     wire [14:0] money_Max;
+    wire [55:0] Enemy_Instance [15:0];
+    wire [55:0] Army_Instance [15:0];
 
     Game_Engine Game_Engine_0 (
         .clk_25MHz(clk_25MHz),
@@ -73,7 +75,9 @@ module Top (
         .scene(scene),
         .gameInit_OP(gameInit_OP),
         .money(money),
-        .money_Max(money_Max)
+        .money_Max(money_Max),
+        .Enemy_Instance(Enemy_Instance),
+        .Army_Instance(Army_Instance)
     );
 
     Render Render_0 (
@@ -166,45 +170,15 @@ endmodule
 
 /*
 
-TODO:
-top:
-    gen_army_0~7    // ! move to Game_Engine
-    tower_atk       // ! move to Game_Engine
-    6_clk           
-    game_cnt: [11:0] unit: 6_clk    // ! move to Game_Engine
-    repel_cd = 10;
-    repel_speed = 3;
-
-6 ip:
+IP Protocol:
     mem_Enemy_Queue_1: {timestamp[12b], type[3b]}
     mem_Enemy_Queue_2: {timestamp[12b], type[3b]}
     mem_Enemy_Queue_3: {timestamp[12b], type[3b]}
-    mem_Enemy_Instance: {exist[1b], type[3b], x[10b], y[10b], hp[12b], state[4b], state_cnt[4b], beDamaged[12b]}
-    mem_Army_Instance:  {exist[1b], type[3b], x[10b], y[10b], hp[12b], state[4b], state_cnt[4b], beDamaged[12b]}
-    mem_Enemy_Stats: {hp[12b], atk[9b], atk_cd[4b], speed[5b], range[8b]}
-    mem_Army_Stats: {hp[12b], atk[9b], atk_cd[4b], speed[5b], range[8b]}
+    mem_Enemy_Instance[55:0]: {exist[1b][55], type[3b][54:52], x[10b][51:42], y[10b][41:32], hp[12b][31:20], state[4b][19:16], state_cnt[4b][15:12], beDamaged[12b][11:0]}
+    mem_Army_Instance [55:0]: {exist[1b][55], type[3b][54:52], x[10b][51:42], y[10b][41:32], hp[12b][31:20], state[4b][19:16], state_cnt[4b][15:12], beDamaged[12b][11:0]}
+    mem_Enemy_Stats[37:0]: {hp[12b][37:26], atk[9b][25:17], atk_cd[4b][16:13], speed[5b][12:8], range[8b][7:0]}
+    mem_Army_Stats [37:0]: {hp[12b][37:26], atk[9b][25:17], atk_cd[4b][16:13], speed[5b][12:8], range[8b][7:0]}
 
-state: 0[null], 1[move], 2[atk0], 3[atk1], 4[atk2], 5[atk3], 6[repel]
-
-module Game_Engine
-v_cnt==
-    490: gen_En
-    491: gen_Ar
-        !!! 
-            reg [7:0] genArmy;
-            reg purseUpgrade;
-            reg towerFire;
-            always @(posedge clk) begin
-                // ...
-            end
-        !!!
-    492: Atk_move_En
-    493: Atk_move_Ar
-    494: Tower Fire
-    495: Purse Upgrade
-    496: Money Add with Time
-    497: beDamaged_En (Repel)
-    498: beDamaged_Ar (Repel)
-    499: Store for Render
+State Protocol: 0[null], 1[move], 2[atk0], 3[atk1], 4[atk2], 5[atk3], 6[repel]
 
 */

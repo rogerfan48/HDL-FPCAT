@@ -1,5 +1,5 @@
 5_Metal_Duck
+300_Black_Bear
 600_Black_Bear
+900_Black_Bear
 1200_Black_Bear
-1800_Black_Bear
-2400_Black_Bear

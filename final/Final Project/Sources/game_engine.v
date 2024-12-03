@@ -18,34 +18,10 @@
 `define    GS_MONEY 4'd9
 `define   GS_HURT_E 4'd10
 `define   GS_HURT_A 4'd11
-`define    GS_STORE 4'd12
-`define    GS_CLEAN 4'd13
+`define    GS_CLEAN 4'd12
 
-`define ARMY_0_W 6'd32
-`define ARMY_0_H 5'd20
-`define ARMY_1_W 6'd32
-`define ARMY_1_H 5'd20
-`define ARMY_2_W 5'd16
-`define ARMY_2_H 4'd12
-`define ARMY_3_W 6'd32
-`define ARMY_3_H 5'd20
-`define ARMY_4_W 5'd16
-`define ARMY_4_H 4'd10
-`define ARMY_5_W 6'd32
-`define ARMY_5_H 5'd25
-`define ARMY_6_W 6'd32
-`define ARMY_6_H 5'd25
-`define ARMY_7_W 7'd64
-`define ARMY_7_H 5'd24
-
-`define ENEMY_0_W 5'd16
-`define ENEMY_0_H 4'd15
-`define ENEMY_1_W 5'd16
-`define ENEMY_1_H 5'd30
-`define ENEMY_2_W 5'd16
-`define ENEMY_2_H 5'd20
-`define ENEMY_3_W 5'd16
-`define ENEMY_3_H 5'd30
+`define ENEMY_SPAWN_X 10'd10
+`define ENEMY_SPAWN_Y 10'd210
 
 `define REPEL_CD 4'd10
 `define REPEL_SPEED 2'd3
@@ -53,20 +29,24 @@
 
 module Game_Engine (
     input clk_25MHz,
-    input [9:0] h_cnt;   //640
-    input [9:0] v_cnt;   //480
+    input [9:0] h_cnt,   //640
+    input [9:0] v_cnt,   //480
     input clk_6,
     input clk_frame,
     input mouseL,
     input [9:0] mouseInFrame,
     input [2:0] scene,
     input gameInit_OP,
-    output [14:0] money,
-    output [14:0] money_Max
+    output reg [14:0] money,
+    output reg [14:0] money_Max,
+    output reg [55:0] Enemy_Instance [15:0],
+    output reg [55:0] Army_Instance [15:0]
 );
+    integer i;
 
-    reg [5:0] enemyGenPtr;
-    wire [5:0] next_enemyGenPtr;
+// ? //////////     IP: Enemy Queue     //////////////
+    reg [5:0] enemyGenPtr;      // only can have 63 enemy, remaining: {12{1}, 3{0}}
+    reg [5:0] next_enemyGenPtr;
     wire [14:0] enemyQueueObj, enemyQueueObj1, enemyQueueObj2, enemyQueueObj3;
     mem_Enemy_Queue_1 mem_EQ1 (.clka(clk_25MHz), .wea(0), .addra(enemyGenPtr), .dina(0), .douta(enemyQueueObj1));
     mem_Enemy_Queue_2 mem_EQ2 (.clka(clk_25MHz), .wea(0), .addra(enemyGenPtr), .dina(0), .douta(enemyQueueObj2));
@@ -77,20 +57,26 @@ module Game_Engine (
         else if (scene==S_PLAY3)    enemyQueueObj = enemyQueueObj3;
         else                        enemyQueueObj = 15'b111111111111000;
     end
-    reg [1:0] enemyStatsPtr;
-    wire [1:0] next_enemyStatsPtr;
-    wire [37:0] enemyStatsObj;
-    mem_Enemy_Stats mem_ES0 (.clka(clk_25MHz), .wea(0), .addra(enemyStatsPtr), .dina(0), .douta(enemyStatsObj));
-    reg [1:0] armyStatsPtr;
-    wire [1:0] next_armyStatsPtr;
-    wire [37:0] armyStatsObj;
-    mem_Army_Stats mem_AS0 (.clka(clk_25MHz), .wea(0), .addra(armyStatsPtr), .dina(0), .douta(armyStatsObj));
 
-    reg [55:0] Enemy_Instance [16];
-    reg [55:0] Army_Instance [16];
-    wire [55:0] next_Enemy_Instance [16];
-    wire [55:0] next_Army_Instance [16];
+// ? //////////     reg: Enemy/Army Stats/Pixel     //////////////
+    reg [1:0] enemy_type_addr;
+    reg [1:0] next_enemy_type_addr;
+    reg [37:0] enemy_stats_value;
+    reg [18:0] enemy_pixel_value;
+    Enemy_Stats EnemyStats0 (enemy_type_addr, enemy_stats_value);
+    Enemy_Pixel EnemyPixel0 (enemy_type_addr, enemy_pixel_value);
+    reg [1:0] army_type_addr;
+    reg [1:0] next_army_type_addr;
+    reg [37:0] army_stats_value;
+    reg [18:0] army_pixel_value;
+    Army_Stats ArmyStats0 (army_type_addr, army_stats_value);
+    Army_Pixel ArmyPixel0 (army_type_addr, army_pixel_value);
 
+// ? //////////     reg: Enemy/Army Instance     //////////////
+    reg [55:0] next_Enemy_Instance [15:0];
+    reg [55:0] next_Army_Instance [15:0];
+
+// ? //////////     reg: Game State     //////////////
     reg [4:0] gameState;
     reg [4:0] next_gameState;
     always @(posedge clk_25MHz) begin
@@ -99,6 +85,7 @@ module Game_Engine (
         else gameState <= next_gameState;
     end
 
+// ? //////////     reg: Game Cnt = GAME TIME     //////////////
     reg [11:0] game_cnt;
     always @(posedge clk_frame) begin
         if (rst) game_cnt <= 12'd0;
@@ -107,16 +94,15 @@ module Game_Engine (
         else game_cnt <= game_cnt;
     end
 
-    reg [14:0] money;
+// ? //////////     reg: Money     //////////////
     wire [14:0] next_money;
-    reg [14:0] money_Max;
     wire [14:0] next_money_Max;
 
+// ? //////////     reg: Screen Buttons     //////////////
     reg [7:0] genArmy;
     reg [7:0] next_genArmy;
     wire timeToGenArmy = (gameState == GS_GEN_A_D);
     always @(*) begin
-        integer i;
         for (i=0; i<8; i=i+1) begin
             if (mouseL && mouseInFrame[i+1])    next_genArmy[i] = 1'b1;
             else if (timeToGenArmy)             next_genArmy[i] = 1'b0;
@@ -150,7 +136,6 @@ module Game_Engine (
     wire [5:0] next_counter3;
     
     always @(posedge clk_25MHz) begin
-        integer i;
         for (i=0; i<16; i=i+1) begin
             Enemy_Instance[i] <= next_Enemy_Instance[i];
             Army_Instance[i] <= next_Army_Instance[i];
@@ -167,9 +152,8 @@ module Game_Engine (
         counter2 <= next_counter2;
         counter3 <= next_counter3;
     end
-    
+
     always @(*) begin
-        integer i;
         for (i=0; i<16; i=i+1) begin
             next_Enemy_Instance[i] = Enemy_Instance[i];
             next_Army_Instance[i] = Army_Instance[i];
@@ -179,15 +163,20 @@ module Game_Engine (
         next_armyStatsPtr = armyStatsPtr;
         next_money = money;
         next_money_Max = money_Max;
+        enemy_type_addr = enemy_type_addr;    // just default
+        army_type_addr = army_type_addr;      // just default
         next_counter1 = counter1;
         next_counter2 = counter2;
         next_counter3 = counter3;
+
         case (gameState)
             GS_REST: begin
-                if (v_cnt==10'd490 && h_cnt<10'd5 && gameInit_OP)   next_gameState = GS_INIT;
-                else                                                next_gameState = gameState;
+                if (v_cnt==10'd490 && h_cnt<10'd5) begin
+                    if (gameInit)   next_gameState = GS_INIT;
+                    else            next_gameState = GS_GEN_E;
+                end else next_gameState = gameState;
             end
-            GS_INIT: begin
+            GS_INIT: begin      // ? ///// Initialization
                 next_gameState = GS_GEN_E;
                 for (i=0; i<16; i=i+1) begin
                     next_Enemy_Instance[i] = 56'd0;
@@ -195,40 +184,53 @@ module Game_Engine (
                 end
                 next_money = 15'd0;
                 next_money_Max = INIT_MONEY_MAX;
+                next_enemyGenPtr = 6'd0;
+                next_counter1 = 6'd0;       // Finding Space ptr
+                next_counter2 = 6'd0;       // Been Generated
             end
-            GS_GEN_E: begin     // generate Enemy
-
+            GS_GEN_E: begin     // ? ///// generate Enemy
+                if (enemyGenPtr == 6'd63 ||             // All Enemy Been Generated
+                    enemyQueueObj[14:3]>game_cnt ||     // Not Yet to Generate
+                    counter2 ||                         // Already Find Space, generate and to the next gameState
+                    counter1==6'd16) begin              // No Space
+                    next_gameState = GS_GEN_A_D;
+                    if (counter2) begin
+                        next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, ENEMY_SPAWN_X, ENEMY_SPAWN_Y-enemy_pixel_value[11:5], enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
+                    end
+                end else begin
+                    if (Enemy_Instance[counter1][55]==1'b0) begin   // Found A Space
+                        enemy_type_addr = enemyQueueObj[1:0];       // Record the Enemy Type, to get the right data in next clk
+                        next_counter2 = 6'd1;
+                    end else next_counter1 = counter1 + 1'b1;       // This Addr No Space, find the next one
+                end
             end
-            GS_GEN_A_D: begin     // generate Army - Detect
+            GS_GEN_A_D: begin   // ? ///// generate Army - Detect
                 next_gameState = GS_GEN_A_G;
             end
-            GS_GEN_A_G: begin     // generate Army - Find Space to gen
+            GS_GEN_A_G: begin   // ? ///// generate Army - Find Space to gen
 
             end
-            GS_ATK_E: begin     // atk or move Enemy
+            GS_ATK_E: begin     // ? ///// atk or move Enemy
 
             end
-            GS_ATK_A: begin     // atk or move Army
+            GS_ATK_A: begin     // ? ///// atk or move Army
 
             end
-            GS_TOWER: begin     // Tower fire
+            GS_TOWER: begin     // ? ///// Tower fire
                 next_gameState = GS_PURSE;
             end
-            GS_PURSE: begin     // Purse Upgrade
+            GS_PURSE: begin     // ? ///// Purse Upgrade
                 next_gameState = GS_MONEY;
             end
-            GS_MONEY: begin     // Money Add with Time
+            GS_MONEY: begin     // ? ///// Money Add with Time
                 next_gameState = GS_HURT_E;
                 if (clk_6 && money<money_Max)   next_money = money + 1'b1;
                 else                            next_money = money;
             end
-            GS_HURT_E: begin    // beDamaged Enemy
+            GS_HURT_E: begin    // ? ///// beDamaged Enemy
 
             end
-            GS_HURT_A: begin    // beDamaged Army
-
-            end
-            GS_STORE: begin     // Store for Render
+            GS_HURT_A: begin    // ? ///// beDamaged Army
 
             end
             default: begin
