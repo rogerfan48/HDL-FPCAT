@@ -21,7 +21,8 @@
 `define    GS_CLEAN 4'd12
 
 `define ENEMY_SPAWN_X 10'd10
-`define ENEMY_SPAWN_Y 10'd210
+`define ARMY_SPAWN_X  10'd570
+`define SPAWN_Y       10'd210
 
 `define REPEL_CD 4'd10
 `define REPEL_SPEED 2'd3
@@ -37,8 +38,9 @@ module Game_Engine (
     input [9:0] mouseInFrame,
     input [2:0] scene,
     input gameInit_OP,
+    output ableToUpgrade,
+    output reg [2:0] purse_level,
     output reg [14:0] money,
-    output reg [14:0] money_Max,
     output reg [55:0] Enemy_Instance [15:0],
     output reg [55:0] Army_Instance [15:0]
 );
@@ -95,11 +97,17 @@ module Game_Engine (
     end
 
 // ? //////////     reg: Money     //////////////
-    wire [14:0] next_money;
-    wire [14:0] next_money_Max;
+    reg [2:0] next_purse_level;
+    reg [14:0] next_money;
+    wire [14:0] purseUpgradeNeedMoney;
+    Purse_Upgrade_Need_Money PUNM0(purse_level, purseUpgradeNeedMoney);
+    Purse_Max_Money PMM0(purse_level, money_Max);
+    assign ableToUpgrade = (money>=purseUpgradeNeedMoney);
 
 // ? //////////     reg: Screen Buttons     //////////////
     reg [7:0] genArmy;
+    wire [3:0] genArmyType;
+    Priority_Encoder_8x3 PE83_0 (genArmy, genArmyType);
     reg [7:0] next_genArmy;
     wire timeToGenArmy = (gameState == GS_GEN_A_D);
     always @(*) begin
@@ -123,9 +131,9 @@ module Game_Engine (
     reg next_purseUpgrade;
     wire timeToUpgradePurse = (gameState == GS_PURSE);
     always @(*) begin
-        if (mouseL && mouseInFrame[0])  next_purseUpgrade = 1'b1;
-        else if (timeToUpgradePurse)    next_purseUpgrade = 1'b0;
-        else                            next_purseUpgrade = purseUpgrade;
+        if (mouseL && mouseInFrame[0] && ableToUpgrade) next_purseUpgrade = 1'b1;
+        else if (timeToUpgradePurse)                    next_purseUpgrade = 1'b0;
+        else                                            next_purseUpgrade = purseUpgrade;
     end
 
     reg [5:0] counter1;
@@ -148,6 +156,7 @@ module Game_Engine (
         towerFire <= next_towerFire;
         money <= next_money;
         money_Max <= next_money_Max;
+        purse_level <= next_purse_level;
         counter1 <= next_counter1;
         counter2 <= next_counter2;
         counter3 <= next_counter3;
@@ -163,6 +172,7 @@ module Game_Engine (
         next_armyStatsPtr = armyStatsPtr;
         next_money = money;
         next_money_Max = money_Max;
+        next_purse_level = purse_level;
         enemy_type_addr = enemy_type_addr;    // just default
         army_type_addr = army_type_addr;      // just default
         next_counter1 = counter1;
@@ -184,6 +194,7 @@ module Game_Engine (
                 end
                 next_money = 15'd0;
                 next_money_Max = INIT_MONEY_MAX;
+                next_purse_level = 3'd0;
                 next_enemyGenPtr = 6'd0;
                 next_counter1 = 6'd0;       // Finding Space ptr
                 next_counter2 = 6'd0;       // Been Generated
@@ -195,7 +206,7 @@ module Game_Engine (
                     counter1==6'd16) begin              // No Space
                     next_gameState = GS_GEN_A_D;
                     if (counter2) begin
-                        next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, ENEMY_SPAWN_X, ENEMY_SPAWN_Y-enemy_pixel_value[11:5], enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
+                        next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, ENEMY_SPAWN_X, SPAWN_Y-enemy_pixel_value[11:5], enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
                     end
                 end else begin
                     if (Enemy_Instance[counter1][55]==1'b0) begin   // Found A Space
@@ -206,32 +217,55 @@ module Game_Engine (
             end
             GS_GEN_A_D: begin   // ? ///// generate Army - Detect
                 next_gameState = GS_GEN_A_G;
+                army_type_addr = genArmy;
+                next_counter1 = 6'd0;       // Finding Space ptr
             end
             GS_GEN_A_G: begin   // ? ///// generate Army - Find Space to gen
-
+                if (counter1==6'd16) begin              // No Space
+                    next_gameState = GS_ATK_E;
+                end else begin
+                    if (Army_Instance[counter1][55]==1'b0) begin    // Found A Space
+                        next_gameState = GS_ATK_E;
+                        next_Army_Instance[counter1] = {1'b1, army_type_addr, ARMY_SPAWN_X, SPAWN_Y-army_pixel_value[11:5], army_stats_value[37:26], 4'd1, 4'd0, 12'd0};
+                    end else next_counter1 = counter1 + 1'b1;       // This Addr No Space, find the next one
+                end
             end
             GS_ATK_E: begin     // ? ///// atk or move Enemy
-
+                // CAN LEAVE IT BLANK FOR ROGER TO DO, OR IF YOU FINISH ALL OTHER PARTS, CAN DO THIS
             end
             GS_ATK_A: begin     // ? ///// atk or move Army
-
+                // CAN LEAVE IT BLANK FOR ROGER TO DO, OR IF YOU FINISH ALL OTHER PARTS, CAN DO THIS
             end
             GS_TOWER: begin     // ? ///// Tower fire
                 next_gameState = GS_PURSE;
+                // TODO: If finished this part, remove this section of TODO, other TODO also.
+                // TODO: Remember when need counter(s) initialize it in the the "READY TO TRANS-STATE" part in the previous state.
+                // TODO: 
+                // TODO: TOWER WILL NOT NEED COUNTER1/2/3, but need an independent timer which need to be a reg on output for render to render
+                // TODO: can reference to Purse below.
             end
             GS_PURSE: begin     // ? ///// Purse Upgrade
                 next_gameState = GS_MONEY;
+                if (purse_level != 3'd7 && ableToUpgrade) begin
+                    next_money = money - purseUpgradeNeedMoney;
+                    next_purse_level = purse_level + 1'b1;
+                end 
             end
             GS_MONEY: begin     // ? ///// Money Add with Time
                 next_gameState = GS_HURT_E;
-                if (clk_6 && money<money_Max)   next_money = money + 1'b1;
-                else                            next_money = money;
+                if (clk_6) begin
+                    if (purse_level==3'd0)      next_money = ((money + 1'b1 > money_Max) ? money_Max : money + 1'b1);
+                    else if (purse_level<3'd3)  next_money = ((money + 2'b2 > money_Max) ? money_Max : money + 2'b2);
+                    else if (purse_level==3'd3) next_money = ((money + 2'b3 > money_Max) ? money_Max : money + 2'b3);
+                    else if (purse_level==3'd4) next_money = ((money + 3'b4 > money_Max) ? money_Max : money + 3'b4);
+                    else                        next_money = ((money + 3'b5 > money_Max) ? money_Max : money + 3'b5);
+                end else                        next_money = money;
             end
             GS_HURT_E: begin    // ? ///// beDamaged Enemy
-
+                // TODO
             end
             GS_HURT_A: begin    // ? ///// beDamaged Army
-
+                // TODO
             end
             default: begin
                 next_gameState = GS_REST;

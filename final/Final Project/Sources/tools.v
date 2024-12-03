@@ -41,3 +41,23 @@ module One_Palse (clk, pb_d, pb_1p);
     always @(posedge clk) pb_delay <= pb_d;
     always @(posedge clk) pb_1p <= pb_d & ~pb_delay;
 endmodule
+
+module Priority_Encoder_8x3 (
+    input [7:0] in,
+    output reg [2:0] out
+);
+
+    always @(*) begin
+        casex (in)
+            8'bxxxxxxx1: out = 3'b000;
+            8'bxxxxxx10: out = 3'b001;
+            8'bxxxxx100: out = 3'b010;
+            8'bxxxx1000: out = 3'b011;
+            8'bxxx10000: out = 3'b100;
+            8'bxx100000: out = 3'b101;
+            8'bx1000000: out = 3'b110;
+            8'b10000000: out = 3'b111;
+            default:     out = 3'b000;
+        endcase
+    end
+endmodule

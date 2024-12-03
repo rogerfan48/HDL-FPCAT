@@ -1,6 +1,6 @@
 module Enemy_Stats (
-    input [1:0] addr;
-    output reg [37:0] out;
+    input [1:0] addr,
+    output reg [37:0] out
 );
     always @(*) begin
         case (addr)
@@ -13,8 +13,8 @@ module Enemy_Stats (
 endmodule
 
 module Army_Stats (
-    input [2:0] addr;
-    output reg [37:0] out;
+    input [2:0] addr,
+    output reg [37:0] out
 );
     always @(*) begin
         case (addr)
@@ -31,8 +31,8 @@ module Army_Stats (
 endmodule
 
 module Enemy_Pixel (
-    input [1:0] addr;
-    output reg [18:0] out;  // W[7B][18:12], H[7B][11:5], D[5B][4:0]
+    input [2:0] addr,
+    output reg [18:0] out   // W[7B][18:12], H[7B][11:5], D[5B][4:0]
 );
     always @(*) begin
         case (addr)
@@ -45,8 +45,8 @@ module Enemy_Pixel (
 endmodule
 
 module Army_Pixel (
-    input [2:0] addr;
-    output reg [18:0] out;  // W[7B][18:12], H[7B][11:5], D[5B][4:0]
+    input [2:0] addr,
+    output reg [18:0] out   // W[7B][18:12], H[7B][11:5], D[5B][4:0]
 );
     always @(*) begin
         case (addr)
@@ -58,6 +58,42 @@ module Army_Pixel (
             2'd5:    out = 19'b0101000011001001010;
             2'd6:    out = 19'b0101000011001001010;
             default: out = 19'b1010000011000001000;
+        endcase
+    end
+endmodule
+
+module Purse_Upgrade_Need_Money (
+    input [2:0] level,
+    output [14:0] money
+);
+    always @(*) begin
+        case (level)
+            2'd0:    out = 14'd100;
+            2'd1:    out = 14'd200;
+            2'd2:    out = 14'd400;
+            2'd3:    out = 14'd600;
+            2'd4:    out = 14'd1000;
+            2'd5:    out = 14'd2000;
+            2'd6:    out = 14'd4000;
+            default: out = 14'd8000;
+        endcase
+    end
+endmodule
+
+module Purse_Max_Money (
+    input [2:0] level,
+    output [14:0] money
+);
+    always @(*) begin
+        case (level)
+            2'd0:    out = 14'd100;
+            2'd1:    out = 14'd300;
+            2'd2:    out = 14'd500;
+            2'd3:    out = 14'd1000;
+            2'd4:    out = 14'd2000;
+            2'd5:    out = 14'd4000;
+            2'd6:    out = 14'd6000;
+            default: out = 14'd10000;
         endcase
     end
 endmodule

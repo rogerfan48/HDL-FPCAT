@@ -59,8 +59,9 @@ module Top (
     assign mouseInFrame[8] = (mouseX>=10'd435 && mouseX<10'd535 && mouseY>=10'd380 && mouseY<10'd460);
     assign mouseInFrame[9] = (mouseX>=10'd540 && mouseY>=10'd380);
 
+    wire ableToUpgrade;
+    wire [2:0] purse_level;
     wire [14:0] money;
-    wire [14:0] money_Max;
     wire [55:0] Enemy_Instance [15:0];
     wire [55:0] Army_Instance [15:0];
 
@@ -74,8 +75,9 @@ module Top (
         .mouseInFrame(mouseInFrame),
         .scene(scene),
         .gameInit_OP(gameInit_OP),
+        .ableToUpgrade(ableToUpgrade),
+        .purse_level(purse_level),
         .money(money),
-        .money_Max(money_Max),
         .Enemy_Instance(Enemy_Instance),
         .Army_Instance(Army_Instance)
     );
