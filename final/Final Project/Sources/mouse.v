@@ -1,5 +1,6 @@
 module Mouse (
     input clk,
+    input clk_25MHz,
     input [9:0] h_cnt,
     input [9:0] v_cnt,
     output enable_mouse_display,
@@ -18,8 +19,8 @@ module Mouse (
 
     wire [3:0] MOUSE_Z_POS;
     wire MOUSE_LEFT_DB;
-    Debounce DB_L (clk, MOUSE_LEFT_ORI, MOUSE_LEFT_DB);
-    One_Palse OP_L (clk, MOUSE_LEFT_DB, MOUSE_LEFT_OP);
+    Debounce DB_L (clk_25MHz, MOUSE_LEFT_ORI, MOUSE_LEFT_DB);
+    One_Palse OP_L (clk_25MHz, MOUSE_LEFT_DB, MOUSE_LEFT_OP);
     
     MouseCtl #(
         .SYSCLK_FREQUENCY_HZ(108000000),

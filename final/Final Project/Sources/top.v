@@ -1,3 +1,11 @@
+`define S_START 3'd0
+`define  S_MENU 3'd1
+`define S_PLAY1 3'd2
+`define S_PLAY2 3'd3
+`define S_PLAY3 3'd4
+`define   S_WIN 3'd5
+`define  S_LOSE 3'd6
+
 module Top (
     input clk,
     input rst,
@@ -15,6 +23,8 @@ module Top (
 
     wire valid;
     wire clk_frame;
+    wire clk_6;     // !! with respect to clk_frame
+    Clk_Divisor_6 Clk_Divisor_6(clk_frame, clk_6);
     wire [9:0] h_cnt;   //640
     wire [9:0] ah_cnt;  //640
     wire [9:0] v_cnt;   //480
@@ -26,13 +36,6 @@ module Top (
     wire [3:0] MOUSE_RED, MOUSE_GREEN, MOUSE_BLUE;
     wire [11:0] MOUSE_PIXEL = {MOUSE_RED, MOUSE_GREEN, MOUSE_BLUE};
 
-    parameter S_START = 3'd0;
-    parameter S_MENU = 3'd1;
-    parameter S_PLAY1 = 3'd2;
-    parameter S_PLAY2 = 3'd3;
-    parameter S_PLAY3 = 3'd4;
-    parameter S_WIN = 3'd5;
-    parameter S_LOSE = 3'd6;
     reg [2:0] scene;
     reg [2:0] next_scene;
 
@@ -40,6 +43,10 @@ module Top (
     wire mouseInLevel1 = (mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd80 && mouseY<10'd140);
     wire mouseInLevel2 = (mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd200 && mouseY<10'd260);
     wire mouseInLevel3 = (mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd320 && mouseY<10'd380);
+    wire gameInit, gameInit_OP;
+    assign gameInit = (mouseL && (mouseInLevel1||mouseInLevel2||mouseInLevel3));
+    One_Palse One_Palse_GameInit (clk_frame, gameInit, gameInit_OP);
+
     wire [9:0] mouseInFrame;    // [0]:purse, [9]:Fire
     assign mouseInFrame[0] = (mouseX<10'd100 && mouseY>=10'd380);
     assign mouseInFrame[1] = (mouseX>=10'd105 && mouseX<10'd205 && mouseY>=10'd290 && mouseY<10'd370);
@@ -51,7 +58,25 @@ module Top (
     assign mouseInFrame[7] = (mouseX>=10'd325 && mouseX<10'd425 && mouseY>=10'd380 && mouseY<10'd460);
     assign mouseInFrame[8] = (mouseX>=10'd435 && mouseX<10'd535 && mouseY>=10'd380 && mouseY<10'd460);
     assign mouseInFrame[9] = (mouseX>=10'd540 && mouseY>=10'd380);
-    Render Render (
+
+    wire [14:0] money;
+    wire [14:0] money_Max;
+
+    Game_Engine Game_Engine_0 (
+        .clk_25MHz(clk_25MHz),
+        .h_cnt(h_cnt),
+        .v_cnt(v_cnt),
+        .clk_6(clk_6),
+        .clk_frame(clk_frame),
+        .mouseL(mouseL),
+        .mouseInFrame(mouseInFrame),
+        .scene(scene),
+        .gameInit_OP(gameInit_OP),
+        .money(money),
+        .money_Max(money_Max)
+    );
+
+    Render Render_0 (
         .clk(clk_25MHz),
         .h_cnt(h_cnt),
         .ah_cnt(ah_cnt),
@@ -73,7 +98,7 @@ module Top (
         .vgaBlue(vgaBlue)
     );
 
-    VGA_Control VGA_Ctrl (
+    VGA_Control VGA_Ctrl_0 (
         .pclk(clk_25MHz),
         .reset(rst),
         .hsync(hsync),
@@ -86,8 +111,9 @@ module Top (
         .clk_frame(clk_frame)
     );
 
-    Mouse Mouse_Ctrl (
+    Mouse Mouse_Ctrl_0 (
         .clk(clk),
+        .clk_25MHz(clk_25MHz),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt),
         .enable_mouse_display(enable_mouse_display),
@@ -102,38 +128,38 @@ module Top (
     );
 
     // Scene
-    always @(posedge clk) begin
+    always @(posedge clk_25MHz) begin
         if (rst) scene <= S_START;
         else     scene <= next_scene;
     end
     always @(*) begin
         case (scene)
             S_START: begin
-                if (mouseL && mouseInStart) next_scene <= S_MENU;
-                else                        next_scene <= S_START;
+                if (mouseL && mouseInStart) next_scene = S_MENU;
+                else                        next_scene = S_START;
             end
             S_MENU: begin
-                if (mouseL && mouseInLevel1)        next_scene <= S_PLAY1;
-                else if (mouseL && mouseInLevel2)   next_scene <= S_PLAY2;
-                else if (mouseL && mouseInLevel3)   next_scene <= S_PLAY3;
-                else                                next_scene <= S_MENU;
+                if (mouseL && mouseInLevel1)        next_scene = S_PLAY1;
+                else if (mouseL && mouseInLevel2)   next_scene = S_PLAY2;
+                else if (mouseL && mouseInLevel3)   next_scene = S_PLAY3;
+                else                                next_scene = S_MENU;
             end
             S_PLAY1: begin
-                next_scene <= scene;
+                next_scene = scene;
             end
             S_PLAY2: begin
-                next_scene <= scene;
+                next_scene = scene;
             end
             S_PLAY3: begin
-                next_scene <= scene;
+                next_scene = scene;
             end
             S_WIN: begin
-                next_scene <= scene;
+                next_scene = scene;
             end
             S_LOSE: begin
-                next_scene <= scene;
+                next_scene = scene;
             end
-            default: next_scene <= scene;
+            default: next_scene = scene;
         endcase
     end
 endmodule
@@ -142,10 +168,10 @@ endmodule
 
 TODO:
 top:
-    gen_army_0~7
-    tower_atk
-    6_clk
-    game_cnt: [11:0] unit: 6_clk
+    gen_army_0~7    // ! move to Game_Engine
+    tower_atk       // ! move to Game_Engine
+    6_clk           
+    game_cnt: [11:0] unit: 6_clk    // ! move to Game_Engine
     repel_cd = 10;
     repel_speed = 3;
 
@@ -161,7 +187,24 @@ top:
 state: 0[null], 1[move], 2[atk0], 3[atk1], 4[atk2], 5[atk3], 6[repel]
 
 module Game_Engine
-    v_cnt==490: gen_En
+v_cnt==
+    490: gen_En
     491: gen_Ar
+        !!! 
+            reg [7:0] genArmy;
+            reg purseUpgrade;
+            reg towerFire;
+            always @(posedge clk) begin
+                // ...
+            end
+        !!!
+    492: Atk_move_En
+    493: Atk_move_Ar
+    494: Tower Fire
+    495: Purse Upgrade
+    496: Money Add with Time
+    497: beDamaged_En (Repel)
+    498: beDamaged_Ar (Repel)
+    499: Store for Render
 
 */
