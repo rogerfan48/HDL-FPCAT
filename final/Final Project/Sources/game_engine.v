@@ -142,6 +142,13 @@ module Game_Engine (
         else                            next_purseUpgrade = purseUpgrade;
     end
 
+    reg [5:0] counter1;
+    reg [5:0] counter2;
+    reg [5:0] counter3;
+    wire [5:0] next_counter1;
+    wire [5:0] next_counter2;
+    wire [5:0] next_counter3;
+    
     always @(posedge clk_25MHz) begin
         integer i;
         for (i=0; i<16; i=i+1) begin
@@ -156,6 +163,9 @@ module Game_Engine (
         towerFire <= next_towerFire;
         money <= next_money;
         money_Max <= next_money_Max;
+        counter1 <= next_counter1;
+        counter2 <= next_counter2;
+        counter3 <= next_counter3;
     end
     
     always @(*) begin
@@ -169,6 +179,9 @@ module Game_Engine (
         next_armyStatsPtr = armyStatsPtr;
         next_money = money;
         next_money_Max = money_Max;
+        next_counter1 = counter1;
+        next_counter2 = counter2;
+        next_counter3 = counter3;
         case (gameState)
             GS_REST: begin
                 if (v_cnt==10'd490 && h_cnt<10'd5 && gameInit_OP)   next_gameState = GS_INIT;
