@@ -23,6 +23,8 @@
 `define ENEMY_SPAWN_X 10'd10
 `define ARMY_SPAWN_X  10'd570
 `define SPAWN_Y       10'd210
+`define TOWER_E_X     10'd70
+`define TOWER_A_X     10'd570
 
 `define REPEL_CD 4'd10
 `define REPEL_SPEED 2'd3
@@ -290,10 +292,12 @@ module Game_Engine (
     case (Enemy_Instance[counter1][`STATE_P])
         `ST_MOVE: begin
             if (counter2 == 6'd16) begin
-                next_Enemy_Instance[counter1][`X_P] = Enemy_Instance[counter1][`X_P] + enemy_stats_value[speed_SP];
+                next_Enemy_Instance[counter1][`X_P] = Enemy_Instance[counter1][`X_P] + enemy_stats_value[`speed_SP];
                 next_counter1 = counter1 + 1'b1;
                 next_counter2 = 6'd0;
-            end else if (Enemy_Instance[counter1][`X_P]+enemy_pixel_value[4:0]+enemy_stats_value[`range_SP]-army_pixel_value[4:0] >=Army_Instance[counter2][`X_P]) begin         // in atk range
+            end else if (
+                (Enemy_Instance[counter1][`X_P]+enemy_pixel_value[4:0]+enemy_stats_value[`range_SP]-army_pixel_value[4:0]>=Army_Instance[counter2][`X_P]) ||(Enemy_Instance[counter1][`X_P]+enemy_stats_value[`range_SP]>=`TOWER_A_X)
+            ) begin         // in atk range
                 next_Enemy_Instance[counter1][`STATE_P] = `ST_ATK_0;
                 next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
                 next_counter1 = counter1 + 1'b1;
@@ -303,38 +307,156 @@ module Game_Engine (
             end
         end
         `ST_ATK_0: begin
-            // if (Enemy_Instance[counter1][`STATE_CNT_P]==enem)
+            if (Enemy_Instance[counter1][`STATE_CNT_P]==enemy_stats_value[`atk_cd_SP]) begin
+                next_Enemy_Instance[counter1][`STATE_P] = `ST_ATK_1;
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            end else begin
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = Enemy_Instance[counter1][`STATE_CNT_P] + 1'b1;
+            end
+            next_counter1 = counter1 + 1'b1;
         end
         `ST_ATK_1: begin
-
+            if (counter2==6'd16) begin
+                if (Enemy_Instance[counter1][`X_P]+enemy_stats_value[`range_SP] >= `TOWER_A_X)
+                    next_towerBlood_A = (enemy_stats_value[`atk_SP]>towerBlood_A ? 12'd0 : towerBlood_A-enemy_stats_value[`atk_SP]);
+                next_Enemy_Instance[counter1][`STATE_P] = `ST_ATK_2;
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
+                next_counter1 = counter1 + 1'b1;
+                next_counter2 = 6'd0;
+            end else begin
+                if (Enemy_Instance[counter1][`X_P]+enemy_pixel_value[4:0]+enemy_stats_value[`range_SP]>=Army_Instance[counter2][`X_P]+army_pixel_value[4:0]) begin
+                    next_Army_Instance[counter2][`BE_DAMAGED_P] = Army_Instance[counter2][`BE_DAMAGED_P] + enemy_stats_value[`atk_SP];
+                end
+                next_counter2 = counter2 + 1'b1;
+            end
         end
         `ST_ATK_2: begin
-
+            if (Enemy_Instance[counter1][`STATE_CNT_P]==enemy_stats_value[`atk_cd_SP]) begin
+                next_Enemy_Instance[counter1][`STATE_P] = `ST_ATK_3;
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            end else begin
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = Enemy_Instance[counter1][`STATE_CNT_P] + 1'b1;
+            end
+            next_counter1 = counter1 + 1'b1;
         end
         `ST_ATK_3: begin
-
+            if (Enemy_Instance[counter1][`STATE_CNT_P]==enemy_stats_value[`atk_cd_SP]) begin
+                next_Enemy_Instance[counter1][`STATE_P] = `ST_MOVE;
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            end else begin
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = Enemy_Instance[counter1][`STATE_CNT_P] + 1'b1;
+            end
+            next_counter1 = counter1 + 1'b1;
         end
         `ST_REPEL: begin
-
+            if (Enemy_Instance[counter1][`STATE_CNT_P]==4'd10) begin
+                next_Enemy_Instance[counter1][`STATE_P] = `ST_MOVE;
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            end else begin
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = Enemy_Instance[counter1][`STATE_CNT_P] + 1'b1;
+                next_Enemy_Instance[counter1][`X_P] = Enemy_Instance[counter1][`X_P] - 10'd3;
+            end
+            next_counter1 = counter1 + 1'b1;
         end
         default: begin
-
+            next_Enemy_Instance[counter1][`STATE_P] = `ST_MOVE;
+            next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            next_counter1 = counter1 + 1'b1;
         end
     endcase
     // --------------------------------------------
                     end
                 end
-
-                // `define  ST_NONE  4'd0
-                // `define  ST_MOVE  4'd1
-                // `define ST_ATK_0  4'd2
-                // `define ST_ATK_1  4'd3
-                // `define ST_ATK_2  4'd4
-                // `define ST_ATK_3  4'd5
-                // `define ST_REPEL  4'd6
             end
             `GS_ATK_A: begin     // ? ///// atk or move Army
-                // TODO:
+                if (counter1==6'd16) begin              // No Space
+                    next_gameState = `GS_TOWER_D;
+                    next_counter1 = 6'd0;
+                    next_counter2 = 6'd0;
+                end else begin
+                    if (clk_6 && Army_Instance[counter1][`EXIST_P]==1'b1) begin
+                        army_type_addr = Army_Instance[counter1][`TYPE_P];
+                        enemy_type_addr = Enemy_Instance[counter2][`TYPE_P];
+    // --------------------------------------------
+    case (Army_Instance[counter1][`STATE_P])
+        `ST_MOVE: begin
+            if (counter2 == 6'd16) begin
+                next_Army_Instance[counter1][`X_P] = Army_Instance[counter1][`X_P] - army_stats_value[`speed_SP];
+                next_counter1 = counter1 + 1'b1;
+                next_counter2 = 6'd0;
+            end else if (
+                (Army_Instance[counter1][`X_P]+army_pixel_value[4:0]<=Enemy_Instance[counter2][`X_P]+army_stats_value[`range_SP]+enemy_pixel_value[4:0]) ||
+                (`TOWER_E_X+army_stats_value[`range_SP]>=Army_Instance[counter1][`X_P])
+            ) begin         // in atk range
+                next_Army_Instance[counter1][`STATE_P] = `ST_ATK_0;
+                next_Army_Instance[counter1][`STATE_CNT_P] = 4'd0;
+                next_counter1 = counter1 + 1'b1;
+                next_counter2 = 6'd0;
+            end else begin
+                next_counter2 = counter2 + 1'b1;
+            end
+        end
+        `ST_ATK_0: begin
+            if (Army_Instance[counter1][`STATE_CNT_P]==army_stats_value[`atk_cd_SP]) begin
+                next_Army_Instance[counter1][`STATE_P] = `ST_ATK_1;
+                next_Army_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            end else begin
+                next_Army_Instance[counter1][`STATE_CNT_P] = Army_Instance[counter1][`STATE_CNT_P] + 1'b1;
+            end
+            next_counter1 = counter1 + 1'b1;
+        end
+        `ST_ATK_1: begin
+            if (counter2==6'd16) begin
+                if (`TOWER_E_X+army_stats_value[`range_SP]>=Army_Instance[counter1][`X_P])
+                    next_towerBlood_E = (army_stats_value[`atk_SP]>towerBlood_E ? 12'd0 : towerBlood_E-army_stats_value[`atk_SP]);
+                next_Army_Instance[counter1][`STATE_P] = `ST_ATK_2;
+                next_Army_Instance[counter1][`STATE_CNT_P] = 4'd0;
+                next_counter1 = counter1 + 1'b1;
+                next_counter2 = 6'd0;
+            end else begin
+                if (Army_Instance[counter1][`X_P]+army_pixel_value[4:0]=<Enemy_Instance[counter2][`X_P]+army_stats_value[`range_SP]+enemy_pixel_value[4:0]) begin
+                    next_Enemy_Instance[counter2][`BE_DAMAGED_P] = Enemy_Instance[counter2][`BE_DAMAGED_P] + army_stats_value[`atk_SP];
+                end
+                next_counter2 = counter2 + 1'b1;
+            end
+        end
+        `ST_ATK_2: begin
+            if (Army_Instance[counter1][`STATE_CNT_P]==army_stats_value[`atk_cd_SP]) begin
+                next_Army_Instance[counter1][`STATE_P] = `ST_ATK_3;
+                next_Army_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            end else begin
+                next_Army_Instance[counter1][`STATE_CNT_P] = Army_Instance[counter1][`STATE_CNT_P] + 1'b1;
+            end
+            next_counter1 = counter1 + 1'b1;
+        end
+        `ST_ATK_3: begin
+            if (Army_Instance[counter1][`STATE_CNT_P]==army_stats_value[`atk_cd_SP]) begin
+                next_Army_Instance[counter1][`STATE_P] = `ST_MOVE;
+                next_Army_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            end else begin
+                next_Army_Instance[counter1][`STATE_CNT_P] = Army_Instance[counter1][`STATE_CNT_P] + 1'b1;
+            end
+            next_counter1 = counter1 + 1'b1;
+        end
+        `ST_REPEL: begin
+            if (Army_Instance[counter1][`STATE_CNT_P]==4'd10) begin
+                next_Army_Instance[counter1][`STATE_P] = `ST_MOVE;
+                next_Army_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            end else begin
+                next_Army_Instance[counter1][`STATE_CNT_P] = Army_Instance[counter1][`STATE_CNT_P] + 1'b1;
+                next_Army_Instance[counter1][`X_P] = Army_Instance[counter1][`X_P] + 10'd3;
+            end
+            next_counter1 = counter1 + 1'b1;
+        end
+        default: begin
+            next_Army_Instance[counter1][`STATE_P] = `ST_MOVE;
+            next_Army_Instance[counter1][`STATE_CNT_P] = 4'd0;
+            next_counter1 = counter1 + 1'b1;
+        end
+    endcase
+    // --------------------------------------------
+                    end
+                end
             end
             `GS_TOWER_D: begin   // ? ///// Tower fire Detect
                 next_gameState = `GS_TOWER_O;
