@@ -31,7 +31,7 @@ module Army_Stats (
 endmodule
 
 module Enemy_Pixel (
-    input [2:0] addr,
+    input [1:0] addr,
     output reg [18:0] out   // W[7B][18:12], H[7B][11:5], D[5B][4:0]
 );
     always @(*) begin

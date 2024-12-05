@@ -46,6 +46,12 @@
 `define   STATE_CNT_P  15:12
 `define  BE_DAMAGED_P  11:0
 
+`define     HP_SP 37:26
+`define    atk_SP 25:17
+`define atk_cd_SP 16:13
+`define  speed_SP 12:8
+`define  range_SP 7:0
+
 `define Killer_Bird 3'd0
 `define  White_Bear 3'd1
 `define  Metal_Duck 3'd2
@@ -245,7 +251,7 @@ module Game_Engine (
                     counter1==6'd16) begin              // No Space
                     next_gameState = `GS_GEN_A_D;
                     if (counter2) begin
-                        next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, `ENEMY_SPAWN_X, `SPAWN_Y-enemy_pixel_value[11:5], enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
+                        next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, `ENEMY_SPAWN_X, `SPAWN_Y-enemy_pixel_value[11:5], enemy_stats_value[`HP_SP], 4'd1, 4'd0, 12'd0};
                     end
                 end else begin
                     if (Enemy_Instance[counter1][55]==1'b0) begin   // Found A Space
@@ -262,6 +268,8 @@ module Game_Engine (
             `GS_GEN_A_G: begin   // ? ///// generate Army - Find Space to gen
                 if (counter1==6'd16) begin              // No Space
                     next_gameState = `GS_ATK_E;
+                    next_counter1 = 6'd0;
+                    next_counter2 = 6'd0;
                 end else begin
                     if (Army_Instance[counter1][55]==1'b0) begin    // Found A Space
                         next_gameState = `GS_ATK_E;
@@ -270,7 +278,60 @@ module Game_Engine (
                 end
             end
             `GS_ATK_E: begin     // ? ///// atk or move Enemy
-                // TODO:
+                if (counter1==6'd16) begin              // No Space
+                    next_gameState = `GS_ATK_A;
+                    next_counter1 = 6'd0;
+                    next_counter2 = 6'd0;
+                end else begin
+                    if (clk_6 && Enemy_Instance[counter1][`EXIST_P]==1'b1) begin
+                        enemy_type_addr = Enemy_Instance[counter1][`TYPE_P];
+                        army_type_addr = Army_Instance[counter2][`TYPE_P];
+    // --------------------------------------------
+    case (Enemy_Instance[counter1][`STATE_P])
+        `ST_MOVE: begin
+            if (counter2 == 6'd16) begin
+                next_Enemy_Instance[counter1][`X_P] = Enemy_Instance[counter1][`X_P] + enemy_stats_value[speed_SP];
+                next_counter1 = counter1 + 1'b1;
+                next_counter2 = 6'd0;
+            end else if (Enemy_Instance[counter1][`X_P]+enemy_pixel_value[4:0]+enemy_stats_value[`range_SP]-army_pixel_value[4:0] >=Army_Instance[counter2][`X_P]) begin         // in atk range
+                next_Enemy_Instance[counter1][`STATE_P] = `ST_ATK_0;
+                next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
+                next_counter1 = counter1 + 1'b1;
+                next_counter2 = 6'd0;
+            end else begin
+                next_counter2 = counter2 + 1'b1;
+            end
+        end
+        `ST_ATK_0: begin
+            // if (Enemy_Instance[counter1][`STATE_CNT_P]==enem)
+        end
+        `ST_ATK_1: begin
+
+        end
+        `ST_ATK_2: begin
+
+        end
+        `ST_ATK_3: begin
+
+        end
+        `ST_REPEL: begin
+
+        end
+        default: begin
+
+        end
+    endcase
+    // --------------------------------------------
+                    end
+                end
+
+                // `define  ST_NONE  4'd0
+                // `define  ST_MOVE  4'd1
+                // `define ST_ATK_0  4'd2
+                // `define ST_ATK_1  4'd3
+                // `define ST_ATK_2  4'd4
+                // `define ST_ATK_3  4'd5
+                // `define ST_REPEL  4'd6
             end
             `GS_ATK_A: begin     // ? ///// atk or move Army
                 // TODO:
@@ -287,10 +348,12 @@ module Game_Engine (
             end
             `GS_TOWER_O: begin   // ? ///// Tower fire Operate
                 if (counter1 >= 6'd16) next_gameState = `GS_PURSE;
-                else begin      // TODO: Now will attack all
-                    next_Enemy_Instance[counter1][`STATE_P] = `ST_REPEL;
-                    next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
-                    next_Enemy_Instance[counter1][`BE_DAMAGED_P] = Enemy_Instance[counter1][`BE_DAMAGED_P] + 12'd300;
+                else begin
+                    if (Enemy_Instance[counter1][`X_P] > 10'd250) begin
+                        next_Enemy_Instance[counter1][`STATE_P] = `ST_REPEL;
+                        next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
+                        next_Enemy_Instance[counter1][`BE_DAMAGED_P] = Enemy_Instance[counter1][`BE_DAMAGED_P] + 12'd300;
+                    end
                     next_counter1 = counter1 + 1'b1;
                 end
             end
@@ -313,7 +376,7 @@ module Game_Engine (
                 end else                        next_money = money;
             end
             `GS_HURT_E: begin    // ? ///// Enemy Update HP
-                if (counter1==6'd15) begin
+                if (counter1==6'd16) begin
                     next_gameState = `GS_HURT_A;
                     next_counter1 = 6'd0;
                 end else begin
@@ -325,7 +388,7 @@ module Game_Engine (
                 end
             end
             `GS_HURT_A: begin    // ? ///// Army Update HP
-                if (counter1==6'd15) begin
+                if (counter1==6'd16) begin
                     next_gameState = `GS_REST;
                 end else begin
                     if (Army_Instance[counter1][`EXIST_P] == 1'b1) begin
