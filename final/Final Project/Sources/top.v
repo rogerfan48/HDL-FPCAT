@@ -61,9 +61,12 @@ module Top (
 
     wire ableToUpgrade;
     wire [2:0] purse_level;
+    wire [7:0] tower_cnt;
     wire [14:0] money;
     wire [55:0] Enemy_Instance [15:0];
     wire [55:0] Army_Instance [15:0];
+    wire game_win;
+    wire game_lose;
 
     Game_Engine Game_Engine_0 (
         .clk_25MHz(clk_25MHz),
@@ -77,9 +80,12 @@ module Top (
         .gameInit_OP(gameInit_OP),
         .ableToUpgrade(ableToUpgrade),
         .purse_level(purse_level),
+        .tower_cnt(tower_cnt),
         .money(money),
         .Enemy_Instance(Enemy_Instance),
-        .Army_Instance(Army_Instance)
+        .Army_Instance(Army_Instance),
+        .game_win(game_win),
+        .game_lose(game_lose)
     );
 
     Render Render_0 (

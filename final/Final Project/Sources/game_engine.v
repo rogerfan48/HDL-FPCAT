@@ -13,12 +13,12 @@
 `define  GS_GEN_A_G 4'd4
 `define    GS_ATK_E 4'd5
 `define    GS_ATK_A 4'd6
-`define    GS_TOWER 4'd7
-`define    GS_PURSE 4'd8
-`define    GS_MONEY 4'd9
-`define   GS_HURT_E 4'd10
-`define   GS_HURT_A 4'd11
-`define    GS_CLEAN 4'd12
+`define  GS_TOWER_D 4'd7
+`define  GS_TOWER_O 4'd8
+`define    GS_PURSE 4'd9
+`define    GS_MONEY 4'd10
+`define   GS_HURT_E 4'd11
+`define   GS_HURT_A 4'd12
 
 `define ENEMY_SPAWN_X 10'd10
 `define ARMY_SPAWN_X  10'd570
@@ -26,10 +26,8 @@
 
 `define REPEL_CD 4'd10
 `define REPEL_SPEED 2'd3
-`define INIT_MONEY_MAX 15'd500
 
-`define MAX_TOWER_FIRE_LEVEL 3'd5
-`define TIME_TO_UPGRADE_TOWER_FIRE 7'd1111111
+`define TOWER_CNT_MAX 8'd150
 
 `define  ST_NONE  4'd0
 `define  ST_MOVE  4'd1
@@ -65,12 +63,12 @@ module Game_Engine (
     input gameInit_OP,
     output ableToUpgrade,
     output reg [2:0] purse_level,
-    //
-    output reg [2:0] towerfire_level,
-    //
+    output reg [7:0] tower_cnt,
     output reg [14:0] money,
     output reg [55:0] Enemy_Instance [15:0],
-    output reg [55:0] Army_Instance [15:0]
+    output reg [55:0] Army_Instance [15:0],
+    output wire game_win,
+    output wire game_lose
 );
     integer i;
 
@@ -136,43 +134,14 @@ module Game_Engine (
     assign ableToUpgrade = (money>=purseUpgradeNeedMoney);
 
 // ? //////////     reg:TowerFire     //////////////
-    reg [2:0] next_towerfire_level;
-    reg [6:0] towerfire_cnt;
-
-    always @(posedge clk_frame) begin
-        if (rst || gameState == GS_INIT) begin
-            towerfire_cnt <= 8'd0;
-        end
-        else if (towerfire_level < MAX_TOWER_FIRE_LEVEL) begin
-            if (towerfire_cnt == TIME_TO_UPGRADE_TOWER_FIRE) begin
-                towerfire_cnt <= 8'd0;
-            end else begin
-                towerfire_cnt <= towerfire_cnt + 8'd1;
-            end
-        end
-        else begin
-            towerfire_cnt <= towerfire_cnt;
-        end
-    end
+    reg [7:0] tower_cnt;
+    reg [7:0] next_tower_cnt;
 
 // ? //////////     reg:TowerBlood     //////////////
     reg [11:0] towerBlood_E, towerBlood_A;
     reg [11:0] next_towerBlood_E, next_towerBlood_A;
-    always @(posedge clk_25MHz) begin
-        if(rst) begin
-            towerBlood_E <= 12'd0;
-            towerBlood_A <= 12'd0;
-        end else begin
-            if(gameState == GS_INIT) begin
-                towerBlood_E <= towerBlood_E <= 12'd4000;
-                towerBlood_A <= towerBlood_A <= 12'd4000;
-            end else begin
-                towerBlood_E <= next_towerBlood_E;
-                towerBlood_A <= next_towerBlood_A;
-            end
-        end
-    end    
-
+    assign game_win = (towerBlood_E == 12'd0);
+    assign game_lose = (towerBlood_A == 12'd0);
 
 // ? //////////     reg: Screen Buttons     //////////////
     reg [7:0] genArmy;
@@ -180,7 +149,6 @@ module Game_Engine (
     Priority_Encoder_8x3 PE83_0 (genArmy, genArmyType);
     reg [7:0] next_genArmy;
     wire timeToGenArmy = (gameState == GS_GEN_A_D);
-
     always @(*) begin
         for (i=0; i<8; i=i+1) begin
             if (mouseL && mouseInFrame[i+1])    next_genArmy[i] = 1'b1;
@@ -191,10 +159,9 @@ module Game_Engine (
 
     reg next_towerFire;
     reg towerFire;
-    wire timeToFire = (gameState == GS_TOWER);
-
+    wire timeToFire = (gameState == GS_TOWER_D);
     always @(*) begin
-        if (mouseL && mouseInFrame[9] && towerfire_level == MAX_TOWER_FIRE_LEVEL)  next_towerFire = 1'b1;
+        if (mouseL && mouseInFrame[9] && tower_cnt==TOWER_CNT_MAX)  next_towerFire = 1'b1;
         else if (timeToFire)            next_towerFire = 1'b0;
         else                            next_towerFire = towerFire;
     end
@@ -202,7 +169,6 @@ module Game_Engine (
     reg purseUpgrade;
     reg next_purseUpgrade;
     wire timeToUpgradePurse = (gameState == GS_PURSE);
-
     always @(*) begin
         if (mouseL && mouseInFrame[0] && ableToUpgrade) next_purseUpgrade = 1'b1;
         else if (timeToUpgradePurse)                    next_purseUpgrade = 1'b0;
@@ -217,6 +183,7 @@ module Game_Engine (
     wire [5:0] next_counter3;
     
     always @(posedge clk_25MHz) begin
+        next_gameState = gameState;
         for (i=0; i<16; i=i+1) begin
             Enemy_Instance[i] <= next_Enemy_Instance[i];
             Army_Instance[i] <= next_Army_Instance[i];
@@ -230,9 +197,9 @@ module Game_Engine (
         money <= next_money;
         money_Max <= next_money_Max;
         purse_level <= next_purse_level;
-        //
-        towerfire_level <= next_towerfire_level;
-        //
+        tower_cnt <= next_tower_cnt;
+        towerBlood_E <= next_towerBlood_E;
+        towerBlood_A <= next_towerBlood_A;
         counter1 <= next_counter1;
         counter2 <= next_counter2;
         counter3 <= next_counter3;
@@ -249,6 +216,9 @@ module Game_Engine (
         next_money = money;
         next_money_Max = money_Max;
         next_purse_level = purse_level;
+        next_tower_cnt = tower_cnt;
+        next_towerBlood_E = towerBlood_E;
+        next_towerBlood_A = towerBlood_A;
         enemy_type_addr = enemy_type_addr;    // just default
         army_type_addr = army_type_addr;      // just default
         next_counter1 = counter1;
@@ -271,6 +241,9 @@ module Game_Engine (
                 next_money = 15'd0;
                 next_money_Max = INIT_MONEY_MAX;
                 next_purse_level = 3'd0;
+                next_tower_cnt = 8'd0;
+                next_towerBlood_E = 12'd4000;
+                next_towerBlood_A = 12'd4000;
                 next_enemyGenPtr = 6'd0;
                 next_counter1 = 6'd0;       // Finding Space ptr
                 next_counter2 = 6'd0;       // Been Generated
@@ -307,30 +280,29 @@ module Game_Engine (
                 end
             end
             GS_ATK_E: begin     // ? ///// atk or move Enemy
-                // CAN LEAVE IT BLANK FOR ROGER TO DO, OR IF YOU FINISH ALL OTHER PARTS, CAN DO THIS
-
+                // TODO:
             end
             GS_ATK_A: begin     // ? ///// atk or move Army
-                // CAN LEAVE IT BLANK FOR ROGER TO DO, OR IF YOU FINISH ALL OTHER PARTS, CAN DO THIS
-
+                // TODO:
             end
-            GS_TOWER: begin     // ? ///// Tower fire
-                next_gameState = GS_PURSE;
-                // TODO: If finished this part, remove this section of TODO, other TODO also.
-                // TODO: Remember when need counter(s) initialize it in the the "READY TO TRANS-STATE" part in the previous state.
-                // TODO: 
-                if(towerFire) begin
-                    next_towerfire_level = 3'd0; 
-                    
+            GS_TOWER_D: begin   // ? ///// Tower fire Detect
+                next_gameState = GS_TOWER_O;
+                if (towerFire) begin
+                    next_tower_cnt = 8'd0;
+                    next_counter1 = 6'd0;
                 end else begin
-                    if(towerfire_level < MAX_TOWER_FIRE_LEVEL && towerfire_cnt == TIME_TO_UPGRADE_TOWER_FIRE) begin
-                        next_towerfire_level = towerfire_level + 1'b1;
-                    end else begin
-                        next_towerfire_level = towerfire_level;
-                    end
+                    if (clk_6 && towerfire_cnt < TOWER_CNT_MAX) next_tower_cnt = tower_cnt + 1'b1;
+                    next_counter1 = 6'd63;
                 end
-                // TODO: TOWER WILL NOT NEED COUNTER1/2/3, but need an independent timer which need to be a reg on output for render to render
-                // TODO: can reference to Purse below.
+            end
+            GS_TOWER_O: begin   // ? ///// Tower fire Operate
+                if (counter1 >= 6'd16) next_gameState = GS_PURSE;
+                else begin      // TODO: Now will attack all
+                    next_Enemy_Instance[counter1][STATE_P] = ST_REPEL;
+                    next_Enemy_Instance[counter1][STATE_CNT_P] = 4'd0;
+                    next_Enemy_Instance[counter1][BE_DAMAGED_P] = Enemy_Instance[counter1][BE_DAMAGED_P] + 12'd300;
+                    next_counter1 = counter1 + 1'b1;
+                end
             end
             GS_PURSE: begin     // ? ///// Purse Upgrade
                 next_gameState = GS_MONEY;
@@ -341,6 +313,7 @@ module Game_Engine (
             end
             GS_MONEY: begin     // ? ///// Money Add with Time
                 next_gameState = GS_HURT_E;
+                next_counter1 = 6'd0;
                 if (clk_6) begin
                     if (purse_level==3'd0)      next_money = ((money + 1'b1 > money_Max) ? money_Max : money + 1'b1);
                     else if (purse_level<3'd3)  next_money = ((money + 2'b2 > money_Max) ? money_Max : money + 2'b2);
@@ -349,59 +322,28 @@ module Game_Engine (
                     else                        next_money = ((money + 3'b5 > money_Max) ? money_Max : money + 3'b5);
                 end else                        next_money = money;
             end
-            GS_HURT_E: begin    // ? ///// beDamaged Enemy update hp and state
-                // TODO (need to add tower fire part, tower fire will cause repelling)
-                for (i=0; i<16; i=i+1) begin
-                    if (Enemy_Instance[i][EXIST_P] == 1'b1) begin
-                        if (Enemy_Instance[i][STATE_P] == ST_REPEL) begin
-                            next_Enemy_Instance[i] = {Enemy[i][EXIST_P], Enemy_Instance[i][TYPE_P], Enemy_Instance[i][X_P], Enemy_Instance[i][Y_P], Enemy_Instance[i][HP_P], Enemy_Instance[i][STATE_P], Enemy_Instance[i][STATE_CNT_P], 12'd0};
-                        end else if (Enemy_Instance[i][HP_P] > Enemy_Instance[i][BE_DAMAGED_P]) begin
-                            next_Enemy_Instance[i] = {Enemy[i][EXIST_P], Enemy_Instance[i][TYPE_P], Enemy_Instance[i][X_P], Enemy_Instance[i][Y_P], Enemy_Instance[i][HP_P] - Enemy_Instance[i][BE_DAMAGED_P], Enemy_Instance[i][STATE_P], Enemy_Instance[i][STATE_CNT_P], 12'd0};
-                        end else begin
-                            next_Enemy_Instance[i] = {1'b0, Enemy_Instance[i][TYPE_P], Enemy_Instance[i][X_P], Enemy_Instance[i][Y_P], 12'd0, ST_REPEL, Enemy_Instance[i][STATE_CNT_P], 12'd0};
-                        end
-                    end else begin
-                            next_Enemy_Instance[i] = Enemy_Instance[i];
-                        end
+            GS_HURT_E: begin    // ? ///// Enemy Update HP
+                if (counter1==6'd15) begin
+                    next_gameState = GS_HURT_A;
+                    next_counter1 = 6'd0;
+                end else begin
+                    if (Enemy_Instance[counter1][EXIST_P] = 1'b1) begin
+                        if (Enemy_Instance[counter1][BE_DAMAGED_P] >= Enemy_Instance[counter1][HP_P]) next_Enemy_Instance[counter1][EXIST_P] = 1'b0;
+                        else next_Enemy_Instance[counter1][HP_P] = Enemy_Instance[counter1][HP_P] - Enemy_Instance[counter1][BE_DAMAGED_P];
                     end
+                    next_counter1 = counter1 + 1'b1;
                 end
             end
-            GS_HURT_A: begin    // ? ///// beDamaged Army update hp and state
-                next_gameState = GS_STCNT_E;
-                // TODO
-                for (i=0; i<16; i=i+1) begin
-                    if (Army_Instance[i][EXIST_P] == 1'b1) begin
-                        if (Army_Instance[i][STATE_P] == ST_REPEL) begin
-                            next_Army_Instance[i] = {Army[i][EXIST_P], Army_Instance[i][TYPE_P], Army_Instance[i][X_P], Army_Instance[i][Y_P], Army_Instance[i][HP_P], Army_Instance[i][STATE_P], Army_Instance[i][STATE_CNT_P], 12'd0};
-                        end else if (Army_Instance[i][HP_P] > Army_Instance[i][BE_DAMAGED_P]) begin
-                            next_Army_Instance[i] = {Army[i][EXIST_P], Army_Instance[i][TYPE_P], Army_Instance[i][X_P], Army_Instance[i][Y_P], Army_Instance[i][HP_P] - Army_Instance[i][BE_DAMAGED_P], Army_Instance[i][STATE_P], Army_Instance[i][STATE_CNT_P], 12'd0};
-                        end else begin
-                            next_Army_Instance[i] = {1'b0, Army_Instance[i][TYPE_P], Army_Instance[i][X_P], Army_Instance[i][Y_P], 12'd0, ST_REPEL, 4'd0, 12'd0};
-                        end
-                    end else begin
-                            next_Army_Instance[i] = Army_Instance[i];
-                        end
+            GS_HURT_A: begin    // ? ///// Army Update HP
+                if (counter1==6'd15) begin
+                    next_gameState = GS_DETECT_END;
+                end else begin
+                    if (Army_Instance[counter1][EXIST_P] = 1'b1) begin
+                        if (Army_Instance[counter1][BE_DAMAGED_P] >= Army_Instance[counter1][HP_P]) next_Army_Instance[counter1][EXIST_P] = 1'b0;
+                        else next_Army_Instance[counter1][HP_P] = Army_Instance[counter1][HP_P] - Army_Instance[counter1][BE_DAMAGED_P];
                     end
+                    next_counter1 = counter1 + 1'b1;
                 end
-            end
-            GS_STCNT_E: begin   // ? ///// update Enemy State Count
-                // TODO
-            end
-            GS_STCNT_A: begin   // ? ///// update Army State Count 
-                // TODO
-                
-            end
-            GS_POS_E: begin       // ? ///// Update Enemy Position
-                // TODO
-            end
-            GS_POS_A: begin       // ? ///// Update Army Position
-                // TODO
-            end
-            GS_TOWER_BLOOD_E: begin  // ? ///// Update Enemy Tower Blood
-                // TODO
-            end
-            GS_TOWER_BLOOD_A: begin  // ? ///// Update Army Tower Blood
-                // TODO (next: stay, win, lose)
             end
             default: begin
                 next_gameState = GS_REST;
