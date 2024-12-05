@@ -141,34 +141,34 @@ module Top (
 
     // Scene
     always @(posedge clk_25MHz) begin
-        if (rst) scene <= S_START;
+        if (rst) scene <= `S_START;
         else     scene <= next_scene;
     end
     always @(*) begin
         case (scene)
-            S_START: begin
-                if (mouseL && mouseInStart) next_scene = S_MENU;
-                else                        next_scene = S_START;
+            `S_START: begin
+                if (mouseL && mouseInStart) next_scene = `S_MENU;
+                else                        next_scene = `S_START;
             end
-            S_MENU: begin
-                if (mouseL && mouseInLevel1)        next_scene = S_PLAY1;
-                else if (mouseL && mouseInLevel2)   next_scene = S_PLAY2;
-                else if (mouseL && mouseInLevel3)   next_scene = S_PLAY3;
-                else                                next_scene = S_MENU;
+            `S_MENU: begin
+                if (mouseL && mouseInLevel1)        next_scene = `S_PLAY1;
+                else if (mouseL && mouseInLevel2)   next_scene = `S_PLAY2;
+                else if (mouseL && mouseInLevel3)   next_scene = `S_PLAY3;
+                else                                next_scene = `S_MENU;
             end
-            S_PLAY1: begin
+            `S_PLAY1: begin
                 next_scene = scene;
             end
-            S_PLAY2: begin
+            `S_PLAY2: begin
                 next_scene = scene;
             end
-            S_PLAY3: begin
+            `S_PLAY3: begin
                 next_scene = scene;
             end
-            S_WIN: begin
+            `S_WIN: begin
                 next_scene = scene;
             end
-            S_LOSE: begin
+            `S_LOSE: begin
                 next_scene = scene;
             end
             default: next_scene = scene;

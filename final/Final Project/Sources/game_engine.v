@@ -75,16 +75,16 @@ module Game_Engine (
 // ? //////////     IP: Enemy Queue     //////////////
     reg [5:0] enemyGenPtr;      // only can have 63 enemy, remaining: {12{1}, 3{0}}
     reg [5:0] next_enemyGenPtr;
-    wire [14:0] enemyQueueObj, enemyQueueObj1, enemyQueueObj2, enemyQueueObj3;
+    reg [14:0] enemyQueueObj, enemyQueueObj1, enemyQueueObj2, enemyQueueObj3;
     mem_Enemy_Queue_1 mem_EQ1 (.clka(clk_25MHz), .wea(0), .addra(enemyGenPtr), .dina(0), .douta(enemyQueueObj1));
     mem_Enemy_Queue_2 mem_EQ2 (.clka(clk_25MHz), .wea(0), .addra(enemyGenPtr), .dina(0), .douta(enemyQueueObj2));
     mem_Enemy_Queue_3 mem_EQ3 (.clka(clk_25MHz), .wea(0), .addra(enemyGenPtr), .dina(0), .douta(enemyQueueObj3));
     
     always @(*) begin
-        if (scene==S_PLAY1)         enemyQueueObj = enemyQueueObj1;
-        else if (scene==S_PLAY2)    enemyQueueObj = enemyQueueObj2;
-        else if (scene==S_PLAY3)    enemyQueueObj = enemyQueueObj3;
-        else                        enemyQueueObj = 15'b111111111111000;
+        if (scene==`S_PLAY1)         enemyQueueObj = enemyQueueObj1;
+        else if (scene==`S_PLAY2)    enemyQueueObj = enemyQueueObj2;
+        else if (scene==`S_PLAY3)    enemyQueueObj = enemyQueueObj3;
+        else                         enemyQueueObj = 15'b111111111111000;
     end
 
 // ? //////////     reg: Enemy/Army Stats/Pixel     //////////////
@@ -110,7 +110,7 @@ module Game_Engine (
     reg [4:0] next_gameState;
 
     always @(posedge clk_25MHz) begin
-        if (scene!=S_PLAY1&&scene!=S_PLAY2&&scene!=S_PLAY3) gameState <= GS_REST;
+        if (scene!=`S_PLAY1&&scene!=`S_PLAY2&&scene!=`S_PLAY3) gameState <= `GS_REST;
         else gameState <= next_gameState;
     end
 
@@ -118,7 +118,7 @@ module Game_Engine (
     reg [11:0] game_cnt;
 
     always @(posedge clk_frame) begin
-        if (gameState==GS_INIT) game_cnt <= 12'd0;
+        if (gameState==`GS_INIT) game_cnt <= 12'd0;
         else if (clk_6) game_cnt <= game_cnt + 1'b1;
         else game_cnt <= game_cnt;
     end
@@ -145,7 +145,7 @@ module Game_Engine (
     wire [3:0] genArmyType;
     Priority_Encoder_8x3 PE83_0 (genArmy, genArmyType);
     reg [7:0] next_genArmy;
-    wire timeToGenArmy = (gameState == GS_GEN_A_D);
+    wire timeToGenArmy = (gameState == `GS_GEN_A_D);
     always @(*) begin
         for (i=0; i<8; i=i+1) begin
             if (mouseL && mouseInFrame[i+1])    next_genArmy[i] = 1'b1;
@@ -156,16 +156,16 @@ module Game_Engine (
 
     reg next_towerFire;
     reg towerFire;
-    wire timeToFire = (gameState == GS_TOWER_D);
+    wire timeToFire = (gameState == `GS_TOWER_D);
     always @(*) begin
-        if (mouseL && mouseInFrame[9] && tower_cnt==TOWER_CNT_MAX)  next_towerFire = 1'b1;
+        if (mouseL && mouseInFrame[9] && tower_cnt==`TOWER_CNT_MAX)  next_towerFire = 1'b1;
         else if (timeToFire)            next_towerFire = 1'b0;
         else                            next_towerFire = towerFire;
     end
 
     reg purseUpgrade;
     reg next_purseUpgrade;
-    wire timeToUpgradePurse = (gameState == GS_PURSE);
+    wire timeToUpgradePurse = (gameState == `GS_PURSE);
     always @(*) begin
         if (mouseL && mouseInFrame[0] && ableToUpgrade) next_purseUpgrade = 1'b1;
         else if (timeToUpgradePurse)                    next_purseUpgrade = 1'b0;
@@ -175,9 +175,9 @@ module Game_Engine (
     reg [5:0] counter1;
     reg [5:0] counter2;
     reg [5:0] counter3;
-    wire [5:0] next_counter1;
-    wire [5:0] next_counter2;
-    wire [5:0] next_counter3;
+    reg [5:0] next_counter1;
+    reg [5:0] next_counter2;
+    reg [5:0] next_counter3;
     
     always @(posedge clk_25MHz) begin
         next_gameState = gameState;
@@ -186,13 +186,10 @@ module Game_Engine (
             Army_Instance[i] <= next_Army_Instance[i];
         end
         enemyGenPtr <= next_enemyGenPtr;
-        enemyStatsPtr <= next_enemyStatsPtr;
-        armyStatsPtr <= next_armyStatsPtr;
         genArmy <= next_genArmy;
         purseUpgrade <= next_purseUpgrade;
         towerFire <= next_towerFire;
         money <= next_money;
-        money_Max <= next_money_Max;
         purse_level <= next_purse_level;
         tower_cnt <= next_tower_cnt;
         towerBlood_E <= next_towerBlood_E;
@@ -208,10 +205,7 @@ module Game_Engine (
             next_Army_Instance[i] = Army_Instance[i];
         end
         next_enemyGenPtr = enemyGenPtr;
-        next_enemyStatsPtr = enemyStatsPtr;
-        next_armyStatsPtr = armyStatsPtr;
         next_money = money;
-        next_money_Max = money_Max;
         next_purse_level = purse_level;
         next_tower_cnt = tower_cnt;
         next_towerBlood_E = towerBlood_E;
@@ -223,20 +217,19 @@ module Game_Engine (
         next_counter3 = counter3;
 
         case (gameState)
-            GS_REST: begin
+            `GS_REST: begin
                 if (v_cnt==10'd490 && h_cnt<10'd5) begin
-                    if (gameInit)   next_gameState = GS_INIT;
-                    else            next_gameState = GS_GEN_E;
-                end else next_gameState = gameState;
+                    if (gameInit_OP)   next_gameState = `GS_INIT;
+                    else               next_gameState = `GS_GEN_E;
+                end else               next_gameState = gameState;
             end
-            GS_INIT: begin      // ? ///// Initialization
-                next_gameState = GS_GEN_E;
+            `GS_INIT: begin      // ? ///// Initialization
+                next_gameState = `GS_GEN_E;
                 for (i=0; i<16; i=i+1) begin
                     next_Enemy_Instance[i] = 56'd0;
                     next_Army_Instance[i] = 56'd0;
                 end
                 next_money = 15'd0;
-                next_money_Max = INIT_MONEY_MAX;
                 next_purse_level = 3'd0;
                 next_tower_cnt = 8'd0;
                 next_towerBlood_E = 12'd4000;
@@ -245,14 +238,14 @@ module Game_Engine (
                 next_counter1 = 6'd0;       // Finding Space ptr
                 next_counter2 = 6'd0;       // Been Generated
             end
-            GS_GEN_E: begin     // ? ///// generate Enemy
+            `GS_GEN_E: begin     // ? ///// generate Enemy
                 if (enemyGenPtr == 6'd63 ||             // All Enemy Been Generated
                     enemyQueueObj[14:3]>game_cnt ||     // Not Yet to Generate
                     counter2 ||                         // Already Find Space, generate and to the next gameState
                     counter1==6'd16) begin              // No Space
-                    next_gameState = GS_GEN_A_D;
+                    next_gameState = `GS_GEN_A_D;
                     if (counter2) begin
-                        next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, ENEMY_SPAWN_X, SPAWN_Y-enemy_pixel_value[11:5], enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
+                        next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, `ENEMY_SPAWN_X, `SPAWN_Y-enemy_pixel_value[11:5], enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
                     end
                 end else begin
                     if (Enemy_Instance[counter1][55]==1'b0) begin   // Found A Space
@@ -261,89 +254,89 @@ module Game_Engine (
                     end else next_counter1 = counter1 + 1'b1;       // This Addr No Space, find the next one
                 end
             end
-            GS_GEN_A_D: begin   // ? ///// generate Army - Detect
-                next_gameState = GS_GEN_A_G;
+            `GS_GEN_A_D: begin   // ? ///// generate Army - Detect
+                next_gameState = `GS_GEN_A_G;
                 army_type_addr = genArmy;
                 next_counter1 = 6'd0;       // Finding Space ptr
             end
-            GS_GEN_A_G: begin   // ? ///// generate Army - Find Space to gen
+            `GS_GEN_A_G: begin   // ? ///// generate Army - Find Space to gen
                 if (counter1==6'd16) begin              // No Space
-                    next_gameState = GS_ATK_E;
+                    next_gameState = `GS_ATK_E;
                 end else begin
                     if (Army_Instance[counter1][55]==1'b0) begin    // Found A Space
-                        next_gameState = GS_ATK_E;
-                        next_Army_Instance[counter1] = {1'b1, army_type_addr, ARMY_SPAWN_X, SPAWN_Y-army_pixel_value[11:5], army_stats_value[37:26], 4'd1, 4'd0, 12'd0};
+                        next_gameState = `GS_ATK_E;
+                        next_Army_Instance[counter1] = {1'b1, army_type_addr, `ARMY_SPAWN_X, `SPAWN_Y-army_pixel_value[11:5], army_stats_value[37:26], 4'd1, 4'd0, 12'd0};
                     end else next_counter1 = counter1 + 1'b1;       // This Addr No Space, find the next one
                 end
             end
-            GS_ATK_E: begin     // ? ///// atk or move Enemy
+            `GS_ATK_E: begin     // ? ///// atk or move Enemy
                 // TODO:
             end
-            GS_ATK_A: begin     // ? ///// atk or move Army
+            `GS_ATK_A: begin     // ? ///// atk or move Army
                 // TODO:
             end
-            GS_TOWER_D: begin   // ? ///// Tower fire Detect
-                next_gameState = GS_TOWER_O;
+            `GS_TOWER_D: begin   // ? ///// Tower fire Detect
+                next_gameState = `GS_TOWER_O;
                 if (towerFire) begin
                     next_tower_cnt = 8'd0;
                     next_counter1 = 6'd0;
                 end else begin
-                    if (clk_6 && towerfire_cnt < TOWER_CNT_MAX) next_tower_cnt = tower_cnt + 1'b1;
+                    if (clk_6 && tower_cnt < `TOWER_CNT_MAX) next_tower_cnt = tower_cnt + 1'b1;
                     next_counter1 = 6'd63;
                 end
             end
-            GS_TOWER_O: begin   // ? ///// Tower fire Operate
-                if (counter1 >= 6'd16) next_gameState = GS_PURSE;
+            `GS_TOWER_O: begin   // ? ///// Tower fire Operate
+                if (counter1 >= 6'd16) next_gameState = `GS_PURSE;
                 else begin      // TODO: Now will attack all
-                    next_Enemy_Instance[counter1][STATE_P] = ST_REPEL;
-                    next_Enemy_Instance[counter1][STATE_CNT_P] = 4'd0;
-                    next_Enemy_Instance[counter1][BE_DAMAGED_P] = Enemy_Instance[counter1][BE_DAMAGED_P] + 12'd300;
+                    next_Enemy_Instance[counter1][`STATE_P] = `ST_REPEL;
+                    next_Enemy_Instance[counter1][`STATE_CNT_P] = 4'd0;
+                    next_Enemy_Instance[counter1][`BE_DAMAGED_P] = Enemy_Instance[counter1][`BE_DAMAGED_P] + 12'd300;
                     next_counter1 = counter1 + 1'b1;
                 end
             end
-            GS_PURSE: begin     // ? ///// Purse Upgrade
-                next_gameState = GS_MONEY;
+            `GS_PURSE: begin     // ? ///// Purse Upgrade
+                next_gameState = `GS_MONEY;
                 if (purse_level != 3'd7 && ableToUpgrade) begin
                     next_money = money - purseUpgradeNeedMoney;
                     next_purse_level = purse_level + 1'b1;
                 end 
             end
-            GS_MONEY: begin     // ? ///// Money Add with Time
-                next_gameState = GS_HURT_E;
+            `GS_MONEY: begin     // ? ///// Money Add with Time
+                next_gameState = `GS_HURT_E;
                 next_counter1 = 6'd0;
                 if (clk_6) begin
                     if (purse_level==3'd0)      next_money = ((money + 1'b1 > money_Max) ? money_Max : money + 1'd1);
-                    else if (purse_level<3'd3)  next_money = ((money + 2'b2 > money_Max) ? money_Max : money + 2'd2);
-                    else if (purse_level==3'd3) next_money = ((money + 2'b3 > money_Max) ? money_Max : money + 2'd3);
-                    else if (purse_level==3'd4) next_money = ((money + 3'b4 > money_Max) ? money_Max : money + 3'd4);
-                    else                        next_money = ((money + 3'b5 > money_Max) ? money_Max : money + 3'd5);
+                    else if (purse_level<3'd3)  next_money = ((money + 2'd2 > money_Max) ? money_Max : money + 2'd2);
+                    else if (purse_level==3'd3) next_money = ((money + 2'd3 > money_Max) ? money_Max : money + 2'd3);
+                    else if (purse_level==3'd4) next_money = ((money + 3'd4 > money_Max) ? money_Max : money + 3'd4);
+                    else                        next_money = ((money + 3'd5 > money_Max) ? money_Max : money + 3'd5);
                 end else                        next_money = money;
             end
-            GS_HURT_E: begin    // ? ///// Enemy Update HP
+            `GS_HURT_E: begin    // ? ///// Enemy Update HP
                 if (counter1==6'd15) begin
-                    next_gameState = GS_HURT_A;
+                    next_gameState = `GS_HURT_A;
                     next_counter1 = 6'd0;
                 end else begin
-                    if (Enemy_Instance[counter1][EXIST_P] == 1'b1) begin
-                        if (Enemy_Instance[counter1][BE_DAMAGED_P] >= Enemy_Instance[counter1][HP_P]) next_Enemy_Instance[counter1][EXIST_P] = 1'b0;
-                        else next_Enemy_Instance[counter1][HP_P] = Enemy_Instance[counter1][HP_P] - Enemy_Instance[counter1][BE_DAMAGED_P];
+                    if (Enemy_Instance[counter1][`EXIST_P] == 1'b1) begin
+                        if (Enemy_Instance[counter1][`BE_DAMAGED_P] >= Enemy_Instance[counter1][`HP_P]) next_Enemy_Instance[counter1][`EXIST_P] = 1'b0;
+                        else next_Enemy_Instance[counter1][`HP_P] = Enemy_Instance[counter1][`HP_P] - Enemy_Instance[counter1][`BE_DAMAGED_P];
                     end
                     next_counter1 = counter1 + 1'b1;
                 end
             end
-            GS_HURT_A: begin    // ? ///// Army Update HP
+            `GS_HURT_A: begin    // ? ///// Army Update HP
                 if (counter1==6'd15) begin
-                    next_gameState = GS_DETECT_END;
+                    next_gameState = `GS_REST;
                 end else begin
-                    if (Army_Instance[counter1][EXIST_P] == 1'b1) begin
-                        if (Army_Instance[counter1][BE_DAMAGED_P] >= Army_Instance[counter1][HP_P]) next_Army_Instance[counter1][EXIST_P] = 1'b0;
-                        else next_Army_Instance[counter1][HP_P] = Army_Instance[counter1][HP_P] - Army_Instance[counter1][BE_DAMAGED_P];
+                    if (Army_Instance[counter1][`EXIST_P] == 1'b1) begin
+                        if (Army_Instance[counter1][`BE_DAMAGED_P] >= Army_Instance[counter1][`HP_P]) next_Army_Instance[counter1][`EXIST_P] = 1'b0;
+                        else next_Army_Instance[counter1][`HP_P] = Army_Instance[counter1][`HP_P] - Army_Instance[counter1][`BE_DAMAGED_P];
                     end
                     next_counter1 = counter1 + 1'b1;
                 end
             end
             default: begin
-                next_gameState = GS_REST;
+                next_gameState = `GS_REST;
             end
         endcase
     end
