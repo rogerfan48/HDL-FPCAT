@@ -6,6 +6,8 @@
 `define   S_WIN 3'd5
 `define  S_LOSE 3'd6
 
+`define TOWER_CNT_MAX 8'd150
+
 module Top (
     input clk,
     input rst,
@@ -47,7 +49,17 @@ module Top (
     assign gameInit = (mouseL && (mouseInLevel1||mouseInLevel2||mouseInLevel3));
     One_Palse One_Palse_GameInit (clk_frame, gameInit, gameInit_OP);
 
+    wire ableToUpgrade;
+    wire [2:0] purse_level;
+    wire [7:0] tower_cnt;
+    wire [14:0] money;
+    wire [55:0] Enemy_Instance [15:0];
+    wire [55:0] Army_Instance [15:0];
+    wire game_win;
+    wire game_lose;
+
     wire [9:0] mouseInFrame;    // [0]:purse, [9]:Fire
+    wire [9:0] effectiveClick;
     assign mouseInFrame[0] = (mouseX<10'd100 && mouseY>=10'd380);
     assign mouseInFrame[1] = (mouseX>=10'd105 && mouseX<10'd205 && mouseY>=10'd290 && mouseY<10'd370);
     assign mouseInFrame[2] = (mouseX>=10'd215 && mouseX<10'd315 && mouseY>=10'd290 && mouseY<10'd370);
@@ -58,15 +70,16 @@ module Top (
     assign mouseInFrame[7] = (mouseX>=10'd325 && mouseX<10'd425 && mouseY>=10'd380 && mouseY<10'd460);
     assign mouseInFrame[8] = (mouseX>=10'd435 && mouseX<10'd535 && mouseY>=10'd380 && mouseY<10'd460);
     assign mouseInFrame[9] = (mouseX>=10'd540 && mouseY>=10'd380);
-
-    wire ableToUpgrade;
-    wire [2:0] purse_level;
-    wire [7:0] tower_cnt;
-    wire [14:0] money;
-    wire [55:0] Enemy_Instance [15:0];
-    wire [55:0] Army_Instance [15:0];
-    wire game_win;
-    wire game_lose;
+    assign effectiveClick[0] = (mouseL && mouseInFrame[0] && ableToUpgrade);
+    assign effectiveClick[1] = (mouseL && mouseInFrame[1] && money>=15'd75);
+    assign effectiveClick[2] = (mouseL && mouseInFrame[2] && money>=15'd150);
+    assign effectiveClick[3] = (mouseL && mouseInFrame[3] && money>=15'd240);
+    assign effectiveClick[4] = (mouseL && mouseInFrame[4] && money>=15'd350);
+    assign effectiveClick[5] = (mouseL && mouseInFrame[5] && money>=15'd750);
+    assign effectiveClick[6] = (mouseL && mouseInFrame[6] && money>=15'd1500);
+    assign effectiveClick[7] = (mouseL && mouseInFrame[7] && money>=15'd2000);
+    assign effectiveClick[8] = (mouseL && mouseInFrame[8] && money>=15'd2400);
+    assign effectiveClick[9] = (mouseL && mouseInFrame[9] && tower_cnt==`TOWER_CNT_MAX);
 
     Game_Engine Game_Engine_0 (
         .clk_25MHz(clk_25MHz),
@@ -74,8 +87,7 @@ module Top (
         .v_cnt(v_cnt),
         .clk_6(clk_6),
         .clk_frame(clk_frame),
-        .mouseL(mouseL),
-        .mouseInFrame(mouseInFrame),
+        .effectiveClick(effectiveClick),
         .scene(scene),
         .gameInit_OP(gameInit_OP),
         .ableToUpgrade(ableToUpgrade),

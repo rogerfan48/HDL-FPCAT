@@ -30,6 +30,24 @@ module Army_Stats (
     end
 endmodule
 
+module Army_Cost (
+    input [2:0] addr,
+    output reg [14:0] out
+)
+    always @(*) begin
+        case (addr)
+            3'd0:    out = 15'd75;
+            3'd1:    out = 15'd150;
+            3'd2:    out = 15'd240;
+            3'd3:    out = 15'd350;
+            3'd4:    out = 15'd750;
+            3'd5:    out = 15'd1500;
+            3'd6:    out = 15'd2000;
+            default: out = 15'd2400;
+        endcase
+    end
+endmodule
+
 module Enemy_Pixel (
     input [1:0] addr,
     output reg [18:0] out   // W[7B][18:12], H[7B][11:5], D[5B][4:0]

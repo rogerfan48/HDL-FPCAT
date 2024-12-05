@@ -65,8 +65,7 @@ module Game_Engine (
     input [9:0] v_cnt,   //480
     input clk_6,
     input clk_frame,
-    input mouseL,
-    input [9:0] mouseInFrame,
+    input [9:0] effectiveClick,
     input [2:0] scene,
     input gameInit_OP,
     output ableToUpgrade,
@@ -106,8 +105,10 @@ module Game_Engine (
     reg [1:0] next_army_type_addr;
     reg [37:0] army_stats_value;
     reg [18:0] army_pixel_value;
+    reg [14:0] army_cost_value;
     Army_Stats ArmyStats0 (army_type_addr, army_stats_value);
     Army_Pixel ArmyPixel0 (army_type_addr, army_pixel_value);
+    Army_Cost ArmyCost0 (army_type_addr, army_cost_value);
 
 // ? //////////     reg: Enemy/Army Instance     //////////////
     reg [55:0] next_Enemy_Instance [15:0];
@@ -150,15 +151,16 @@ module Game_Engine (
 
 // ? //////////     reg: Screen Buttons     //////////////
     reg [7:0] genArmy;
+    wire genArmyValid = (genArmy!=8'd0);
     wire [3:0] genArmyType;
     Priority_Encoder_8x3 PE83_0 (genArmy, genArmyType);
     reg [7:0] next_genArmy;
     wire timeToGenArmy = (gameState == `GS_GEN_A_D);
     always @(*) begin
         for (i=0; i<8; i=i+1) begin
-            if (mouseL && mouseInFrame[i+1])    next_genArmy[i] = 1'b1;
-            else if (timeToGenArmy)             next_genArmy[i] = 1'b0;
-            else                                next_genArmy[i] = genArmy[i];
+            if (effectiveClick[i+1])    next_genArmy[i] = 1'b1;
+            else if (timeToGenArmy)     next_genArmy[i] = 1'b0;
+            else                        next_genArmy[i] = genArmy[i];
         end
     end
 
@@ -166,18 +168,18 @@ module Game_Engine (
     reg towerFire;
     wire timeToFire = (gameState == `GS_TOWER_D);
     always @(*) begin
-        if (mouseL && mouseInFrame[9] && tower_cnt==`TOWER_CNT_MAX)  next_towerFire = 1'b1;
-        else if (timeToFire)            next_towerFire = 1'b0;
-        else                            next_towerFire = towerFire;
+        if (effectiveClick[9])  next_towerFire = 1'b1;
+        else if (timeToFire)    next_towerFire = 1'b0;
+        else                    next_towerFire = towerFire;
     end
 
     reg purseUpgrade;
     reg next_purseUpgrade;
     wire timeToUpgradePurse = (gameState == `GS_PURSE);
     always @(*) begin
-        if (mouseL && mouseInFrame[0] && ableToUpgrade) next_purseUpgrade = 1'b1;
-        else if (timeToUpgradePurse)                    next_purseUpgrade = 1'b0;
-        else                                            next_purseUpgrade = purseUpgrade;
+        if (effectiveClick[0])          next_purseUpgrade = 1'b1;
+        else if (timeToUpgradePurse)    next_purseUpgrade = 1'b0;
+        else                            next_purseUpgrade = purseUpgrade;
     end
 
     reg [5:0] counter1;
@@ -264,11 +266,13 @@ module Game_Engine (
             end
             `GS_GEN_A_D: begin   // ? ///// generate Army - Detect
                 next_gameState = `GS_GEN_A_G;
-                army_type_addr = genArmy;
+                army_type_addr = genArmyType;
+                if (genArmyValid) next_money = money - army_cost_value;
                 next_counter1 = 6'd0;       // Finding Space ptr
+                next_counter2 = genArmyValid;
             end
             `GS_GEN_A_G: begin   // ? ///// generate Army - Find Space to gen
-                if (counter1==6'd16) begin              // No Space
+                if (counter1==6'd16 || counter2==1'b0) begin              // No Space
                     next_gameState = `GS_ATK_E;
                     next_counter1 = 6'd0;
                     next_counter2 = 6'd0;
