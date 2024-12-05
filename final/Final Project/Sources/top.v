@@ -117,6 +117,8 @@ module Top (
         .mouseInLevel2(mouseInLevel2),
         .mouseInLevel3(mouseInLevel3),
         .mouseInFrame(mouseInFrame),
+        .Enemy_Instance(Enemy_Instance),
+        .Army_Instance(Army_Instance),
         .vgaRed(vgaRed),
         .vgaGreen(vgaGreen),
         .vgaBlue(vgaBlue)

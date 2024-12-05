@@ -125,14 +125,13 @@ module Purse_Max_Money (
 endmodule
 
 module STATS_acc_PIC (
-    input [1:0] state,
-    input [9:0] x_pos,
+    input [2:0] state,
+    input x_pos,
     output reg [2:0] pic
 );
     always @(*) begin
         case(state)
-            `ST_MOVE: if (x_pos[4]) pic = 3'd1;
-                      else          pic = 3'd0;
+            `ST_MOVE:  pic = (x_pos ? 3'd1 : 3'd0);
             `ST_ATK_0, `ST_ATK_1: pic = 3'd2
             `ST_ATK_2: pic = 3'd3;
             `ST_ATK_3: pic = 3'd4;

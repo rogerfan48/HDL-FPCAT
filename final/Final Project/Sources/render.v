@@ -35,7 +35,7 @@ module Render (
         mouseInLevel1, mouseInLevel2, mouseInLevel3, pixel_menu);
     wire [11:0] pixel_play;
     Render_Play Render_Play (clk, h_cnt, ah_cnt, v_cnt, av_cnt,
-        mouseInFrame, pixel_play);
+        Enemy_Instance, Army_Instance, mouseInFrame, pixel_play);
 
     always@(*) begin
         if(!valid)                     {vgaRed, vgaGreen, vgaBlue} = 12'h0;

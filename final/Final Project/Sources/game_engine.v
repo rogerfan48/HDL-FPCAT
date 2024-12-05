@@ -418,7 +418,7 @@ module Game_Engine (
                 next_counter1 = counter1 + 1'b1;
                 next_counter2 = 6'd0;
             end else begin
-                if (Army_Instance[counter1][`X_P]+army_pixel_value[4:0]=<Enemy_Instance[counter2][`X_P]+army_stats_value[`range_SP]+enemy_pixel_value[4:0]) begin
+                if (Army_Instance[counter1][`X_P]+army_pixel_value[4:0]<=Enemy_Instance[counter2][`X_P]+army_stats_value[`range_SP]+enemy_pixel_value[4:0]) begin
                     next_Enemy_Instance[counter2][`BE_DAMAGED_P] = Enemy_Instance[counter2][`BE_DAMAGED_P] + army_stats_value[`atk_SP];
                 end
                 next_counter2 = counter2 + 1'b1;
