@@ -110,8 +110,7 @@ module Game_Engine (
     reg [4:0] next_gameState;
 
     always @(posedge clk_25MHz) begin
-        if (rst) gameState <= GS_REST;
-        else if (scene!=S_PLAY1&&scene!=S_PLAY2&&scene!=S_PLAY3) gameState <= GS_REST;
+        if (scene!=S_PLAY1&&scene!=S_PLAY2&&scene!=S_PLAY3) gameState <= GS_REST;
         else gameState <= next_gameState;
     end
 
@@ -119,8 +118,7 @@ module Game_Engine (
     reg [11:0] game_cnt;
 
     always @(posedge clk_frame) begin
-        if (rst) game_cnt <= 12'd0;
-        else if (gameState==GS_INIT) game_cnt <= 12'd0;
+        if (gameState==GS_INIT) game_cnt <= 12'd0;
         else if (clk_6) game_cnt <= game_cnt + 1'b1;
         else game_cnt <= game_cnt;
     end
@@ -134,7 +132,6 @@ module Game_Engine (
     assign ableToUpgrade = (money>=purseUpgradeNeedMoney);
 
 // ? //////////     reg:TowerFire     //////////////
-    reg [7:0] tower_cnt;
     reg [7:0] next_tower_cnt;
 
 // ? //////////     reg:TowerBlood     //////////////
@@ -315,11 +312,11 @@ module Game_Engine (
                 next_gameState = GS_HURT_E;
                 next_counter1 = 6'd0;
                 if (clk_6) begin
-                    if (purse_level==3'd0)      next_money = ((money + 1'b1 > money_Max) ? money_Max : money + 1'b1);
-                    else if (purse_level<3'd3)  next_money = ((money + 2'b2 > money_Max) ? money_Max : money + 2'b2);
-                    else if (purse_level==3'd3) next_money = ((money + 2'b3 > money_Max) ? money_Max : money + 2'b3);
-                    else if (purse_level==3'd4) next_money = ((money + 3'b4 > money_Max) ? money_Max : money + 3'b4);
-                    else                        next_money = ((money + 3'b5 > money_Max) ? money_Max : money + 3'b5);
+                    if (purse_level==3'd0)      next_money = ((money + 1'b1 > money_Max) ? money_Max : money + 1'd1);
+                    else if (purse_level<3'd3)  next_money = ((money + 2'b2 > money_Max) ? money_Max : money + 2'd2);
+                    else if (purse_level==3'd3) next_money = ((money + 2'b3 > money_Max) ? money_Max : money + 2'd3);
+                    else if (purse_level==3'd4) next_money = ((money + 3'b4 > money_Max) ? money_Max : money + 3'd4);
+                    else                        next_money = ((money + 3'b5 > money_Max) ? money_Max : money + 3'd5);
                 end else                        next_money = money;
             end
             GS_HURT_E: begin    // ? ///// Enemy Update HP
@@ -327,7 +324,7 @@ module Game_Engine (
                     next_gameState = GS_HURT_A;
                     next_counter1 = 6'd0;
                 end else begin
-                    if (Enemy_Instance[counter1][EXIST_P] = 1'b1) begin
+                    if (Enemy_Instance[counter1][EXIST_P] == 1'b1) begin
                         if (Enemy_Instance[counter1][BE_DAMAGED_P] >= Enemy_Instance[counter1][HP_P]) next_Enemy_Instance[counter1][EXIST_P] = 1'b0;
                         else next_Enemy_Instance[counter1][HP_P] = Enemy_Instance[counter1][HP_P] - Enemy_Instance[counter1][BE_DAMAGED_P];
                     end
@@ -338,7 +335,7 @@ module Game_Engine (
                 if (counter1==6'd15) begin
                     next_gameState = GS_DETECT_END;
                 end else begin
-                    if (Army_Instance[counter1][EXIST_P] = 1'b1) begin
+                    if (Army_Instance[counter1][EXIST_P] == 1'b1) begin
                         if (Army_Instance[counter1][BE_DAMAGED_P] >= Army_Instance[counter1][HP_P]) next_Army_Instance[counter1][EXIST_P] = 1'b0;
                         else next_Army_Instance[counter1][HP_P] = Army_Instance[counter1][HP_P] - Army_Instance[counter1][BE_DAMAGED_P];
                     end
