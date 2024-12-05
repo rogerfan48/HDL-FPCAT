@@ -1,3 +1,11 @@
+`define  ST_NONE  4'd0
+`define  ST_MOVE  4'd1
+`define ST_ATK_0  4'd2
+`define ST_ATK_1  4'd3
+`define ST_ATK_2  4'd4
+`define ST_ATK_3  4'd5
+`define ST_REPEL  4'd6
+
 module Enemy_Stats (
     input [1:0] addr,
     output reg [37:0] out
@@ -33,7 +41,7 @@ endmodule
 module Army_Cost (
     input [2:0] addr,
     output reg [14:0] out
-)
+);
     always @(*) begin
         case (addr)
             3'd0:    out = 15'd75;
@@ -112,6 +120,24 @@ module Purse_Max_Money (
             3'd5:    out = 14'd4000;
             3'd6:    out = 14'd6000;
             default: out = 14'd10000;
+        endcase
+    end
+endmodule
+
+module STATS_acc_PIC (
+    input [1:0] state,
+    input [9:0] x_pos,
+    output reg [2:0] pic
+);
+    always @(*) begin
+        case(state)
+            `ST_MOVE: if (x_pos[4]) pic = 3'd1;
+                      else          pic = 3'd0;
+            `ST_ATK_0, `ST_ATK_1: pic = 3'd2
+            `ST_ATK_2: pic = 3'd3;
+            `ST_ATK_3: pic = 3'd4;
+            `ST_REPEL: pic = 3'd5;
+            default:   pic = 3'd0;
         endcase
     end
 endmodule
