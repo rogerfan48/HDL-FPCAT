@@ -14,6 +14,8 @@ module Render (
     input mouseInLevel1,
     input mouseInLevel2,
     input mouseInLevel3,
+    input [55:0] Enemy_Instance [15:0],
+    input [55:0] Army_Instance [15:0],
     input [9:0] mouseInFrame,
     output reg [3:0] vgaRed,
     output reg [3:0] vgaGreen,
