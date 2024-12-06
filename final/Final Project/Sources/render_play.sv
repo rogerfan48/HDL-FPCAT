@@ -12,6 +12,7 @@
 // `define  BE_DAMAGED_P  11:0
 
 module Render_Play (
+    input en,
     input clk_100Mhz,
     input clk,
     input [9:0] h_cnt,
@@ -78,7 +79,7 @@ module Render_Play (
     wire [12:0] army_0_addr = (((av_cnt - Army_Instance[0][41:32]) >> 1) * army_0_pixel_value[18:12]) + (((ah_cnt - Army_Instance[0][51:42])) >> 1) + (army_0_pixel_value[18:12] * army_0_pixel_value[11:5] * army_0_picnum);
     wire [12:0] army_1_addr = (((av_cnt - Army_Instance[1][41:32]) >> 1) * army_0_pixel_value[18:12]) + (((ah_cnt - Army_Instance[1][51:42])) >> 1) + (army_1_pixel_value[18:12] * army_1_pixel_value[11:5] * army_1_picnum);
     wire [1:0] army_0_value, army_1_value;
-    Army_Render_Pixel army_01_Render (.clk(clk), .ctype_a(Army_Instance[0][54:52]), ctype_b(Army_Instance[1][54:52]), .addra(army_0_addr), .addrb(army_1_addr), .pixel_value_a(army_0_value), .pixel_value_b(army_1_value));
+    Army_Render_Pixel army_01_Render (.clk(clk_100Mhz), .ctype_a(Army_Instance[0][54:52]), ctype_b(Army_Instance[1][54:52]), .addra(army_0_addr), .addrb(army_1_addr), .pixel_value_a(army_0_value), .pixel_value_b(army_1_value));
 
     reg [18:0] army_2_pixel_value, army_3_pixel_value;
     reg  [2:0] army_2_picnum, army_3_picnum;
@@ -89,7 +90,7 @@ module Render_Play (
     wire [12:0] army_2_addr = (((av_cnt - Army_Instance[2][41:32]) >> 1) * army_2_pixel_value[18:12]) + (((ah_cnt - Army_Instance[2][51:42])) >> 1) + (army_2_pixel_value[18:12] * army_2_pixel_value[11:5] * army_2_picnum);
     wire [12:0] army_3_addr = (((av_cnt - Army_Instance[3][41:32]) >> 1) * army_3_pixel_value[18:12]) + (((ah_cnt - Army_Instance[3][51:42])) >> 1) + (army_3_pixel_value[18:12] * army_3_pixel_value[11:5] * army_3_picnum);
     wire [1:0] army_2_value, army_3_value;
-    Army_Render_Pixel army_23_Render (.clk(clk), .ctype_a(Army_Instance[2][54:52]), ctype_b(Army_Instance[3][54:52]), .addra(army_2_addr), .addrb(army_3_addr), .pixel_value_a(army_2_value), .pixel_value_b(army_3_value));
+    Army_Render_Pixel army_23_Render (.clk(clk_100Mhz), .ctype_a(Army_Instance[2][54:52]), ctype_b(Army_Instance[3][54:52]), .addra(army_2_addr), .addrb(army_3_addr), .pixel_value_a(army_2_value), .pixel_value_b(army_3_value));
 
     reg [18:0] army_4_pixel_value, army_5_pixel_value;
     reg  [2:0] army_4_picnum, army_5_picnum;
@@ -100,7 +101,7 @@ module Render_Play (
     wire [12:0] army_4_addr = (((av_cnt - Army_Instance[4][41:32]) >> 1) * army_4_pixel_value[18:12]) + (((ah_cnt - Army_Instance[4][51:42])) >> 1) + (army_4_pixel_value[18:12] * army_4_pixel_value[11:5] * army_4_picnum);
     wire [12:0] army_5_addr = (((av_cnt - Army_Instance[5][41:32]) >> 1) * army_5_pixel_value[18:12]) + (((ah_cnt - Army_Instance[5][51:42])) >> 1) + (army_5_pixel_value[18:12] * army_5_pixel_value[11:5] * army_5_picnum);
     wire [1:0] army_4_value, army_5_value;
-    Army_Render_Pixel army_45_Render (.clk(clk), .ctype_a(Army_Instance[4][54:52]), ctype_b(Army_Instance[5][54:52]), .addra(army_4_addr), .addrb(army_5_addr), .pixel_value_a(army_4_value), .pixel_value_b(army_5_value));
+    Army_Render_Pixel army_45_Render (.clk(clk_100Mhz), .ctype_a(Army_Instance[4][54:52]), ctype_b(Army_Instance[5][54:52]), .addra(army_4_addr), .addrb(army_5_addr), .pixel_value_a(army_4_value), .pixel_value_b(army_5_value));
 
     reg [18:0] army_6_pixel_value, army_7_pixel_value;
     reg  [2:0] army_6_picnum, army_7_picnum;
@@ -111,7 +112,7 @@ module Render_Play (
     wire [12:0] army_6_addr = (((av_cnt - Army_Instance[6][41:32]) >> 1) * army_6_pixel_value[18:12]) + (((ah_cnt - Army_Instance[6][51:42])) >> 1) + (army_6_pixel_value[18:12] * army_6_pixel_value[11:5] * army_6_picnum);
     wire [12:0] army_7_addr = (((av_cnt - Army_Instance[7][41:32]) >> 1) * army_7_pixel_value[18:12]) + (((ah_cnt - Army_Instance[7][51:42])) >> 1) + (army_7_pixel_value[18:12] * army_7_pixel_value[11:5] * army_7_picnum);
     wire [1:0] army_6_value, army_7_value;
-    Army_Render_Pixel army_67_Render (.clk(clk), .ctype_a(Army_Instance[6][54:52]), ctype_b(Army_Instance[7][54:52]), .addra(army_6_addr), .addrb(army_7_addr), .pixel_value_a(army_6_value), .pixel_value_b(army_7_value));
+    Army_Render_Pixel army_67_Render (.clk(clk_100Mhz), .ctype_a(Army_Instance[6][54:52]), ctype_b(Army_Instance[7][54:52]), .addra(army_6_addr), .addrb(army_7_addr), .pixel_value_a(army_6_value), .pixel_value_b(army_7_value));
 
 
     wire [9:0] tower_enemy_addr_0 = ((av_cnt-90)/3)*20 + ((ah_cnt-10)/3);

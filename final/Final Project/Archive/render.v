@@ -34,7 +34,7 @@ module Render (
     Render_Menu Render_Menu (clk, h_cnt, ah_cnt, v_cnt, av_cnt,
         mouseInLevel1, mouseInLevel2, mouseInLevel3, pixel_menu);
     wire [11:0] pixel_play;
-    Render_Play Render_Play (clk, h_cnt, ah_cnt, v_cnt, av_cnt,
+    Render_Play Render_Play ((scene == S_PLAY1 || scene == S_PLAY2 || scene == S_PLAY_3), clk, h_cnt, ah_cnt, v_cnt, av_cnt,
         Enemy_Instance, Army_Instance, mouseInFrame, pixel_play);
 
     always@(*) begin
