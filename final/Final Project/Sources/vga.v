@@ -74,7 +74,8 @@ module VGA_Control (
     assign h_cnt = (pixel_cnt < HD) ? pixel_cnt : 10'd0;
     assign v_cnt = (line_cnt < VD) ? line_cnt : 10'd0;
 
-    reg next_ah_cnt, next_av_cnt;
+    reg [9:0] next_ah_cnt;
+    reg [9:0] next_av_cnt;
     always @(negedge clk) begin
         ah_cnt <= next_ah_cnt;
         av_cnt <= next_av_cnt;

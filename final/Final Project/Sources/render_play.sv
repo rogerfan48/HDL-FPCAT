@@ -342,6 +342,18 @@ module Render_Play (
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
+            end else if (h_cnt>=10'd10 && h_cnt<10'd70 && v_cnt>=10'd90 && v_cnt<10'd210 && tower_enemy_value!=2'b11) begin
+                case (tower_enemy_value)
+                    2'b00: pixel = 12'hfff;
+                    2'b10: pixel = 12'hf00;
+                    default: pixel = 12'h000;
+                endcase
+            end else if (h_cnt>=10'd570 && h_cnt<10'd630 && v_cnt>=10'd90 && v_cnt<10'd210 && tower_cat_value!=2'b11) begin
+                case (tower_cat_value)
+                    2'b00: pixel = 12'hfff;
+                    2'b10: pixel = 12'hf00;
+                    default: pixel = 12'h000;
+                endcase
             end else if (v_cnt>=10'd170 && v_cnt<10'd230) begin
                 pixel = 12'hda5;    // path
             end else if (v_cnt>=10'd140) begin
