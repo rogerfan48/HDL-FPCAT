@@ -21,7 +21,8 @@ module Top (
 );
 
     wire clk_25MHz;
-    Clk_Divisor_4 Clk_Div_4 (clk, clk_25MHz);
+    wire [1:0] display_cnt;
+    Clk_Divisor_4 Clk_Div_4 (clk, clk_25MHz, display_cnt);
 
     wire valid;
     wire clk_frame;
@@ -31,6 +32,8 @@ module Top (
     wire [9:0] ah_cnt;  //640
     wire [9:0] v_cnt;   //480
     wire [9:0] av_cnt;  //480
+    wire [9:0] d_h_cnt;
+    wire [9:0] d_v_cnt;
 
     wire enable_mouse_display;
     wire [9:0] mouseX, mouseY;
@@ -101,12 +104,16 @@ module Top (
     );
 
     Render Render_0 (
+        .rst(rst),
         .clk(clk),
         .clk_25MHz(clk_25MHz),
+        .display_cnt(display_cnt),
         .h_cnt(h_cnt),
         .ah_cnt(ah_cnt),
         .v_cnt(v_cnt),
         .av_cnt(av_cnt),
+        .d_h_cnt(d_h_cnt),
+        .d_v_cnt(d_v_cnt),
         .mouseX(mouseX),
         .mouseY(mouseY),
         .valid(valid),
@@ -126,7 +133,9 @@ module Top (
     );
 
     VGA_Control VGA_Ctrl_0 (
+        .clk(clk),
         .pclk(clk_25MHz),
+        .display_cnt(display_cnt),
         .reset(rst),
         .hsync(hsync),
         .vsync(vsync),
@@ -135,6 +144,8 @@ module Top (
         .ah_cnt(ah_cnt),
         .v_cnt(v_cnt),
         .av_cnt(av_cnt),
+        .d_h_cnt(d_h_cnt),
+        .d_v_cnt(d_v_cnt),
         .clk_frame(clk_frame)
     );
 

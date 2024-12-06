@@ -1,12 +1,16 @@
 `timescale 1ns / 1ps
 
 module VGA_Control (
+    input clk,
     input pclk, reset,
+    input [1:0] display_cnt;
     output hsync, vsync, valid,
     output [9:0] h_cnt,
     output [9:0] v_cnt,
     output reg [9:0] ah_cnt,
     output reg [9:0] av_cnt,
+    output reg [9:0] d_h_cnt,
+    output reg [9:0] d_v_cnt,
     output reg clk_frame
     );
     
@@ -69,19 +73,41 @@ module VGA_Control (
     
     assign h_cnt = (pixel_cnt < HD) ? pixel_cnt : 10'd0;
     assign v_cnt = (line_cnt < VD) ? line_cnt : 10'd0;
+
+    reg next_ah_cnt, next_av_cnt;
+    always @(negedge clk) begin
+        ah_cnt <= next_ah_cnt;
+        av_cnt <= next_av_cnt;
+    end
     always @(*) begin
         if (pixel_cnt < 638) begin
-            ah_cnt = pixel_cnt + 2;
-            av_cnt = line_cnt;
+            next_ah_cnt = pixel_cnt + 3;
+            next_av_cnt = line_cnt;
+        end else if (pixel_cnt == 797) begin
+            next_ah_cnt = 10'd0;
+            next_av_cnt = line_cnt + 1;
         end else if (pixel_cnt == 798) begin
-            ah_cnt = 10'd0;
-            av_cnt = line_cnt + 1;
+            next_ah_cnt = 10'd1;
+            next_av_cnt = line_cnt + 1;
         end else if (pixel_cnt == 799) begin
-            ah_cnt = 10'd1;
-            av_cnt = line_cnt + 1;
+            next_ah_cnt = 10'd2;
+            next_av_cnt = line_cnt + 1;
         end else begin
-            ah_cnt = 10'd0;
-            av_cnt = line_cnt;
+            next_ah_cnt = 10'd0;
+            next_av_cnt = line_cnt;
         end
+    end
+
+    always @(negedge clk) begin
+        case (display_cnt)
+            2'b11, 2'b00, 2'b01: begin
+                d_h_cnt <= h_cnt+2;
+                d_v_cnt <= (pixel_cnt==798||pixel_cnt==799) ? v_cnt+1 : v_cnt;
+            end
+            2'b01: begin
+                d_h_cnt <= h_cnt+1;
+                d_v_cnt <= (pixel_cnt==799) ? v_cnt+1 : v_cnt;
+            end
+        endcase
     end
 endmodule
