@@ -18,16 +18,16 @@ module Enemy_Render_Pixel(
     
     mem_Enemy_Killer_Bird mem_Enemy_Killer_Bird (
         .clka(clk), .wea(0), .addra(addr_a[10:0]), .dina(0), .douta(pixel_value_0), 
-                    .web(0), .addrb(addr_b[10:0]), .dinb(0), .doutb(pixel_value_1));
+        .clkb(clk), .web(0), .addrb(addr_b[10:0]), .dinb(0), .doutb(pixel_value_1));
     mem_Enemy_White_Bear  mem_Enemy_White_Bear (
         .clka(clk), .wea(0), .addra(addr_a[11:0]), .dina(0), .douta(pixel_value_2),
-                    .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_3));
+        .clkb(clk), .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_3));
     mem_Enemy_Metal_Duck  mem_Enemy_Metal_Duck (
         .clka(clk), .wea(0), .addra(addr_a[10:0]), .dina(0), .douta(pixel_value_4),
-                    .web(0), .addrb(addr_b[10:0]), .dinb(0), .doutb(pixel_value_5));
+        .clkb(clk), .web(0), .addrb(addr_b[10:0]), .dinb(0), .doutb(pixel_value_5));
     mem_Enemy_Black_Bear  mem_Enemy_Black_Bear (
         .clka(clk), .wea(0), .addra(addr_a[11:0]), .dina(0), .douta(pixel_value_6),
-                    .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_7));
+        .clkb(clk), .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_7));
     
     always @(*) begin
         case (type_a)
@@ -51,8 +51,8 @@ module Army_Render_Pixel(
     input clk,
     input [2:0] type_a,
     input [2:0] type_b,
-    input [11:0] addr_a,
-    input [11:0] addr_b,
+    input [12:0] addr_a,
+    input [12:0] addr_b,
     output reg [1:0] pixel_value_a,
     output reg [1:0] pixel_value_b
 );
@@ -75,28 +75,28 @@ module Army_Render_Pixel(
 
     mem_Army_Joker_Cat    mem_Army_Joker_Cat (
         .clka(clk), .wea(0), .addra(addr_a[11:0]), .dina(0), .douta(pixel_value_0),
-                    .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_1));
+        .clkb(clk), .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_1));
     mem_Army_Fish_Cat     mem_Army_Fish_Cat (
         .clka(clk), .wea(0), .addra(addr_a[11:0]), .dina(0), .douta(pixel_value_2),
-                    .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_3));
+        .clkb(clk), .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_3));
     mem_Army_Trap_Cat     mem_Army_Trap_Cat (
         .clka(clk), .wea(0), .addra(addr_a[10:0]), .dina(0), .douta(pixel_value_4),
-                    .web(0), .addrb(addr_b[10:0]), .dinb(0), .doutb(pixel_value_5));
+        .clkb(clk), .web(0), .addrb(addr_b[10:0]), .dinb(0), .doutb(pixel_value_5));
     mem_Army_Jay_Cat      mem_Army_Jay_Cat (
         .clka(clk), .wea(0), .addra(addr_a[11:0]), .dina(0), .douta(pixel_value_6), 
-                    .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_7));
+        .clkb(clk), .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_7));
     mem_Army_Bomb_Cat     mem_Army_Bomb_Cat (
         .clka(clk), .wea(0), .addra(addr_a[9:0]), .dina(0), .douta(pixel_value_8), 
-                    .web(0), .addrb(addr_b[9:0]), .dinb(0), .doutb(pixel_value_9));
+        .clkb(clk), .web(0), .addrb(addr_b[9:0]), .dinb(0), .doutb(pixel_value_9));
     mem_Army_CY_Cat       mem_Army_CY_Cat (
         .clka(clk), .wea(0), .addra(addr_a[11:0]), .dina(0), .douta(pixel_value_10), 
-                    .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_11));
+        .clkb(clk), .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_11));
     mem_Army_Hacker_Cat   mem_Army_Hacker_Cat (
         .clka(clk), .wea(0), .addra(addr_a[11:0]), .dina(0), .douta(pixel_value_12), 
-                    .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_13));
+        .clkb(clk), .web(0), .addrb(addr_b[11:0]), .dinb(0), .doutb(pixel_value_13));
     mem_Army_Elephant_Cat mem_Army_Elephant_Cat (
         .clka(clk), .wea(0), .addra(addr_a[12:0]), .dina(0), .douta(pixel_value_14), 
-                    .web(0), .addrb(addr_b[12:0]), .dinb(0), .doutb(pixel_value_15));
+        .clkb(clk), .web(0), .addrb(addr_b[12:0]), .dinb(0), .doutb(pixel_value_15));
     
     always @(*) begin
         case (type_a)
