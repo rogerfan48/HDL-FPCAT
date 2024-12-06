@@ -53,8 +53,8 @@ module Top (
     wire [2:0] purse_level;
     wire [7:0] tower_cnt;
     wire [14:0] money;
-    wire [55:0] Enemy_Instance [15:0];
-    wire [55:0] Army_Instance [15:0];
+    wire [55:0] Enemy_Instance [7:0];
+    wire [55:0] Army_Instance [7:0];
     wire game_win;
     wire game_lose;
 
