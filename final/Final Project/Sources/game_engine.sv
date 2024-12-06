@@ -31,13 +31,13 @@
 
 `define TOWER_CNT_MAX 8'd150
 
-`define  ST_NONE  4'd0
-`define  ST_MOVE  4'd1
-`define ST_ATK_0  4'd2
-`define ST_ATK_1  4'd3
-`define ST_ATK_2  4'd4
-`define ST_ATK_3  4'd5
-`define ST_REPEL  4'd6
+`define  ST_NONE  3'd0
+`define  ST_MOVE  3'd1
+`define ST_ATK_0  3'd2
+`define ST_ATK_1  3'd3
+`define ST_ATK_2  3'd4
+`define ST_ATK_3  3'd5
+`define ST_REPEL  3'd6
 
 // `define       EXIST_P  55
 // `define        TYPE_P  54:52

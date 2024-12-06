@@ -1,10 +1,10 @@
-`define  ST_NONE  4'd0
-`define  ST_MOVE  4'd1
-`define ST_ATK_0  4'd2
-`define ST_ATK_1  4'd3
-`define ST_ATK_2  4'd4
-`define ST_ATK_3  4'd5
-`define ST_REPEL  4'd6
+`define  ST_NONE  3'd0
+`define  ST_MOVE  3'd1
+`define ST_ATK_0  3'd2
+`define ST_ATK_1  3'd3
+`define ST_ATK_2  3'd4
+`define ST_ATK_3  3'd5
+`define ST_REPEL  3'd6
 
 module Enemy_Stats (
     input [1:0] addr,
@@ -132,10 +132,10 @@ module STATS_acc_PIC (
     always @(*) begin
         case(state)
             `ST_MOVE:  pic = (x_pos ? 3'd1 : 3'd0);
-            `ST_ATK_0, `ST_ATK_1: pic = 3'd2
+            `ST_ATK_0, `ST_ATK_1: pic = 3'd2;
             `ST_ATK_2: pic = 3'd3;
             `ST_ATK_3: pic = 3'd4;
-            `ST_REPEL: pic = 3'd5;
+            4'd6: pic = 3'd5;
             default:   pic = 3'd0;
         endcase
     end

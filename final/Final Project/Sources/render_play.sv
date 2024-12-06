@@ -1,5 +1,6 @@
 // `define W_PP 18:12
 // `define H_PP 11:5
+// `define D_PP 4:0
 
 // `define       EXIST_P  55
 // `define        TYPE_P  54:52
@@ -21,10 +22,6 @@ module Render_Play (
     input [9:0] mouseInFrame,
     output reg [11:0] pixel
 );
-
-    wire [9:0] tower_enemy_addr = (((av_cnt-90)/3)*20 + ((ah_cnt-10)/3)) % 800;
-    wire [1:0] tower_enemy_value;
-    mem_Tower_Enemy mem_Tower_Enemy (.clka(clk), .wea(0), .addra(tower_enemy_addr), .dina(0), .douta(tower_enemy_value));
 
     reg [18:0] enemy_0_pixel_value;
     reg  [2:0] enemy_0_picnum;
