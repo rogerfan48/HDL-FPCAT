@@ -1,5 +1,6 @@
 module Render (
     input clk,
+    input clk_25MHz,
     input [9:0] h_cnt,
     input [9:0] ah_cnt,
     input [9:0] v_cnt,
@@ -31,12 +32,13 @@ module Render (
     parameter S_LOSE = 3'd6;
 
     wire [11:0] pixel_start;
-    Render_Start Render_Start (clk, h_cnt, ah_cnt, v_cnt, av_cnt, mouseInStart, pixel_start);
+    Render_Start Render_Start (clk_25MHz, h_cnt, ah_cnt, v_cnt, av_cnt, mouseInStart, pixel_start);
     wire [11:0] pixel_menu;
-    Render_Menu Render_Menu (clk, h_cnt, ah_cnt, v_cnt, av_cnt,
+    Render_Menu Render_Menu (clk_25MHz, h_cnt, ah_cnt, v_cnt, av_cnt,
         mouseInLevel1, mouseInLevel2, mouseInLevel3, pixel_menu);
     wire [11:0] pixel_play;
-    Render_Play Render_Play ((scene == S_PLAY1 || scene == S_PLAY2 || scene == S_PLAY_3), clk, h_cnt, ah_cnt, v_cnt, av_cnt,
+    Render_Play Render_Play ((scene==S_PLAY1 || scene==S_PLAY2 || scene==S_PLAY_3), 
+        clk, clk_25MHz, h_cnt, ah_cnt, v_cnt, av_cnt,
         Enemy_Instance, Army_Instance, mouseInFrame, pixel_play);
 
     always@(*) begin

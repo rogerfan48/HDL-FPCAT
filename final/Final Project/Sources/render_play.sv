@@ -13,8 +13,8 @@
 
 module Render_Play (
     input en,
-    input clk_100Mhz,
     input clk,
+    input clk_25MHz,
     input [9:0] h_cnt,
     input [9:0] ah_cnt,
     input [9:0] v_cnt,
@@ -26,145 +26,209 @@ module Render_Play (
 );
 
     reg [18:0] enemy_0_pixel_value, enemy_1_pixel_value;
-    reg  [2:0] enemy_0_picnum, enemy_1_picnum;
+    reg  [2:0] enemy_0_picNum, enemy_1_picNum;
     Enemy_Pixel EnemyPixel0 (Enemy_Instance[0][54:52], enemy_0_pixel_value);
     Enemy_Pixel EnemyPixel1 (Enemy_Instance[1][54:52], enemy_1_pixel_value);
-    STATS_acc_PIC STATS_acc_PIC0 (Enemy_Instance[0][19:16], Enemy_Instance[0][45], enemy_0_picnum);
-    STATS_acc_PIC STATS_acc_PIC1 (Enemy_Instance[1][19:16], Enemy_Instance[1][45], enemy_1_picnum);
-    wire [11:0] enemy_0_addr = (((av_cnt - Enemy_Instance[0][41:32]) >> 1) * enemy_0_pixel_value[18:12]) + (((ah_cnt - Enemy_Instance[0][51:42])) >> 1) + (enemy_0_pixel_value[18:12] * enemy_0_pixel_value[11:5] * enemy_0_picnum);   
-    wire [11:0] enemy_1_addr = (((av_cnt - Enemy_Instance[1][41:32]) >> 1) * enemy_1_pixel_value[18:12]) + (((ah_cnt - Enemy_Instance[1][51:42])) >> 1) + (enemy_1_pixel_value[18:12] * enemy_1_pixel_value[11:5] * enemy_1_picnum);
+    PicNum_By_State PicNum_By_State0 (Enemy_Instance[0][19:16], Enemy_Instance[0][45], enemy_0_picNum);
+    PicNum_By_State PicNum_By_State1 (Enemy_Instance[1][19:16], Enemy_Instance[1][45], enemy_1_picNum);
+    wire [11:0] enemy_0_addr = (
+        (((av_cnt - Enemy_Instance[0][41:32]) >> 1) * enemy_0_pixel_value[18:12]) + 
+        (((ah_cnt - Enemy_Instance[0][51:42]) >> 1)) + 
+        (enemy_0_pixel_value[18:12] * enemy_0_pixel_value[11:5] * enemy_0_picNum));   
+    wire [11:0] enemy_1_addr = (
+        (((av_cnt - Enemy_Instance[1][41:32]) >> 1) * enemy_1_pixel_value[18:12]) + 
+        (((ah_cnt - Enemy_Instance[1][51:42]) >> 1)) +
+        (enemy_1_pixel_value[18:12] * enemy_1_pixel_value[11:5] * enemy_1_picNum));
     wire [1:0] enemy_0_value, enemy_1_value;
-    Enemy_Render_Pixel enemy_01_Render (.clk(clk_100Mhz), .ctype_a(Enemy_Instance[0][54:52]), .ctype_b(Enemy_Instance[1][54:52]), .addra(enemy_0_addr), .addrb(enemy_1_addr), .pixel_value_a(enemy_0_value), .pixel_value_b(enemy_1_value));
+    Enemy_Render_Pixel Enemy_Render_01 (.clk(clk), 
+        .type_a(Enemy_Instance[0][54:52]), .addr_a(enemy_0_addr), .pixel_value_a(enemy_0_value),
+        .type_b(Enemy_Instance[1][54:52]), .addr_b(enemy_1_addr), .pixel_value_b(enemy_1_value));
 
     reg [18:0] enemy_2_pixel_value, enemy_3_pixel_value;
-    reg  [2:0] enemy_2_picnum, enemy_3_picnum;
+    reg  [2:0] enemy_2_picNum, enemy_3_picNum;
     Enemy_Pixel EnemyPixel2 (Enemy_Instance[2][54:52], enemy_2_pixel_value);
     Enemy_Pixel EnemyPixel3 (Enemy_Instance[3][54:52], enemy_3_pixel_value);
-    STATS_acc_PIC STATS_acc_PIC2 (Enemy_Instance[2][19:16], Enemy_Instance[2][45], enemy_2_picnum);
-    STATS_acc_PIC STATS_acc_PIC3 (Enemy_Instance[3][19:16], Enemy_Instance[3][45], enemy_3_picnum);
-    wire [11:0] enemy_2_addr = (((av_cnt - Enemy_Instance[2][41:32]) >> 1) * enemy_2_pixel_value[18:12]) + (((ah_cnt - Enemy_Instance[2][51:42])) >> 1) + (enemy_2_pixel_value[18:12] * enemy_2_pixel_value[11:5] * enemy_2_picnum);
-    wire [11:0] enemy_3_addr = (((av_cnt - Enemy_Instance[3][41:32]) >> 1) * enemy_3_pixel_value[18:12]) + (((ah_cnt - Enemy_Instance[3][51:42])) >> 1) + (enemy_3_pixel_value[18:12] * enemy_3_pixel_value[11:5] * enemy_3_picnum);
+    PicNum_By_State PicNum_By_State2 (Enemy_Instance[2][19:16], Enemy_Instance[2][45], enemy_2_picNum);
+    PicNum_By_State PicNum_By_State3 (Enemy_Instance[3][19:16], Enemy_Instance[3][45], enemy_3_picNum);
+    wire [11:0] enemy_2_addr = (
+        (((av_cnt - Enemy_Instance[2][41:32]) >> 1) * enemy_2_pixel_value[18:12]) + 
+        (((ah_cnt - Enemy_Instance[2][51:42]) >> 1)) + 
+        (enemy_2_pixel_value[18:12] * enemy_2_pixel_value[11:5] * enemy_2_picNum));   
+    wire [11:0] enemy_3_addr = (
+        (((av_cnt - Enemy_Instance[3][41:32]) >> 1) * enemy_3_pixel_value[18:12]) + 
+        (((ah_cnt - Enemy_Instance[3][51:42]) >> 1)) +
+        (enemy_3_pixel_value[18:12] * enemy_3_pixel_value[11:5] * enemy_3_picNum));
     wire [1:0] enemy_2_value, enemy_3_value;
-    Enemy_Render_Pixel enemy_23_Render (.clk(clk_100Mhz), .ctype_a(Enemy_Instance[2][54:52]), .ctype_b(Enemy_Instance[3][54:52]), .addra(enemy_2_addr), .addrb(enemy_3_addr), .pixel_value_a(enemy_2_value), .pixel_value_b(enemy_3_value));
+    Enemy_Render_Pixel Enemy_Render_23 (.clk(clk), 
+        .type_a(Enemy_Instance[2][54:52]), .addr_a(enemy_2_addr), .pixel_value_a(enemy_2_value),
+        .type_b(Enemy_Instance[3][54:52]), .addr_b(enemy_3_addr), .pixel_value_b(enemy_3_value));
     
     reg [18:0] enemy_4_pixel_value, enemy_5_pixel_value;
-    reg  [2:0] enemy_4_picnum, enemy_5_picnum;
+    reg  [2:0] enemy_4_picNum, enemy_5_picNum;
     Enemy_Pixel EnemyPixel4 (Enemy_Instance[4][54:52], enemy_4_pixel_value);
     Enemy_Pixel EnemyPixel5 (Enemy_Instance[5][54:52], enemy_5_pixel_value);
-    STATS_acc_PIC STATS_acc_PIC4 (Enemy_Instance[4][19:16], Enemy_Instance[4][45], enemy_4_picnum);
-    STATS_acc_PIC STATS_acc_PIC5 (Enemy_Instance[5][19:16], Enemy_Instance[5][45], enemy_5_picnum);
-    wire [11:0] enemy_4_addr = (((av_cnt - Enemy_Instance[4][41:32]) >> 1) * enemy_4_pixel_value[18:12]) + (((ah_cnt - Enemy_Instance[4][51:42])) >> 1) + (enemy_4_pixel_value[18:12] * enemy_4_pixel_value[11:5] * enemy_4_picnum);
-    wire [11:0] enemy_5_addr = (((av_cnt - Enemy_Instance[5][41:32]) >> 1) * enemy_5_pixel_value[18:12]) + (((ah_cnt - Enemy_Instance[5][51:42])) >> 1) + (enemy_5_pixel_value[18:12] * enemy_5_pixel_value[11:5] * enemy_5_picnum);
+    PicNum_By_State PicNum_By_State4 (Enemy_Instance[4][19:16], Enemy_Instance[4][45], enemy_4_picNum);
+    PicNum_By_State PicNum_By_State5 (Enemy_Instance[5][19:16], Enemy_Instance[5][45], enemy_5_picNum);
+    wire [11:0] enemy_4_addr = (
+        (((av_cnt - Enemy_Instance[4][41:32]) >> 1) * enemy_4_pixel_value[18:12]) + 
+        (((ah_cnt - Enemy_Instance[4][51:42]) >> 1)) + 
+        (enemy_4_pixel_value[18:12] * enemy_4_pixel_value[11:5] * enemy_4_picNum));   
+    wire [11:0] enemy_5_addr = (
+        (((av_cnt - Enemy_Instance[5][41:32]) >> 1) * enemy_5_pixel_value[18:12]) + 
+        (((ah_cnt - Enemy_Instance[5][51:42]) >> 1)) +
+        (enemy_5_pixel_value[18:12] * enemy_5_pixel_value[11:5] * enemy_5_picNum));
     wire [1:0] enemy_4_value, enemy_5_value;
-    Enemy_Render_Pixel enemy_45_Render (.clk(clk_100Mhz), .ctype_a(Enemy_Instance[4][54:52]), .ctype_b(Enemy_Instance[5][54:52]), .addra(enemy_4_addr), .addrb(enemy_5_addr), .pixel_value_a(enemy_4_value), .pixel_value_b(enemy_5_value));
+    Enemy_Render_Pixel Enemy_Render_45 (.clk(clk), 
+        .type_a(Enemy_Instance[4][54:52]), .addr_a(enemy_4_addr), .pixel_value_a(enemy_4_value),
+        .type_b(Enemy_Instance[5][54:52]), .addr_b(enemy_5_addr), .pixel_value_b(enemy_5_value));
 
     reg [18:0] enemy_6_pixel_value, enemy_7_pixel_value;
-    reg  [2:0] enemy_6_picnum, enemy_7_picnum;
+    reg  [2:0] enemy_6_picNum, enemy_7_picNum;
     Enemy_Pixel EnemyPixel6 (Enemy_Instance[6][54:52], enemy_6_pixel_value);
     Enemy_Pixel EnemyPixel7 (Enemy_Instance[7][54:52], enemy_7_pixel_value);
-    STATS_acc_PIC STATS_acc_PIC6 (Enemy_Instance[6][19:16], Enemy_Instance[6][45], enemy_6_picnum);
-    STATS_acc_PIC STATS_acc_PIC7 (Enemy_Instance[7][19:16], Enemy_Instance[7][45], enemy_7_picnum);
-    wire [11:0] enemy_6_addr = (((av_cnt - Enemy_Instance[6][41:32]) >> 1) * enemy_6_pixel_value[18:12]) + (((ah_cnt - Enemy_Instance[6][51:42])) >> 1) + (enemy_6_pixel_value[18:12] * enemy_6_pixel_value[11:5] * enemy_6_picnum);
-    wire [11:0] enemy_7_addr = (((av_cnt - Enemy_Instance[7][41:32]) >> 1) * enemy_7_pixel_value[18:12]) + (((ah_cnt - Enemy_Instance[7][51:42])) >> 1) + (enemy_7_pixel_value[18:12] * enemy_7_pixel_value[11:5] * enemy_7_picnum);
+    PicNum_By_State PicNum_By_State6 (Enemy_Instance[6][19:16], Enemy_Instance[6][45], enemy_6_picNum);
+    PicNum_By_State PicNum_By_State7 (Enemy_Instance[7][19:16], Enemy_Instance[7][45], enemy_7_picNum);
+    wire [11:0] enemy_6_addr = (
+        (((av_cnt - Enemy_Instance[6][41:32]) >> 1) * enemy_6_pixel_value[18:12]) + 
+        (((ah_cnt - Enemy_Instance[6][51:42]) >> 1)) + 
+        (enemy_6_pixel_value[18:12] * enemy_6_pixel_value[11:5] * enemy_6_picNum));   
+    wire [11:0] enemy_7_addr = (
+        (((av_cnt - Enemy_Instance[7][41:32]) >> 1) * enemy_7_pixel_value[18:12]) + 
+        (((ah_cnt - Enemy_Instance[7][51:42]) >> 1)) +
+        (enemy_7_pixel_value[18:12] * enemy_7_pixel_value[11:5] * enemy_7_picNum));
     wire [1:0] enemy_6_value, enemy_7_value;
-    Enemy_Render_Pixel enemy_67_Render (.clk(clk_100Mhz), .ctype_a(Enemy_Instance[6][54:52]), .ctype_b(Enemy_Instance[7][54:52]), .addra(enemy_6_addr), .addrb(enemy_7_addr), .pixel_value_a(enemy_6_value), .pixel_value_b(enemy_7_value));
+    Enemy_Render_Pixel Enemy_Render_67 (.clk(clk), 
+        .type_a(Enemy_Instance[6][54:52]), .addr_a(enemy_6_addr), .pixel_value_a(enemy_6_value),
+        .type_b(Enemy_Instance[7][54:52]), .addr_b(enemy_7_addr), .pixel_value_b(enemy_7_value));
 
 
-    reg [18:0] army_0_pixel_value, army_1_pixel_value;
-    reg  [2:0] army_0_picnum, army_1_picnum;
+reg [18:0] army_0_pixel_value, army_1_pixel_value;
+    reg  [2:0] army_0_picNum, army_1_picNum;
     Army_Pixel ArmyPixel0 (Army_Instance[0][54:52], army_0_pixel_value);
     Army_Pixel ArmyPixel1 (Army_Instance[1][54:52], army_1_pixel_value);
-    STATS_acc_PIC STATS_acc_PIC8 (Army_Instance[0][19:16], Army_Instance[0][45], army_0_picnum);
-    STATS_acc_PIC STATS_acc_PIC9 (Army_Instance[1][19:16], Army_Instance[1][45], army_1_picnum);
-    wire [12:0] army_0_addr = (((av_cnt - Army_Instance[0][41:32]) >> 1) * army_0_pixel_value[18:12]) + (((ah_cnt - Army_Instance[0][51:42])) >> 1) + (army_0_pixel_value[18:12] * army_0_pixel_value[11:5] * army_0_picnum);
-    wire [12:0] army_1_addr = (((av_cnt - Army_Instance[1][41:32]) >> 1) * army_0_pixel_value[18:12]) + (((ah_cnt - Army_Instance[1][51:42])) >> 1) + (army_1_pixel_value[18:12] * army_1_pixel_value[11:5] * army_1_picnum);
+    PicNum_By_State PicNum_By_State8 (Army_Instance[0][19:16], Army_Instance[0][45], army_0_picNum);
+    PicNum_By_State PicNum_By_State9 (Army_Instance[1][19:16], Army_Instance[1][45], army_1_picNum);
+    wire [12:0] army_0_addr = (
+        (((av_cnt - Army_Instance[0][41:32]) >> 1) * army_0_pixel_value[18:12]) + 
+        (((ah_cnt - Army_Instance[0][51:42]) >> 1)) + 
+        (army_0_pixel_value[18:12] * army_0_pixel_value[11:5] * army_0_picNum));
+    wire [12:0] army_1_addr = (
+        (((av_cnt - Army_Instance[1][41:32]) >> 1) * army_1_pixel_value[18:12]) + 
+        (((ah_cnt - Army_Instance[1][51:42]) >> 1)) +
+        (army_1_pixel_value[18:12] * army_1_pixel_value[11:5] * army_1_picNum));
     wire [1:0] army_0_value, army_1_value;
-    Army_Render_Pixel army_01_Render (.clk(clk_100Mhz), .ctype_a(Army_Instance[0][54:52]), ctype_b(Army_Instance[1][54:52]), .addra(army_0_addr), .addrb(army_1_addr), .pixel_value_a(army_0_value), .pixel_value_b(army_1_value));
+    Army_Render_Pixel Army_Render_01 (.clk(clk), 
+        .type_a(Army_Instance[0][54:52]), .addr_a(army_0_addr), .pixel_value_a(army_0_value),
+        .type_b(Army_Instance[1][54:52]), .addr_b(army_1_addr), .pixel_value_b(army_1_value));
 
     reg [18:0] army_2_pixel_value, army_3_pixel_value;
-    reg  [2:0] army_2_picnum, army_3_picnum;
+    reg  [2:0] army_2_picNum, army_3_picNum;
     Army_Pixel ArmyPixel2 (Army_Instance[2][54:52], army_2_pixel_value);
     Army_Pixel ArmyPixel3 (Army_Instance[3][54:52], army_3_pixel_value);
-    STATS_acc_PIC STATS_acc_PIC10 (Army_Instance[2][19:16], Army_Instance[2][45], army_2_picnum);
-    STATS_acc_PIC STATS_acc_PIC11 (Army_Instance[3][19:16], Army_Instance[3][45], army_3_picnum);
-    wire [12:0] army_2_addr = (((av_cnt - Army_Instance[2][41:32]) >> 1) * army_2_pixel_value[18:12]) + (((ah_cnt - Army_Instance[2][51:42])) >> 1) + (army_2_pixel_value[18:12] * army_2_pixel_value[11:5] * army_2_picnum);
-    wire [12:0] army_3_addr = (((av_cnt - Army_Instance[3][41:32]) >> 1) * army_3_pixel_value[18:12]) + (((ah_cnt - Army_Instance[3][51:42])) >> 1) + (army_3_pixel_value[18:12] * army_3_pixel_value[11:5] * army_3_picnum);
+    PicNum_By_State PicNum_By_State10 (Army_Instance[2][19:16], Army_Instance[2][45], army_2_picNum);
+    PicNum_By_State PicNum_By_State11 (Army_Instance[3][19:16], Army_Instance[3][45], army_3_picNum);
+    wire [12:0] army_2_addr = (
+        (((av_cnt - Army_Instance[2][41:32]) >> 1) * army_2_pixel_value[18:12]) + 
+        (((ah_cnt - Army_Instance[2][51:42]) >> 1)) + 
+        (army_2_pixel_value[18:12] * army_2_pixel_value[11:5] * army_2_picNum));
+    wire [12:0] army_3_addr = (
+        (((av_cnt - Army_Instance[3][41:32]) >> 1) * army_3_pixel_value[18:12]) + 
+        (((ah_cnt - Army_Instance[3][51:42]) >> 1)) +
+        (army_3_pixel_value[18:12] * army_3_pixel_value[11:5] * army_3_picNum));
     wire [1:0] army_2_value, army_3_value;
-    Army_Render_Pixel army_23_Render (.clk(clk_100Mhz), .ctype_a(Army_Instance[2][54:52]), ctype_b(Army_Instance[3][54:52]), .addra(army_2_addr), .addrb(army_3_addr), .pixel_value_a(army_2_value), .pixel_value_b(army_3_value));
+    Army_Render_Pixel Army_Render_23 (.clk(clk), 
+        .type_a(Army_Instance[2][54:52]), .addr_a(army_2_addr), .pixel_value_a(army_2_value),
+        .type_b(Army_Instance[3][54:52]), .addr_b(army_3_addr), .pixel_value_b(army_3_value));
 
     reg [18:0] army_4_pixel_value, army_5_pixel_value;
-    reg  [2:0] army_4_picnum, army_5_picnum;
+    reg  [2:0] army_4_picNum, army_5_picNum;
     Army_Pixel ArmyPixel4 (Army_Instance[4][54:52], army_4_pixel_value);
     Army_Pixel ArmyPixel5 (Army_Instance[5][54:52], army_5_pixel_value);
-    STATS_acc_PIC STATS_acc_PIC12 (Army_Instance[4][19:16], Army_Instance[4][45], army_4_picnum);
-    STATS_acc_PIC STATS_acc_PIC13 (Army_Instance[5][19:16], Army_Instance[5][45], army_5_picnum);
-    wire [12:0] army_4_addr = (((av_cnt - Army_Instance[4][41:32]) >> 1) * army_4_pixel_value[18:12]) + (((ah_cnt - Army_Instance[4][51:42])) >> 1) + (army_4_pixel_value[18:12] * army_4_pixel_value[11:5] * army_4_picnum);
-    wire [12:0] army_5_addr = (((av_cnt - Army_Instance[5][41:32]) >> 1) * army_5_pixel_value[18:12]) + (((ah_cnt - Army_Instance[5][51:42])) >> 1) + (army_5_pixel_value[18:12] * army_5_pixel_value[11:5] * army_5_picnum);
+    PicNum_By_State PicNum_By_State12 (Army_Instance[4][19:16], Army_Instance[4][45], army_4_picNum);
+    PicNum_By_State PicNum_By_State13 (Army_Instance[5][19:16], Army_Instance[5][45], army_5_picNum);
+    wire [12:0] army_4_addr = (
+        (((av_cnt - Army_Instance[4][41:32]) >> 1) * army_4_pixel_value[18:12]) + 
+        (((ah_cnt - Army_Instance[4][51:42]) >> 1)) + 
+        (army_4_pixel_value[18:12] * army_4_pixel_value[11:5] * army_4_picNum));
+    wire [12:0] army_5_addr = (
+        (((av_cnt - Army_Instance[5][41:32]) >> 1) * army_5_pixel_value[18:12]) + 
+        (((ah_cnt - Army_Instance[5][51:42]) >> 1)) +
+        (army_5_pixel_value[18:12] * army_5_pixel_value[11:5] * army_5_picNum));
     wire [1:0] army_4_value, army_5_value;
-    Army_Render_Pixel army_45_Render (.clk(clk_100Mhz), .ctype_a(Army_Instance[4][54:52]), ctype_b(Army_Instance[5][54:52]), .addra(army_4_addr), .addrb(army_5_addr), .pixel_value_a(army_4_value), .pixel_value_b(army_5_value));
+    Army_Render_Pixel Army_Render_45 (.clk(clk), 
+        .type_a(Army_Instance[4][54:52]), .addr_a(army_4_addr), .pixel_value_a(army_4_value),
+        .type_b(Army_Instance[5][54:52]), .addr_b(army_5_addr), .pixel_value_b(army_5_value));
 
     reg [18:0] army_6_pixel_value, army_7_pixel_value;
-    reg  [2:0] army_6_picnum, army_7_picnum;
+    reg  [2:0] army_6_picNum, army_7_picNum;
     Army_Pixel ArmyPixel6 (Army_Instance[6][54:52], army_6_pixel_value);
     Army_Pixel ArmyPixel7 (Army_Instance[7][54:52], army_7_pixel_value);
-    STATS_acc_PIC STATS_acc_PIC14 (Army_Instance[6][19:16], Army_Instance[6][45], army_6_picnum);
-    STATS_acc_PIC STATS_acc_PIC15 (Army_Instance[7][19:16], Army_Instance[7][45], army_7_picnum);
-    wire [12:0] army_6_addr = (((av_cnt - Army_Instance[6][41:32]) >> 1) * army_6_pixel_value[18:12]) + (((ah_cnt - Army_Instance[6][51:42])) >> 1) + (army_6_pixel_value[18:12] * army_6_pixel_value[11:5] * army_6_picnum);
-    wire [12:0] army_7_addr = (((av_cnt - Army_Instance[7][41:32]) >> 1) * army_7_pixel_value[18:12]) + (((ah_cnt - Army_Instance[7][51:42])) >> 1) + (army_7_pixel_value[18:12] * army_7_pixel_value[11:5] * army_7_picnum);
+    PicNum_By_State PicNum_By_State14 (Army_Instance[6][19:16], Army_Instance[6][45], army_6_picNum);
+    PicNum_By_State PicNum_By_State15 (Army_Instance[7][19:16], Army_Instance[7][45], army_7_picNum);
+    wire [12:0] army_6_addr = (
+        (((av_cnt - Army_Instance[6][41:32]) >> 1) * army_6_pixel_value[18:12]) + 
+        (((ah_cnt - Army_Instance[6][51:42]) >> 1)) + 
+        (army_6_pixel_value[18:12] * army_6_pixel_value[11:5] * army_6_picNum));
+    wire [12:0] army_7_addr = (
+        (((av_cnt - Army_Instance[7][41:32]) >> 1) * army_7_pixel_value[18:12]) + 
+        (((ah_cnt - Army_Instance[7][51:42]) >> 1)) +
+        (army_7_pixel_value[18:12] * army_7_pixel_value[11:5] * army_7_picNum));
     wire [1:0] army_6_value, army_7_value;
-    Army_Render_Pixel army_67_Render (.clk(clk_100Mhz), .ctype_a(Army_Instance[6][54:52]), ctype_b(Army_Instance[7][54:52]), .addra(army_6_addr), .addrb(army_7_addr), .pixel_value_a(army_6_value), .pixel_value_b(army_7_value));
+    Army_Render_Pixel Army_Render_67 (.clk(clk), 
+        .type_a(Army_Instance[6][54:52]), .addr_a(army_6_addr), .pixel_value_a(army_6_value),
+        .type_b(Army_Instance[7][54:52]), .addr_b(army_7_addr), .pixel_value_b(army_7_value));
 
 
     wire [9:0] tower_enemy_addr_0 = ((av_cnt-90)/3)*20 + ((ah_cnt-10)/3);
     wire [9:0] tower_enemy_addr = (tower_enemy_addr_0 < 800 ? tower_enemy_addr_0 : 0);
     wire [1:0] tower_enemy_value;
-    mem_Tower_Enemy mem_Tower_Enemy (.clka(clk), .wea(0), .addra(tower_enemy_addr), .dina(0), .douta(tower_enemy_value));
+    mem_Tower_Enemy mem_Tower_Enemy (.clka(clk_25MHz, .wea(0), .addra(tower_enemy_addr), .dina(0), .douta(tower_enemy_value));
     wire [9:0] tower_cat_addr_0 = ((av_cnt-90)/3)*20 + ((ah_cnt-570)/3);
     wire [9:0] tower_cat_addr = (tower_cat_addr_0 < 800 ? tower_cat_addr_0 : 0);
     wire [1:0] tower_cat_value;
-    mem_Tower_Cat mem_Tower_Cat (.clka(clk), .wea(0), .addra(tower_cat_addr), .dina(0), .douta(tower_cat_value));
+    mem_Tower_Cat mem_Tower_Cat (.clka(clk_25MHz, .wea(0), .addra(tower_cat_addr), .dina(0), .douta(tower_cat_value));
 
     wire [8:0] frame_joker_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-105)/4);
     wire [8:0] frame_joker_addr = (frame_joker_addr_0 < 500 ? frame_joker_addr_0 : 0);
     wire [1:0] frame_joker_value;
-    mem_Frame_Joker_Cat mem_Frame_Joker_Cat (.clka(clk), .wea(0), .addra(frame_joker_addr), .dina(0), .douta(frame_joker_value));
+    mem_Frame_Joker_Cat mem_Frame_Joker_Cat (.clka(clk_25MHz, .wea(0), .addra(frame_joker_addr), .dina(0), .douta(frame_joker_value));
     wire [8:0] frame_fish_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-215)/4);
     wire [8:0] frame_fish_addr = (frame_fish_addr_0 < 500 ? frame_fish_addr_0 : 0);
     wire [1:0] frame_fish_value;
-    mem_Frame_Fish_Cat mem_Frame_Fish_Cat (.clka(clk), .wea(0), .addra(frame_fish_addr), .dina(0), .douta(frame_fish_value));
+    mem_Frame_Fish_Cat mem_Frame_Fish_Cat (.clka(clk_25MHz, .wea(0), .addra(frame_fish_addr), .dina(0), .douta(frame_fish_value));
     wire [8:0] frame_trap_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-325)/4);
     wire [8:0] frame_trap_addr = (frame_trap_addr_0 < 500 ? frame_trap_addr_0 : 0);
     wire [1:0] frame_trap_value;
-    mem_Frame_Trap_Cat mem_Frame_Trap_Cat (.clka(clk), .wea(0), .addra(frame_trap_addr), .dina(0), .douta(frame_trap_value));
+    mem_Frame_Trap_Cat mem_Frame_Trap_Cat (.clka(clk_25MHz, .wea(0), .addra(frame_trap_addr), .dina(0), .douta(frame_trap_value));
     wire [8:0] frame_jay_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-435)/4);
     wire [8:0] frame_jay_addr = (frame_jay_addr_0 < 500 ? frame_jay_addr_0 : 0);
     wire [1:0] frame_jay_value;
-    mem_Frame_Jay_Cat mem_Frame_Jay_Cat (.clka(clk), .wea(0), .addra(frame_jay_addr), .dina(0), .douta(frame_jay_value));
+    mem_Frame_Jay_Cat mem_Frame_Jay_Cat (.clka(clk_25MHz, .wea(0), .addra(frame_jay_addr), .dina(0), .douta(frame_jay_value));
     wire [8:0] frame_bomb_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-105)/4);
     wire [8:0] frame_bomb_addr = (frame_bomb_addr_0 < 500 ? frame_bomb_addr_0 : 0);
     wire [1:0] frame_bomb_value;
-    mem_Frame_Bomb_Cat mem_Frame_Bomb_Cat (.clka(clk), .wea(0), .addra(frame_bomb_addr), .dina(0), .douta(frame_bomb_value));
+    mem_Frame_Bomb_Cat mem_Frame_Bomb_Cat (.clka(clk_25MHz, .wea(0), .addra(frame_bomb_addr), .dina(0), .douta(frame_bomb_value));
     wire [8:0] frame_CY_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-215)/4);
     wire [8:0] frame_CY_addr = (frame_CY_addr_0 < 500 ? frame_CY_addr_0 : 0);
     wire [1:0] frame_CY_value;
-    mem_Frame_CY_Cat mem_Frame_CY_Cat (.clka(clk), .wea(0), .addra(frame_CY_addr), .dina(0), .douta(frame_CY_value));
+    mem_Frame_CY_Cat mem_Frame_CY_Cat (.clka(clk_25MHz, .wea(0), .addra(frame_CY_addr), .dina(0), .douta(frame_CY_value));
     wire [8:0] frame_hacker_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-325)/4);
     wire [8:0] frame_hacker_addr = (frame_hacker_addr_0 < 500 ? frame_hacker_addr_0 : 0);
     wire [1:0] frame_hacker_value;
-    mem_Frame_Hacker_Cat mem_Frame_Hacker_Cat (.clka(clk), .wea(0), .addra(frame_hacker_addr), .dina(0), .douta(frame_hacker_value));
+    mem_Frame_Hacker_Cat mem_Frame_Hacker_Cat (.clka(clk_25MHz, .wea(0), .addra(frame_hacker_addr), .dina(0), .douta(frame_hacker_value));
     wire [8:0] frame_elephant_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-435)/4);
     wire [8:0] frame_elephant_addr = (frame_elephant_addr_0 < 500 ? frame_elephant_addr_0 : 0);
     wire [1:0] frame_elephant_value;
-    mem_Frame_Elephant_Cat mem_Frame_Elephant_Cat (.clka(clk), .wea(0), .addra(frame_elephant_addr), .dina(0), .douta(frame_elephant_value));
+    mem_Frame_Elephant_Cat mem_Frame_Elephant_Cat (.clka(clk_25MHz, .wea(0), .addra(frame_elephant_addr), .dina(0), .douta(frame_elephant_value));
 
     wire [11:0] btn_purse_addr_0 = ((av_cnt-380)/2)*50 + ((ah_cnt)/2);
     wire [11:0] btn_purse_addr = (btn_purse_addr_0 < 5000 ? btn_purse_addr_0 : 0);
     wire [1:0] btn_purse_value;
-    mem_Btn_Purse mem_Btn_Purse (.clka(clk), .wea(0), .addra(btn_purse_addr), .dina(0), .douta(btn_purse_value));
+    mem_Btn_Purse mem_Btn_Purse (.clka(clk_25MHz, .wea(0), .addra(btn_purse_addr), .dina(0), .douta(btn_purse_value));
     wire [12:0] btn_fire_addr_0 = ((av_cnt-380)/2)*50 + ((ah_cnt-540)/2) + 2500;
     wire [12:0] btn_fire_addr = (btn_fire_addr_0 < 5000 ? btn_fire_addr_0 : 0);
     wire [1:0] btn_fire_value;
-    mem_Btn_Fire mem_Btn_Fire (.clka(clk), .wea(0), .addra(btn_fire_addr), .dina(0), .douta(btn_fire_value));
+    mem_Btn_Fire mem_Btn_Fire (.clka(clk_25MHz, .wea(0), .addra(btn_fire_addr), .dina(0), .douta(btn_fire_value));
 
     always @(*) begin
         if (v_cnt<10'd270) begin    // simply cut half, this is upper half (gaming) for shortening Circuit Longest Length

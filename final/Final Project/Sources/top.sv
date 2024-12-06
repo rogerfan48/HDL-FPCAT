@@ -101,7 +101,8 @@ module Top (
     );
 
     Render Render_0 (
-        .clk(clk_25MHz),
+        .clk(clk),
+        .clk_25MHz(clk_25MHz),
         .h_cnt(h_cnt),
         .ah_cnt(ah_cnt),
         .v_cnt(v_cnt),

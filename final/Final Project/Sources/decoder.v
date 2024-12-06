@@ -124,7 +124,7 @@ module Purse_Max_Money (
     end
 endmodule
 
-module STATS_acc_PIC (
+module PicNum_By_State (
     input [2:0] state,
     input x_pos,
     output reg [2:0] pic
