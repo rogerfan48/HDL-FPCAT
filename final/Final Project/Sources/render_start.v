@@ -22,36 +22,35 @@ module Render_Start (
     input mouseInStart,
     output reg [11:0] pixel
 );
-    reg [10:0] FPCAT_addr;
-    reg [10:0] GAME_START_addr;
-    always @(posedge clk_25MHz) begin  // 25MHz 上升邊緣
-        FPCAT_addr <= (((av_cnt-150)/5)*60 + ((ah_cnt-170)/5)) % 1200;
-        GAME_START_addr <= (((av_cnt-280)/2)*100 + ((ah_cnt-220)/2)) % 2000;
-    end
-    wire FPCAT_value;
-    mem_FPCAT mem_FPCAT_0 (
-        .clka(clk_25MHz),   // input wire clka 輸入時鐘信號
-        .wea(0),            // input wire [0 : 0] wea 1位元的寫入使能信號
-        .addra(FPCAT_addr), // input wire [10 : 0] addra 11位元的位址信號[10:0]
-        .dina(0),           // input wire [0 : 0] dina 1位元的輸入資料
-        .douta(FPCAT_value) // output wire [0 : 0] douta 1位元的輸出資料
-    );
 
+    reg [10:0] FPCAT_pp00, FPCAT_pp01, FPCAT_pp10, FPCAT_pp11, FPCAT_pp2;
+    wire FPCAT_value;
+    always @(posedge clk_25MHz) begin
+        FPCAT_pp00 <= ((v_cnt_5-150)/5);
+        FPCAT_pp01 <= ((h_cnt_5-170)/5);
+        FPCAT_pp10 <= FPCAT_pp00 * 60;
+        FPCAT_pp11 <= FPCAT_pp01;
+        FPCAT_pp2 <= (FPCAT_pp10 + FPCAT_pp11) % 1200;
+    end
+    mem_FPCAT mem_FPCAT_0 (.clka(clk_25MHz), .wea(0), .addra(FPCAT_pp2),  .dina(0), .douta(FPCAT_value));
+
+    reg [10:0] GAME_START_pp00, GAME_START_pp01, GAME_START_pp10, GAME_START_pp11, GAME_START_pp2;
+    always @(posedge clk_25MHz) begin
+        GAME_START_pp00 <= ((v_cnt_5-280)/2);
+        GAME_START_pp01 <= ((h_cnt_5-220)/2);
+        GAME_START_pp10 <= GAME_START_pp00 * 100;
+        GAME_START_pp11 <= GAME_START_pp01;
+        GAME_START_pp2 <= (GAME_START_pp10 + GAME_START_pp11) % 2000;
+    end
     wire GAME_START_value;
-    mem_GAME_START mem_GAME_START_0 (
-        .clka(clk_25MHz),           // input wire clka
-        .wea(0),                    // input wire [0 : 0] wea
-        .addra(GAME_START_addr),    // input wire [10 : 0] addra
-        .dina(0),                   // input wire [0 : 0] dina
-        .douta(GAME_START_value)    // output wire [0 : 0] douta
-    );
+    mem_GAME_START mem_GAME_START_0 (.clka(clk_25MHz), .wea(0), .addra(GAME_START_pp2), .dina(0), .douta(GAME_START_value));
 
     always @(*) begin
-        if (h_cnt>=10'd170 && h_cnt<10'd470 && v_cnt>=10'd150 && v_cnt<10'd250 && FPCAT_value==1'b1) begin
+        if (h_cnt_1>=10'd170 && h_cnt_1<10'd470 && v_cnt_1>=10'd150 && v_cnt_1<10'd250 && FPCAT_value==1'b1) begin
             pixel = 12'hfff;      // Title
-        end else if (h_cnt>=10'd220 && h_cnt<10'd420 && v_cnt>=10'd280 && v_cnt<10'd320 && GAME_START_value==1'b1) begin
+        end else if (h_cnt_1>=10'd220 && h_cnt_1<10'd420 && v_cnt_1>=10'd280 && v_cnt_1<10'd320 && GAME_START_value==1'b1) begin
             pixel = 12'hfff;      // Game Start
-        end else if (h_cnt>=10'd200 && h_cnt<10'd440 && v_cnt>=10'd270 && v_cnt<10'd330) begin
+        end else if (h_cnt_1>=10'd200 && h_cnt_1<10'd440 && v_cnt_1>=10'd270 && v_cnt_1<10'd330) begin
             if (mouseInStart) pixel = 12'h632;
             else              pixel = 12'h521;
         end else begin
