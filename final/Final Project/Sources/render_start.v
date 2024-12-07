@@ -1,21 +1,29 @@
 module Render_Start (
-    input clk,
+    input clk_25MHz,
     input [9:0] h_cnt,
     input [9:0] ah_cnt,
     input [9:0] v_cnt,
     input [9:0] av_cnt,
+    input [9:0] h_cnt_1,
+    input [9:0] h_cnt_2,
+    input [9:0] h_cnt_3,
+    input [9:0] h_cnt_4,
+    input [9:0] v_cnt_1,
+    input [9:0] v_cnt_2,
+    input [9:0] v_cnt_3,
+    input [9:0] v_cnt_4,
     input mouseInStart,
     output reg [11:0] pixel
 );
     reg [10:0] FPCAT_addr;
     reg [10:0] GAME_START_addr;
-    always @(posedge clk) begin  // 25MHz 上升邊緣
+    always @(posedge clk_25MHz) begin  // 25MHz 上升邊緣
         FPCAT_addr <= (((av_cnt-150)/5)*60 + ((ah_cnt-170)/5)) % 1200;
         GAME_START_addr <= (((av_cnt-280)/2)*100 + ((ah_cnt-220)/2)) % 2000;
     end
     wire FPCAT_value;
     mem_FPCAT mem_FPCAT_0 (
-        .clka(clk),         // input wire clka 輸入時鐘信號
+        .clka(clk_25MHz),   // input wire clka 輸入時鐘信號
         .wea(0),            // input wire [0 : 0] wea 1位元的寫入使能信號
         .addra(FPCAT_addr), // input wire [10 : 0] addra 11位元的位址信號[10:0]
         .dina(0),           // input wire [0 : 0] dina 1位元的輸入資料
@@ -24,7 +32,7 @@ module Render_Start (
 
     wire GAME_START_value;
     mem_GAME_START mem_GAME_START_0 (
-        .clka(clk),                 // input wire clka
+        .clka(clk_25MHz),           // input wire clka
         .wea(0),                    // input wire [0 : 0] wea
         .addra(GAME_START_addr),    // input wire [10 : 0] addra
         .dina(0),                   // input wire [0 : 0] dina

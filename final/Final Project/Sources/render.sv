@@ -9,6 +9,14 @@ module Render (
     input [9:0] av_cnt,
     input [9:0] d_h_cnt,
     input [9:0] d_v_cnt,
+    input [9:0] h_cnt_1,
+    input [9:0] h_cnt_2,
+    input [9:0] h_cnt_3,
+    input [9:0] h_cnt_4,
+    input [9:0] v_cnt_1,
+    input [9:0] v_cnt_2,
+    input [9:0] v_cnt_3,
+    input [9:0] v_cnt_4,
     input [9:0] mouseX,
     input [9:0] mouseY,
     input valid,
@@ -36,12 +44,16 @@ module Render (
     parameter S_LOSE = 3'd6;
 
     wire [11:0] pixel_start;
-    Render_Start Render_Start (clk_25MHz, h_cnt, ah_cnt, v_cnt, av_cnt, mouseInStart, pixel_start);
+    Render_Start Render_Start (clk_25MHz, h_cnt, ah_cnt, v_cnt, av_cnt,
+        h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, 
+        mouseInStart, pixel_start);
     wire [11:0] pixel_menu;
     Render_Menu Render_Menu (clk_25MHz, h_cnt, ah_cnt, v_cnt, av_cnt,
+        h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4,
         mouseInLevel1, mouseInLevel2, mouseInLevel3, pixel_menu);
     wire [11:0] pixel_play;
     Render_Play Render_Play (rst, clk, clk_25MHz, display_cnt, h_cnt, ah_cnt, v_cnt, av_cnt, d_h_cnt, d_v_cnt,
+        h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4,
         Enemy_Instance, Army_Instance, mouseInFrame, pixel_play);
 
     always@(*) begin
@@ -57,6 +69,23 @@ module Render (
                 S_WIN:   {vgaRed, vgaGreen, vgaBlue} = 12'h0;
                 S_LOSE:  {vgaRed, vgaGreen, vgaBlue} = 12'h0;
                 default: {vgaRed, vgaGreen, vgaBlue} = 12'h0;
+            endcase
+        end
+    end
+
+    always @(posedge clk_25MHz) begin
+        if (!valid)                    {vgaRed, vgaGreen, vgaBlue} <= 12'h0;
+        else if (enable_mouse_display) {vgaRed, vgaGreen, vgaBlue} <= mouse_pixel;
+        else begin
+            case(scene)
+                S_START: {vgaRed, vgaGreen, vgaBlue} <= pixel_start;
+                S_MENU:  {vgaRed, vgaGreen, vgaBlue} <= pixel_menu;
+                S_PLAY1: {vgaRed, vgaGreen, vgaBlue} <= pixel_play;
+                S_PLAY2: {vgaRed, vgaGreen, vgaBlue} <= pixel_play;
+                S_PLAY3: {vgaRed, vgaGreen, vgaBlue} <= pixel_play;
+                S_WIN:   {vgaRed, vgaGreen, vgaBlue} <= 12'h0;
+                S_LOSE:  {vgaRed, vgaGreen, vgaBlue} <= 12'h0;
+                default: {vgaRed, vgaGreen, vgaBlue} <= 12'h0;
             endcase
         end
     end

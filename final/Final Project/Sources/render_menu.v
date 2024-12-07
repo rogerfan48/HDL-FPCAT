@@ -1,9 +1,17 @@
 module Render_Menu (
-    input clk,
+    input clk_25MHz,
     input [9:0] h_cnt,
     input [9:0] ah_cnt,
     input [9:0] v_cnt,
     input [9:0] av_cnt,
+    input [9:0] h_cnt_1,
+    input [9:0] h_cnt_2,
+    input [9:0] h_cnt_3,
+    input [9:0] h_cnt_4,
+    input [9:0] v_cnt_1,
+    input [9:0] v_cnt_2,
+    input [9:0] v_cnt_3,
+    input [9:0] v_cnt_4,
     input mouseInLevel1,
     input mouseInLevel2,
     input mouseInLevel3,
@@ -13,14 +21,14 @@ module Render_Menu (
     reg [10:0] LEVEL_1_addr;
     reg [10:0] LEVEL_2_addr;
     reg [10:0] LEVEL_3_addr;
-    always @(posedge clk) begin
+    always @(posedge clk_25MHz) begin
         LEVEL_1_addr <= (((av_cnt-90)/2)*60 + ((ah_cnt-240)/2)) % 1200;
         LEVEL_2_addr = (((av_cnt-210)/2)*60 + ((ah_cnt-240)/2)) % 1200;
         LEVEL_3_addr = (((av_cnt-330)/2)*60 + ((ah_cnt-240)/2)) % 1200;
     end
     wire LEVEL_1_value;
     mem_LEVEL mem_LEVEL_1 (
-        .clka(clk),             // input wire clka
+        .clka(clk_25MHz),       // input wire clka
         .wea(0),                // input wire [0 : 0] wea
         .addra(LEVEL_1_addr),   // input wire [10 : 0] addra
         .dina(0),               // input wire [0 : 0] dina
@@ -28,7 +36,7 @@ module Render_Menu (
     );
     wire LEVEL_2_value;
     mem_LEVEL mem_LEVEL_2 (
-        .clka(clk),             // input wire clka
+        .clka(clk_25MHz),       // input wire clka
         .wea(0),                // input wire [0 : 0] wea
         .addra(LEVEL_2_addr),   // input wire [10 : 0] addra
         .dina(0),               // input wire [0 : 0] dina
@@ -36,7 +44,7 @@ module Render_Menu (
     );
     wire LEVEL_3_value;
     mem_LEVEL mem_LEVEL_3 (
-        .clka(clk),             // input wire clka
+        .clka(clk_25MHz),       // input wire clka
         .wea(0),                // input wire [0 : 0] wea
         .addra(LEVEL_3_addr),   // input wire [10 : 0] addra
         .dina(0),               // input wire [0 : 0] dina
@@ -46,13 +54,13 @@ module Render_Menu (
     reg [10:0] num_menu_addr;
     wire num_menu_value;
     mem_Numbers mem_num_menu (
-        .clka(clk),             // input wire clka
+        .clka(clk_25MHz),       // input wire clka
         .wea(0),                // input wire [0 : 0] wea
         .addra(num_menu_addr),  // input wire [10 : 0] addra
         .dina(0),               // input wire [0 : 0] dina
         .douta(num_menu_value)  // output wire [0 : 0] douta
     );
-    always @(posedge clk) begin
+    always @(posedge clk_25MHz) begin
         if (ah_cnt>=10'd370 && ah_cnt<10'd400 && av_cnt>=10'd87 && av_cnt<10'd132) begin
             num_menu_addr <= (((av_cnt-87)/3)*10 + ((ah_cnt-370)/3)+150) % 1650;
         end else if (ah_cnt>=10'd370 && ah_cnt<10'd400 && av_cnt>=10'd207 && av_cnt<10'd252) begin
