@@ -20,7 +20,7 @@ module Clk_Divisor_6 (
 
     always @(posedge clk) num <= next_num;
 
-    assign next_num = (out ? 3'd0 : num + 1'b1);
+    assign next_num = ((num == 3'd5) ? 3'd0 : num + 1'b1);
     assign out = (num == 3'd5);
 endmodule
 

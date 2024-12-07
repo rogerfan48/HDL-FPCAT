@@ -183,13 +183,19 @@ module Top (
                 else                                next_scene = `S_MENU;
             end
             `S_PLAY1: begin
-                next_scene = scene;
+                if(game_win) next_scene = `S_WIN;
+                else if(game_lose) next_scene = `S_LOSE;
+                else next_scene = `S_PLAY1;
             end
             `S_PLAY2: begin
-                next_scene = scene;
+                if(game_win) next_scene = `S_WIN;
+                else if(game_lose) next_scene = `S_LOSE;
+                else next_scene = `S_PLAY2;
             end
             `S_PLAY3: begin
-                next_scene = scene;
+                if(game_win) next_scene = `S_WIN;
+                else if(game_lose) next_scene = `S_LOSE;
+                else next_scene = `S_PLAY3;
             end
             `S_WIN: begin
                 next_scene = scene;
