@@ -112,7 +112,8 @@ module Top (
         .Enemy_Instance(Enemy_Instance),
         .Army_Instance(Army_Instance),
         .game_win(game_win),
-        .game_lose(game_lose)
+        .game_lose(game_lose),
+        .rightgameState(arm_LED[7])
     );
 
     Render Render_0 (

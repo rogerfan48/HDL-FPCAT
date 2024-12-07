@@ -75,7 +75,8 @@ module Game_Engine (
     output reg [55:0] Enemy_Instance [7:0],
     output reg [55:0] Army_Instance [7:0],
     output wire game_win,
-    output wire game_lose
+    output wire game_lose,
+    output wire rightgameState
 );
     integer i;
 
@@ -123,6 +124,8 @@ module Game_Engine (
         else if (scene!=`S_PLAY1&&scene!=`S_PLAY2&&scene!=`S_PLAY3) gameState <= `GS_REST;
         else gameState <= next_gameState;
     end
+
+    assign rightgameState = (gameState==`GS_INIT || rightgameState==1'b1);
 
 // ? //////////     reg: Game Cnt = GAME TIME     //////////////
     reg [11:0] game_cnt;
