@@ -142,6 +142,8 @@ module Render_Play (
             end
         endcase
     end
+// ------------ Storing Value ------------>
+
 
     wire [18:0] enemy_pixel_value [7:0];
     Enemy_Pixel EP0 (Enemy_Instance[0][54:52], enemy_pixel_value[0]);
@@ -161,7 +163,6 @@ module Render_Play (
     Army_Pixel AP5 (Army_Instance[5][54:52], army_pixel_value[5]);
     Army_Pixel AP6 (Army_Instance[6][54:52], army_pixel_value[6]);
     Army_Pixel AP7 (Army_Instance[7][54:52], army_pixel_value[7]);
-
 
     wire [9:0] tower_enemy_addr_0 = ((av_cnt-90)/3)*20 + ((ah_cnt-10)/3);
     wire [9:0] tower_cat_addr_0 = ((av_cnt-90)/3)*20 + ((ah_cnt-570)/3);

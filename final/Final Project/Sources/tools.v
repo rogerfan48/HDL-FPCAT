@@ -1,27 +1,41 @@
 module Clk_Divisor_4 (
-    input clk, 
+    input clk,
+    input rst,  // 添加重置訊號 
     output out,
     output reg [1:0] num
 );
     wire [1:0] next_num;
 
-    always @(posedge clk) num <= next_num;
+    always @(posedge clk or posedge rst) begin
+        if (rst) num <= 2'b00;
+        else     num <= next_num;
+    end
 
     assign next_num = num + 1'b1;
     assign out = num[1];
 endmodule
 
 module Clk_Divisor_6 (
-    input clk, 
-    output out
+    input clk,
+    input rst,  // 添加重置信號
+    output reg out
 );
-    reg  [2:0] num;
-    wire [2:0] next_num;
-
-    always @(negedge clk) num <= next_num;
-
-    assign next_num = ((num == 3'd5) ? 3'd0 : num + 1'b1);
-    assign out = (num == 3'd5);
+    reg [2:0] num;
+    
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            num <= 3'd0;
+            out <= 1'b0;
+        end else begin
+            if (num == 3'd5) begin
+                num <= 3'd0;
+                out <= 1'b1;
+            end else begin
+                num <= num + 1'b1;
+                out <= 1'b0;
+            end
+        end
+    end
 endmodule
 
 module Debounce(clk, pb, pb_d);

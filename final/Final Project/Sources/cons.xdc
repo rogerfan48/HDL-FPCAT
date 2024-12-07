@@ -7,6 +7,14 @@
 set_property PACKAGE_PIN W5 [get_ports clk]
 set_property IOSTANDARD LVCMOS33 [get_ports clk]
 create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_ports clk]
+# 定義由Clk_Divisor_4產生的衍生時鐘
+create_generated_clock -name clk_25MHz -source [get_ports clk] -divide_by 4 [get_pins Clk_Div_4/num_reg[1]/Q]
+
+# 移除 set_clock_groups 設定，讓兩個時脈保持同步關係
+
+# 添加時序約束
+set_input_delay -clock [get_clocks sys_clk_pin] 2.000 [get_ports {PS2_CLK PS2_DATA rst}]
+set_output_delay -clock [get_clocks sys_clk_pin] 2.000 [get_ports {vgaRed[*] vgaGreen[*] vgaBlue[*] display[*] digit[*]}]
 
 ## Buttons
 set_property PACKAGE_PIN U17 [get_ports rst]

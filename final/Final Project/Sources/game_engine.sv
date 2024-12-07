@@ -60,6 +60,7 @@
 `define  Black_Bear 3'd3
 
 module Game_Engine (
+    input rst,
     input clk_25MHz,
     input [9:0] h_cnt,   //640
     input [9:0] v_cnt,   //480
@@ -67,7 +68,7 @@ module Game_Engine (
     input clk_frame,
     input [9:0] effectiveClick,
     input [2:0] scene,
-    input gameInit_OP,
+    input gameInit,
     output ableToUpgrade,
     output reg [2:0] purse_level,
     output reg [7:0] tower_cnt,
@@ -75,7 +76,7 @@ module Game_Engine (
     output reg [55:0] Enemy_Instance [7:0],
     output reg [55:0] Army_Instance [7:0],
     output wire game_win,
-    output wire game_lose,
+    output wire game_lose
 );
     integer i;
 
@@ -119,20 +120,21 @@ module Game_Engine (
     reg [4:0] next_gameState;
 
     always @(posedge clk_25MHz) begin
-        if (gameInit_OP) gameState <= `GS_INIT;
-        else if (scene!=`S_PLAY1&&scene!=`S_PLAY2&&scene!=`S_PLAY3) gameState <= `GS_REST;
-        else gameState <= next_gameState;
+        if (scene==`S_MENU && gameInit) gameState <= `GS_INIT;
+        else if (scene==`S_PLAY1||scene==`S_PLAY2||scene==`S_PLAY3) gameState <= next_gameState;
+        else gameState = `GS_REST;
     end
-// ? // Just for testing //
-    //always @(posedge clk_25MHz) rightgameState = (gameState==`GS_INIT || rightgameState==1'b1);
 
 // ? //////////     reg: Game Cnt = GAME TIME     //////////////
-    reg [11:0] game_cnt;
-
-    always @(posedge clk_frame) begin
-        if (gameState==`GS_INIT) game_cnt <= 12'd0;
-        else if (clk_6) game_cnt <= game_cnt + 1'b1;
-        else game_cnt <= game_cnt;
+    reg [11:0] game_cnt, next_game_cnt;
+    always @(posedge clk_25MHz or posedge rst) begin
+        if (rst)    game_cnt <= 12'd0;
+        else        game_cnt <= next_game_cnt;
+    end
+    always @(*) begin
+        next_game_cnt = game_cnt;
+        if (gameState==`GS_INIT)    next_game_cnt = 12'd0;
+        else if (clk_6)             next_game_cnt = game_cnt + 1'b1;
     end
 
 // ? //////////     reg: Money     //////////////

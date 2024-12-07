@@ -1,4 +1,4 @@
-module Seven_Segment(        // num limited in 0~100
+module Seven_Segment(
     input rst,
     input clk,
     input [14:0] nums,

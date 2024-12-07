@@ -88,14 +88,14 @@
   <FileSets Version="1" Minor="31">
     <FileSet Name="sources_1" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1" RelGenDir="$PGENDIR/sources_1">
       <Filter Type="Srcs"/>
-      <File Path="$PSRCDIR/sources_1/ip/mem_Btn_Fire/mem_Btn_Fire.xci">
+      <File Path="$PSRCDIR/sources_1/ip/mem_Btn_Purse/mem_Btn_Purse.xci">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
-      <File Path="$PSRCDIR/sources_1/ip/mem_Btn_Purse/mem_Btn_Purse.xci">
+      <File Path="$PSRCDIR/sources_1/ip/mem_Btn_Fire/mem_Btn_Fire.xci">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>

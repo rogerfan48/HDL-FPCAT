@@ -25,12 +25,12 @@ module Top (
 
     wire clk_25MHz;
     wire [1:0] display_cnt;
-    Clk_Divisor_4 Clk_Div_4 (clk, clk_25MHz, display_cnt);
+    Clk_Divisor_4 Clk_Div_4 (clk, rst, clk_25MHz, display_cnt);
 
     wire valid;
     wire clk_frame;
     wire clk_6;     // !! with respect to clk_frame
-    Clk_Divisor_6 Clk_Divisor_6(clk_frame, clk_6);
+    Clk_Divisor_6 Clk_Divisor_6(clk_frame, rst, clk_6);
     wire [9:0] h_cnt;   //640
     wire [9:0] ah_cnt;  //640
     wire [9:0] v_cnt;   //480
@@ -51,9 +51,8 @@ module Top (
     wire mouseInLevel1 = (mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd80 && mouseY<10'd140);
     wire mouseInLevel2 = (mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd200 && mouseY<10'd260);
     wire mouseInLevel3 = (mouseX>=10'd160 && mouseX<10'd480 && mouseY>=10'd320 && mouseY<10'd380);
-    wire gameInit, gameInit_OP;
+    wire gameInit;
     assign gameInit = (mouseL && (mouseInLevel1||mouseInLevel2||mouseInLevel3));
-    One_Palse One_Palse_GameInit (clk_frame, gameInit, gameInit_OP);
 
     wire ableToUpgrade;
     wire [2:0] purse_level;
@@ -97,6 +96,7 @@ module Top (
     assign effectiveClick[9] = (mouseL && mouseInFrame[9] && tower_cnt==`TOWER_CNT_MAX);
 
     Game_Engine Game_Engine_0 (
+        .rst(rst),
         .clk_25MHz(clk_25MHz),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt),
@@ -104,7 +104,7 @@ module Top (
         .clk_frame(clk_frame),
         .effectiveClick(effectiveClick),
         .scene(scene),
-        .gameInit_OP(gameInit_OP),
+        .gameInit(gameInit),
         .ableToUpgrade(ableToUpgrade),
         .purse_level(purse_level),
         .tower_cnt(tower_cnt),
@@ -112,7 +112,7 @@ module Top (
         .Enemy_Instance(Enemy_Instance),
         .Army_Instance(Army_Instance),
         .game_win(game_win),
-        .game_lose(game_lose),
+        .game_lose(game_lose)
     );
 
     Render Render_0 (
