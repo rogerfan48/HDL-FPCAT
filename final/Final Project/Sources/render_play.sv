@@ -203,16 +203,18 @@ module Render_Play (
     mem_Frame_Hacker_Cat mem_Frame_Hacker_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_hacker_addr), .dina(0), .douta(frame_hacker_value));
     mem_Frame_Elephant_Cat mem_Frame_Elephant_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_elephant_addr), .dina(0), .douta(frame_elephant_value));
 
-    wire [11:0] btn_purse_addr_0 = ((av_cnt-380)/2)*50 + ((ah_cnt)/2);
     wire [12:0] btn_fire_addr_0 = ((av_cnt-380)/2)*50 + ((ah_cnt-540)/2) + 2500;
-    reg [11:0] btn_purse_addr, btn_fire_addr;
+    wire [12:0] btn_fire_addr = (btn_fire_addr_0 < 5000 ? btn_fire_addr_0 : 0);
+    wire [1:0] btn_fire_value;
+    mem_Btn_Fire mem_Btn_Fire (.clka(clk_25MHz), .wea(0), .addra(btn_fire_addr), .dina(0), .douta(btn_fire_value));
+
+    wire [11:0] btn_purse_addr_0 = ((av_cnt-380) >> 1)*50 + ((ah_cnt) >> 1);
+    reg [11:0] btn_purse_addr;
     always @(posedge clk_25MHz) begin
         btn_purse_addr <= (btn_purse_addr_0 < 5000 ? btn_purse_addr_0 : 0);
-        btn_fire_addr <= (btn_fire_addr_0 < 5000 ? btn_fire_addr_0 : 0);
     end
-    wire [1:0] btn_purse_value, btn_fire_value;
+    wire [1:0] btn_purse_value;
     mem_Btn_Purse mem_Btn_Purse (.clka(clk_25MHz), .wea(0), .addra(btn_purse_addr), .dina(0), .douta(btn_purse_value));
-    mem_Btn_Fire mem_Btn_Fire (.clka(clk_25MHz), .wea(0), .addra(btn_fire_addr), .dina(0), .douta(btn_fire_value));
 
     always @(*) begin
         if (v_cnt<10'd270) begin    // simply cut half, this is upper half (gaming) for shortening Circuit Longest Length
