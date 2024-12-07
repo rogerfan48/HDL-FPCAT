@@ -35,6 +35,7 @@ module Render_Start (
     mem_FPCAT mem_FPCAT_0 (.clka(clk_25MHz), .wea(0), .addra(FPCAT_pp2),  .dina(0), .douta(FPCAT_value));
 
     reg [10:0] GAME_START_pp00, GAME_START_pp01, GAME_START_pp10, GAME_START_pp11, GAME_START_pp2;
+    wire GAME_START_value;
     always @(posedge clk_25MHz) begin
         GAME_START_pp00 <= ((v_cnt_5-280)/2);
         GAME_START_pp01 <= ((h_cnt_5-220)/2);
@@ -42,7 +43,6 @@ module Render_Start (
         GAME_START_pp11 <= GAME_START_pp01;
         GAME_START_pp2 <= (GAME_START_pp10 + GAME_START_pp11) % 2000;
     end
-    wire GAME_START_value;
     mem_GAME_START mem_GAME_START_0 (.clka(clk_25MHz), .wea(0), .addra(GAME_START_pp2), .dina(0), .douta(GAME_START_value));
 
     always @(*) begin

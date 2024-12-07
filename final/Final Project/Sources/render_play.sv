@@ -40,399 +40,577 @@ module Render_Play (
     output reg [11:0] pixel
 );
 
-    reg  [55:0] Enemy_Instance_0, Enemy_Instance_1;
     wire [18:0] enemy_0_pixel_value, enemy_1_pixel_value;
     wire  [2:0] enemy_0_picNum, enemy_1_picNum;
-    Enemy_Pixel EnemyPixel0 (Enemy_Instance_0[54:52], enemy_0_pixel_value);
-    Enemy_Pixel EnemyPixel1 (Enemy_Instance_1[54:52], enemy_1_pixel_value);
-    PicNum_By_State PicNum_By_State0 (Enemy_Instance_0[19:16], Enemy_Instance_0[45], enemy_0_picNum);
-    PicNum_By_State PicNum_By_State1 (Enemy_Instance_1[19:16], Enemy_Instance_1[45], enemy_1_picNum);
-    wire [11:0] enemy_0_addr = (
-        (((d_v_cnt - Enemy_Instance_0[41:32]) >> 1) * enemy_0_pixel_value[18:12]) + 
-        (((d_h_cnt - Enemy_Instance_0[51:42]) >> 1)) + 
-        (enemy_0_pixel_value[18:12] * enemy_0_pixel_value[11:5] * enemy_0_picNum));   
-    wire [11:0] enemy_1_addr = (
-        (((d_v_cnt - Enemy_Instance_1[41:32]) >> 1) * enemy_1_pixel_value[18:12]) + 
-        (((d_h_cnt - Enemy_Instance_1[51:42]) >> 1)) +
-        (enemy_1_pixel_value[18:12] * enemy_1_pixel_value[11:5] * enemy_1_picNum));
+    wire enemy_0_diff = enemy_0_pixel_value[18:12] * enemy_0_pixel_value[11:5] * enemy_0_picNum;
+    wire enemy_1_diff = enemy_1_pixel_value[18:12] * enemy_1_pixel_value[11:5] * enemy_1_picNum;
+    Enemy_Pixel EnemyPixel0 (Enemy_Instance[0][54:52], enemy_0_pixel_value);
+    Enemy_Pixel EnemyPixel1 (Enemy_Instance[1][54:52], enemy_1_pixel_value);
+    PicNum_By_State PicNum_By_State0 (Enemy_Instance[0][19:16], Enemy_Instance[0][45], enemy_0_picNum);
+    PicNum_By_State PicNum_By_State1 (Enemy_Instance[1][19:16], Enemy_Instance[1][45], enemy_1_picNum);
+    reg [11:0] enemy_0_pp00, enemy_0_pp01, enemy_0_pp10, enemy_0_pp11, enemy_0_pp2;
+    reg [11:0] enemy_1_pp00, enemy_1_pp01, enemy_1_pp10, enemy_1_pp11, enemy_1_pp2;
     wire [1:0] enemy_0_value, enemy_1_value;
-    Enemy_Render_Pixel Enemy_Render_01 (.clk(clk), 
-        .type_a(Enemy_Instance_0[54:52]), .addr_a(enemy_0_addr), .pixel_value_a(enemy_0_value),
-        .type_b(Enemy_Instance_1[54:52]), .addr_b(enemy_1_addr), .pixel_value_b(enemy_1_value));
+    always @(posedge clk_25MHz) begin
+        enemy_0_pp00 <= ((v_cnt_5 - Enemy_Instance[0][41:32]) >> 1);
+        enemy_0_pp01 <= ((h_cnt_5 - Enemy_Instance[0][51:42]) >> 1);
+        enemy_0_pp10 <= enemy_0_pp00 * enemy_0_pixel_value[18:12];
+        enemy_0_pp11 <= enemy_0_pp01 + enemy_0_diff;
+        enemy_0_pp2 <= (enemy_0_pp10 + enemy_0_pp11);
+    end
+    always @(posedge clk_25MHz) begin
+        enemy_1_pp00 <= ((v_cnt_5 - Enemy_Instance[1][41:32]) >> 1);
+        enemy_1_pp01 <= ((h_cnt_5 - Enemy_Instance[1][51:42]) >> 1);
+        enemy_1_pp10 <= enemy_1_pp00 * enemy_1_pixel_value[18:12];
+        enemy_1_pp11 <= enemy_1_pp01 + enemy_0_diff;
+        enemy_1_pp2 <= (enemy_1_pp10 + enemy_1_pp11);
+    end
+    Enemy_Render_Pixel Enemy_Render_01 (.clk(clk_25MHz), 
+        .type_a(Enemy_Instance[0][54:52]), .addr_a(enemy_0_pp2), .pixel_value_a(enemy_0_value),
+        .type_b(Enemy_Instance[1][54:52]), .addr_b(enemy_1_pp2), .pixel_value_b(enemy_1_value));
 
-    reg  [55:0] Army_Instance_0, Army_Instance_1;
+    wire [18:0] enemy_2_pixel_value, enemy_3_pixel_value;
+    wire  [2:0] enemy_2_picNum, enemy_3_picNum;
+    wire enemy_2_diff = enemy_2_pixel_value[18:12] * enemy_2_pixel_value[11:5] * enemy_2_picNum;
+    wire enemy_3_diff = enemy_3_pixel_value[18:12] * enemy_3_pixel_value[11:5] * enemy_3_picNum;
+    Enemy_Pixel EnemyPixel2 (Enemy_Instance[2][54:52], enemy_2_pixel_value);
+    Enemy_Pixel EnemyPixel3 (Enemy_Instance[3][54:52], enemy_3_pixel_value);
+    PicNum_By_State PicNum_By_State2 (Enemy_Instance[2][19:16], Enemy_Instance[2][45], enemy_2_picNum);
+    PicNum_By_State PicNum_By_State3 (Enemy_Instance[3][19:16], Enemy_Instance[3][45], enemy_3_picNum);
+    reg [11:0] enemy_2_pp00, enemy_2_pp01, enemy_2_pp10, enemy_2_pp11, enemy_2_pp2;
+    reg [11:0] enemy_3_pp00, enemy_3_pp01, enemy_3_pp10, enemy_3_pp11, enemy_3_pp2;
+    wire [1:0] enemy_2_value, enemy_3_value;
+    always @(posedge clk_25MHz) begin
+        enemy_2_pp00 <= ((v_cnt_5 - Enemy_Instance[2][41:32]) >> 1);
+        enemy_2_pp01 <= ((h_cnt_5 - Enemy_Instance[2][51:42]) >> 1);
+        enemy_2_pp10 <= enemy_2_pp00 * enemy_2_pixel_value[18:12];
+        enemy_2_pp11 <= enemy_2_pp01 + enemy_2_diff;
+        enemy_2_pp2 <= (enemy_2_pp10 + enemy_2_pp11);
+    end
+    always @(posedge clk_25MHz) begin
+        enemy_3_pp00 <= ((v_cnt_5 - Enemy_Instance[3][41:32]) >> 1);
+        enemy_3_pp01 <= ((h_cnt_5 - Enemy_Instance[3][51:42]) >> 1);
+        enemy_3_pp10 <= enemy_3_pp00 * enemy_3_pixel_value[18:12];
+        enemy_3_pp11 <= enemy_3_pp01 + enemy_3_diff;
+        enemy_3_pp2 <= (enemy_3_pp10 + enemy_3_pp11);
+    end
+    Enemy_Render_Pixel Enemy_Render_23 (.clk(clk_25MHz), 
+        .type_a(Enemy_Instance[2][54:52]), .addr_a(enemy_2_pp2), .pixel_value_a(enemy_2_value),
+        .type_b(Enemy_Instance[3][54:52]), .addr_b(enemy_3_pp2), .pixel_value_b(enemy_3_value));
+
+    wire [18:0] enemy_4_pixel_value, enemy_5_pixel_value;
+    wire  [2:0] enemy_4_picNum, enemy_5_picNum;
+    wire enemy_4_diff = enemy_4_pixel_value[18:12] * enemy_4_pixel_value[11:5] * enemy_4_picNum;
+    wire enemy_5_diff = enemy_5_pixel_value[18:12] * enemy_5_pixel_value[11:5] * enemy_5_picNum;
+    Enemy_Pixel EnemyPixel4 (Enemy_Instance[4][54:52], enemy_4_pixel_value);
+    Enemy_Pixel EnemyPixel5 (Enemy_Instance[5][54:52], enemy_5_pixel_value);
+    PicNum_By_State PicNum_By_State4 (Enemy_Instance[4][19:16], Enemy_Instance[4][45], enemy_4_picNum);
+    PicNum_By_State PicNum_By_State5 (Enemy_Instance[5][19:16], Enemy_Instance[5][45], enemy_5_picNum);
+    reg [11:0] enemy_4_pp00, enemy_4_pp01, enemy_4_pp10, enemy_4_pp11, enemy_4_pp2;
+    reg [11:0] enemy_5_pp00, enemy_5_pp01, enemy_5_pp10, enemy_5_pp11, enemy_5_pp2;
+    wire [1:0] enemy_4_value, enemy_5_value;
+    always @(posedge clk_25MHz) begin
+        enemy_4_pp00 <= ((v_cnt_5 - Enemy_Instance[4][41:32]) >> 1);
+        enemy_4_pp01 <= ((h_cnt_5 - Enemy_Instance[4][51:42]) >> 1);
+        enemy_4_pp10 <= enemy_4_pp00 * enemy_4_pixel_value[18:12];
+        enemy_4_pp11 <= enemy_4_pp01 + enemy_4_diff;
+        enemy_4_pp2 <= (enemy_4_pp10 + enemy_4_pp11);
+    end
+    always @(posedge clk_25MHz) begin
+        enemy_5_pp00 <= ((v_cnt_5 - Enemy_Instance[5][41:32]) >> 1);
+        enemy_5_pp01 <= ((h_cnt_5 - Enemy_Instance[5][51:42]) >> 1);
+        enemy_5_pp10 <= enemy_5_pp00 * enemy_5_pixel_value[18:12];
+        enemy_5_pp11 <= enemy_5_pp01 + enemy_5_diff;
+        enemy_5_pp2 <= (enemy_5_pp10 + enemy_5_pp11);
+    end
+    Enemy_Render_Pixel Enemy_Render_45 (.clk(clk_25MHz), 
+        .type_a(Enemy_Instance[4][54:52]), .addr_a(enemy_4_pp2), .pixel_value_a(enemy_4_value),
+        .type_b(Enemy_Instance[5][54:52]), .addr_b(enemy_5_pp2), .pixel_value_b(enemy_5_value));
+
+    wire [18:0] enemy_6_pixel_value, enemy_7_pixel_value;
+    wire  [2:0] enemy_6_picNum, enemy_7_picNum;
+    wire enemy_6_diff = enemy_6_pixel_value[18:12] * enemy_6_pixel_value[11:5] * enemy_6_picNum;
+    wire enemy_7_diff = enemy_7_pixel_value[18:12] * enemy_7_pixel_value[11:5] * enemy_7_picNum;
+    Enemy_Pixel EnemyPixel6 (Enemy_Instance[6][54:52], enemy_6_pixel_value);
+    Enemy_Pixel EnemyPixel7 (Enemy_Instance[7][54:52], enemy_7_pixel_value);
+    PicNum_By_State PicNum_By_State6 (Enemy_Instance[6][19:16], Enemy_Instance[6][45], enemy_6_picNum);
+    PicNum_By_State PicNum_By_State7 (Enemy_Instance[7][19:16], Enemy_Instance[7][45], enemy_7_picNum);
+    reg [11:0] enemy_6_pp00, enemy_6_pp01, enemy_6_pp10, enemy_6_pp11, enemy_6_pp2;
+    reg [11:0] enemy_7_pp00, enemy_7_pp01, enemy_7_pp10, enemy_7_pp11, enemy_7_pp2;
+    wire [1:0] enemy_6_value, enemy_7_value;
+    always @(posedge clk_25MHz) begin
+        enemy_6_pp00 <= ((v_cnt_5 - Enemy_Instance[6][41:32]) >> 1);
+        enemy_6_pp01 <= ((h_cnt_5 - Enemy_Instance[6][51:42]) >> 1);
+        enemy_6_pp10 <= enemy_6_pp00 * enemy_6_pixel_value[18:12];
+        enemy_6_pp11 <= enemy_6_pp01 + enemy_6_diff;
+        enemy_6_pp2 <= (enemy_6_pp10 + enemy_6_pp11);
+    end
+    always @(posedge clk_25MHz) begin
+        enemy_7_pp00 <= ((v_cnt_5 - Enemy_Instance[7][41:32]) >> 1);
+        enemy_7_pp01 <= ((h_cnt_5 - Enemy_Instance[7][51:42]) >> 1);
+        enemy_7_pp10 <= enemy_7_pp00 * enemy_7_pixel_value[18:12];
+        enemy_7_pp11 <= enemy_7_pp01 + enemy_7_diff;
+        enemy_7_pp2 <= (enemy_7_pp10 + enemy_7_pp11);
+    end
+    Enemy_Render_Pixel Enemy_Render_67 (.clk(clk_25MHz), 
+        .type_a(Enemy_Instance[6][54:52]), .addr_a(enemy_6_pp2), .pixel_value_a(enemy_6_value),
+        .type_b(Enemy_Instance[7][54:52]), .addr_b(enemy_7_pp2), .pixel_value_b(enemy_7_value));
+
+
+
     wire [18:0] army_0_pixel_value, army_1_pixel_value;
     wire  [2:0] army_0_picNum, army_1_picNum;
-    Army_Pixel ArmyPixel0 (Army_Instance_0[54:52], army_0_pixel_value);
-    Army_Pixel ArmyPixel1 (Army_Instance_1[54:52], army_1_pixel_value);
-    PicNum_By_State PicNum_By_State8 (Army_Instance_0[19:16], Army_Instance_0[45], army_0_picNum);
-    PicNum_By_State PicNum_By_State9 (Army_Instance_1[19:16], Army_Instance_1[45], army_1_picNum);
-    wire [12:0] army_0_addr = (
-        (((d_v_cnt - Army_Instance_0[41:32]) >> 1) * army_0_pixel_value[18:12]) + 
-        (((d_h_cnt - Army_Instance_0[51:42]) >> 1)) + 
-        (army_0_pixel_value[18:12] * army_0_pixel_value[11:5] * army_0_picNum));
-    wire [12:0] army_1_addr = (
-        (((d_v_cnt - Army_Instance_1[41:32]) >> 1) * army_1_pixel_value[18:12]) + 
-        (((d_h_cnt - Army_Instance_1[51:42]) >> 1)) +
-        (army_1_pixel_value[18:12] * army_1_pixel_value[11:5] * army_1_picNum));
+    wire army_0_diff = army_0_pixel_value[18:12] * army_0_pixel_value[11:5] * army_0_picNum;
+    wire army_1_diff = army_1_pixel_value[18:12] * army_1_pixel_value[11:5] * army_1_picNum;
+    Army_Pixel ArmyPixel0 (Army_Instance[0][54:52], army_0_pixel_value);
+    Army_Pixel ArmyPixel1 (Army_Instance[1][54:52], army_1_pixel_value);
+    PicNum_By_State PicNum_By_State0_ (Army_Instance[0][19:16], Army_Instance[0][45], army_0_picNum);
+    PicNum_By_State PicNum_By_State1_ (Army_Instance[1][19:16], Army_Instance[1][45], army_1_picNum);
+    reg [12:0] army_0_pp00, army_0_pp01, army_0_pp10, army_0_pp11, army_0_pp2;
+    reg [12:0] army_1_pp00, army_1_pp01, army_1_pp10, army_1_pp11, army_1_pp2;
     wire [1:0] army_0_value, army_1_value;
-    Army_Render_Pixel Army_Render_01 (.clk(clk), 
-        .type_a(Army_Instance_0[54:52]), .addr_a(army_0_addr), .pixel_value_a(army_0_value),
-        .type_b(Army_Instance_1[54:52]), .addr_b(army_1_addr), .pixel_value_b(army_1_value));
-
-
-// <----------- Storing Value -------------
-    reg [1:0] d_cnt;
-    reg [1:0] enemy_value_tmp [5:0];
-    reg [1:0] army_value_tmp [5:0];
-    reg [1:0] enemy_value [7:0];
-    reg [1:0] army_value [7:0];
-    reg [1:0] next_enemy_value_tmp [5:0];
-    reg [1:0] next_army_value_tmp [5:0];
-    reg [1:0] next_enemy_value [7:0];
-    reg [1:0] next_army_value [7:0];
-    always @(posedge clk) begin
-        if (rst) begin
-            d_cnt <= display_cnt;
-        end else begin
-            d_cnt <= d_cnt + 1'b1;
-        end
-        enemy_value_tmp <= next_enemy_value_tmp;
-        army_value_tmp <= next_army_value_tmp;
-        enemy_value <= next_enemy_value;
-        army_value <= next_army_value;
-    end
-    //   ||      |      |      |      ||  
-    //   10      11     00     01     10
-    always @(*) begin
-        next_enemy_value_tmp = enemy_value_tmp;
-        next_army_value_tmp = army_value_tmp;
-        next_enemy_value = enemy_value;
-        next_army_value = army_value;
-        case (d_cnt)
-            2'b11: begin
-                Enemy_Instance_0 = Enemy_Instance[0];
-                Enemy_Instance_1 = Enemy_Instance[1];
-                next_enemy_value_tmp[2] = enemy_0_value;
-                next_enemy_value_tmp[3] = enemy_1_value;
-                Army_Instance_0 = Army_Instance[0];
-                Army_Instance_1 = Army_Instance[1];
-                next_army_value_tmp[2] = army_0_value;
-                next_army_value_tmp[3] = army_1_value;
-            end
-            2'b00: begin
-                Enemy_Instance_0 = Enemy_Instance[2];
-                Enemy_Instance_1 = Enemy_Instance[3];
-                next_enemy_value_tmp[4] = enemy_0_value;
-                next_enemy_value_tmp[5] = enemy_1_value;
-                Army_Instance_0 = Army_Instance[2];
-                Army_Instance_1 = Army_Instance[3];
-                next_army_value_tmp[4] = army_0_value;
-                next_army_value_tmp[5] = army_1_value;
-            end
-            2'b01: begin
-                Enemy_Instance_0 = Enemy_Instance[4];
-                Enemy_Instance_1 = Enemy_Instance[5];
-                next_enemy_value[5:0] = enemy_value_tmp[5:0];
-                next_enemy_value[6] = enemy_0_value;
-                next_enemy_value[7] = enemy_1_value;
-                Army_Instance_0 = Army_Instance[4];
-                Army_Instance_1 = Army_Instance[5];
-                next_army_value[5:0] = army_value_tmp[5:0];
-                next_army_value[6] = army_0_value;
-                next_army_value[7] = army_1_value;
-            end
-            2'b10: begin
-                Enemy_Instance_0 = Enemy_Instance[6];
-                Enemy_Instance_1 = Enemy_Instance[7];
-                next_enemy_value_tmp[0] = enemy_0_value;
-                next_enemy_value_tmp[1] = enemy_1_value;
-                Army_Instance_0 = Army_Instance[6];
-                Army_Instance_1 = Army_Instance[7];
-                next_army_value_tmp[0] = army_0_value;
-                next_army_value_tmp[1] = army_1_value;
-            end
-        endcase
-    end
-// ------------ Storing Value ------------>
-
-
-    wire [18:0] enemy_pixel_value [7:0];
-    Enemy_Pixel EP0 (Enemy_Instance[0][54:52], enemy_pixel_value[0]);
-    Enemy_Pixel EP1 (Enemy_Instance[1][54:52], enemy_pixel_value[1]);
-    Enemy_Pixel EP2 (Enemy_Instance[2][54:52], enemy_pixel_value[2]);
-    Enemy_Pixel EP3 (Enemy_Instance[3][54:52], enemy_pixel_value[3]);
-    Enemy_Pixel EP4 (Enemy_Instance[4][54:52], enemy_pixel_value[4]);
-    Enemy_Pixel EP5 (Enemy_Instance[5][54:52], enemy_pixel_value[5]);
-    Enemy_Pixel EP6 (Enemy_Instance[6][54:52], enemy_pixel_value[6]);
-    Enemy_Pixel EP7 (Enemy_Instance[7][54:52], enemy_pixel_value[7]);
-    wire [18:0] army_pixel_value [7:0];
-    Army_Pixel AP0 (Army_Instance[0][54:52], army_pixel_value[0]);
-    Army_Pixel AP1 (Army_Instance[1][54:52], army_pixel_value[1]);
-    Army_Pixel AP2 (Army_Instance[2][54:52], army_pixel_value[2]);
-    Army_Pixel AP3 (Army_Instance[3][54:52], army_pixel_value[3]);
-    Army_Pixel AP4 (Army_Instance[4][54:52], army_pixel_value[4]);
-    Army_Pixel AP5 (Army_Instance[5][54:52], army_pixel_value[5]);
-    Army_Pixel AP6 (Army_Instance[6][54:52], army_pixel_value[6]);
-    Army_Pixel AP7 (Army_Instance[7][54:52], army_pixel_value[7]);
-
-    wire [9:0] tower_enemy_addr_0 = ((av_cnt-90)/3)*20 + ((ah_cnt-10)/3);
-    wire [9:0] tower_cat_addr_0 = ((av_cnt-90)/3)*20 + ((ah_cnt-570)/3);
-    reg [9:0] tower_enemy_addr, tower_cat_addr;
     always @(posedge clk_25MHz) begin
-        tower_enemy_addr <= (tower_enemy_addr_0 < 800 ? tower_enemy_addr_0 : 0);
-        tower_cat_addr <= (tower_cat_addr_0 < 800 ? tower_cat_addr_0 : 0);
+        army_0_pp00 <= ((v_cnt_5 - Army_Instance[0][41:32]) >> 1);
+        army_0_pp01 <= ((h_cnt_5 - Army_Instance[0][51:42]) >> 1);
+        army_0_pp10 <= army_0_pp00 * army_0_pixel_value[18:12];
+        army_0_pp11 <= army_0_pp01 + army_0_diff;
+        army_0_pp2 <= (army_0_pp10 + army_0_pp11);
     end
-    wire [1:0] tower_enemy_value, tower_cat_value;
-    mem_Tower_Enemy mem_Tower_Enemy (.clka(clk_25MHz), .wea(0), .addra(tower_enemy_addr), .dina(0), .douta(tower_enemy_value));
-    mem_Tower_Cat mem_Tower_Cat (.clka(clk_25MHz), .wea(0), .addra(tower_cat_addr), .dina(0), .douta(tower_cat_value));
-
-    wire [8:0] frame_joker_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-105)/4);
-    wire [8:0] frame_fish_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-215)/4);
-    wire [8:0] frame_trap_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-325)/4);
-    wire [8:0] frame_jay_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-435)/4);
-    wire [8:0] frame_bomb_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-105)/4);
-    wire [8:0] frame_CY_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-215)/4);
-    wire [8:0] frame_hacker_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-325)/4);
-    wire [8:0] frame_elephant_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-435)/4);
-    reg [8:0] frame_joker_addr, frame_fish_addr, frame_trap_addr, frame_jay_addr, frame_bomb_addr, frame_CY_addr, frame_hacker_addr, frame_elephant_addr;
     always @(posedge clk_25MHz) begin
-        frame_joker_addr <= (frame_joker_addr_0 < 500 ? frame_joker_addr_0 : 0);
-        frame_fish_addr <= (frame_fish_addr_0 < 500 ? frame_fish_addr_0 : 0);
-        frame_trap_addr <= (frame_trap_addr_0 < 500 ? frame_trap_addr_0 : 0);
-        frame_jay_addr <= (frame_jay_addr_0 < 500 ? frame_jay_addr_0 : 0);
-        frame_bomb_addr <= (frame_bomb_addr_0 < 500 ? frame_bomb_addr_0 : 0);
-        frame_CY_addr <= (frame_CY_addr_0 < 500 ? frame_CY_addr_0 : 0);
-        frame_hacker_addr <= (frame_hacker_addr_0 < 500 ? frame_hacker_addr_0 : 0);
-        frame_elephant_addr <= (frame_elephant_addr_0 < 500 ? frame_elephant_addr_0 : 0);
+        army_1_pp00 <= ((v_cnt_5 - Army_Instance[1][41:32]) >> 1);
+        army_1_pp01 <= ((h_cnt_5 - Army_Instance[1][51:42]) >> 1);
+        army_1_pp10 <= army_1_pp00 * army_1_pixel_value[18:12];
+        army_1_pp11 <= army_1_pp01 + army_0_diff;
+        army_1_pp2 <= (army_1_pp10 + army_1_pp11);
     end
-    wire [1:0] frame_joker_value, frame_fish_value, frame_trap_value, frame_jay_value, frame_bomb_value, frame_CY_value, frame_hacker_value, frame_elephant_value;
-    mem_Frame_Joker_Cat mem_Frame_Joker_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_joker_addr), .dina(0), .douta(frame_joker_value));
-    mem_Frame_Fish_Cat  mem_Frame_Fish_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_fish_addr), .dina(0), .douta(frame_fish_value));
-    mem_Frame_Trap_Cat  mem_Frame_Trap_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_trap_addr), .dina(0), .douta(frame_trap_value));
-    mem_Frame_Jay_Cat   mem_Frame_Jay_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_jay_addr), .dina(0), .douta(frame_jay_value));
-    mem_Frame_Bomb_Cat  mem_Frame_Bomb_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_bomb_addr), .dina(0), .douta(frame_bomb_value));
-    mem_Frame_CY_Cat    mem_Frame_CY_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_CY_addr), .dina(0), .douta(frame_CY_value));
-    mem_Frame_Hacker_Cat mem_Frame_Hacker_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_hacker_addr), .dina(0), .douta(frame_hacker_value));
-    mem_Frame_Elephant_Cat mem_Frame_Elephant_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_elephant_addr), .dina(0), .douta(frame_elephant_value));
+    Army_Render_Pixel Army_Render_01 (.clk(clk_25MHz), 
+        .type_a(Army_Instance[0][54:52]), .addr_a(army_0_pp2), .pixel_value_a(army_0_value),
+        .type_b(Army_Instance[1][54:52]), .addr_b(army_1_pp2), .pixel_value_b(army_1_value));
 
-    wire [12:0] btn_fire_addr_0 = ((av_cnt-380)/2)*50 + ((ah_cnt-540)/2) + 2500;
-    wire [12:0] btn_fire_addr = (btn_fire_addr_0 < 5000 ? btn_fire_addr_0 : 0);
+    wire [18:0] army_2_pixel_value, army_3_pixel_value;
+    wire  [2:0] army_2_picNum, army_3_picNum;
+    wire army_2_diff = army_2_pixel_value[18:12] * army_2_pixel_value[11:5] * army_2_picNum;
+    wire army_3_diff = army_3_pixel_value[18:12] * army_3_pixel_value[11:5] * army_3_picNum;
+    Army_Pixel ArmyPixel2 (Army_Instance[2][54:52], army_2_pixel_value);
+    Army_Pixel ArmyPixel3 (Army_Instance[3][54:52], army_3_pixel_value);
+    PicNum_By_State PicNum_By_State2_ (Army_Instance[2][19:16], Army_Instance[2][45], army_2_picNum);
+    PicNum_By_State PicNum_By_State3_ (Army_Instance[3][19:16], Army_Instance[3][45], army_3_picNum);
+    reg [12:0] army_2_pp00, army_2_pp01, army_2_pp10, army_2_pp11, army_2_pp2;
+    reg [12:0] army_3_pp00, army_3_pp01, army_3_pp10, army_3_pp11, army_3_pp2;
+    wire [1:0] army_2_value, army_3_value;
+    always @(posedge clk_25MHz) begin
+        army_2_pp00 <= ((v_cnt_5 - Army_Instance[2][41:32]) >> 1);
+        army_2_pp01 <= ((h_cnt_5 - Army_Instance[2][51:42]) >> 1);
+        army_2_pp10 <= army_2_pp00 * army_2_pixel_value[18:12];
+        army_2_pp11 <= army_2_pp01 + army_2_diff;
+        army_2_pp2 <= (army_2_pp10 + army_2_pp11);
+    end
+    always @(posedge clk_25MHz) begin
+        army_3_pp00 <= ((v_cnt_5 - Army_Instance[3][41:32]) >> 1);
+        army_3_pp01 <= ((h_cnt_5 - Army_Instance[3][51:42]) >> 1);
+        army_3_pp10 <= army_3_pp00 * army_3_pixel_value[18:12];
+        army_3_pp11 <= army_3_pp01 + army_3_diff;
+        army_3_pp2 <= (army_3_pp10 + army_3_pp11);
+    end
+    Army_Render_Pixel Army_Render_23 (.clk(clk_25MHz), 
+        .type_a(Army_Instance[2][54:52]), .addr_a(army_2_pp2), .pixel_value_a(army_2_value),
+        .type_b(Army_Instance[3][54:52]), .addr_b(army_3_pp2), .pixel_value_b(army_3_value));
+
+    wire [18:0] army_4_pixel_value, army_5_pixel_value;
+    wire  [2:0] army_4_picNum, army_5_picNum;
+    wire army_4_diff = army_4_pixel_value[18:12] * army_4_pixel_value[11:5] * army_4_picNum;
+    wire army_5_diff = army_5_pixel_value[18:12] * army_5_pixel_value[11:5] * army_5_picNum;
+    Army_Pixel ArmyPixel4 (Army_Instance[4][54:52], army_4_pixel_value);
+    Army_Pixel ArmyPixel5 (Army_Instance[5][54:52], army_5_pixel_value);
+    PicNum_By_State PicNum_By_State4_ (Army_Instance[4][19:16], Army_Instance[4][45], army_4_picNum);
+    PicNum_By_State PicNum_By_State5_ (Army_Instance[5][19:16], Army_Instance[5][45], army_5_picNum);
+    reg [12:0] army_4_pp00, army_4_pp01, army_4_pp10, army_4_pp11, army_4_pp2;
+    reg [12:0] army_5_pp00, army_5_pp01, army_5_pp10, army_5_pp11, army_5_pp2;
+    wire [1:0] army_4_value, army_5_value;
+    always @(posedge clk_25MHz) begin
+        army_4_pp00 <= ((v_cnt_5 - Army_Instance[4][41:32]) >> 1);
+        army_4_pp01 <= ((h_cnt_5 - Army_Instance[4][51:42]) >> 1);
+        army_4_pp10 <= army_4_pp00 * army_4_pixel_value[18:12];
+        army_4_pp11 <= army_4_pp01 + army_4_diff;
+        army_4_pp2 <= (army_4_pp10 + army_4_pp11);
+    end
+    always @(posedge clk_25MHz) begin
+        army_5_pp00 <= ((v_cnt_5 - Army_Instance[5][41:32]) >> 1);
+        army_5_pp01 <= ((h_cnt_5 - Army_Instance[5][51:42]) >> 1);
+        army_5_pp10 <= army_5_pp00 * army_5_pixel_value[18:12];
+        army_5_pp11 <= army_5_pp01 + army_5_diff;
+        army_5_pp2 <= (army_5_pp10 + army_5_pp11);
+    end
+    Army_Render_Pixel Army_Render_45 (.clk(clk_25MHz), 
+        .type_a(Army_Instance[4][54:52]), .addr_a(army_4_pp2), .pixel_value_a(army_4_value),
+        .type_b(Army_Instance[5][54:52]), .addr_b(army_5_pp2), .pixel_value_b(army_5_value));
+
+    wire [18:0] army_6_pixel_value, army_7_pixel_value;
+    wire  [2:0] army_6_picNum, army_7_picNum;
+    wire army_6_diff = army_6_pixel_value[18:12] * army_6_pixel_value[11:5] * army_6_picNum;
+    wire army_7_diff = army_7_pixel_value[18:12] * army_7_pixel_value[11:5] * army_7_picNum;
+    Army_Pixel ArmyPixel6 (Army_Instance[6][54:52], army_6_pixel_value);
+    Army_Pixel ArmyPixel7 (Army_Instance[7][54:52], army_7_pixel_value);
+    PicNum_By_State PicNum_By_State6_ (Army_Instance[6][19:16], Army_Instance[6][45], army_6_picNum);
+    PicNum_By_State PicNum_By_State7_ (Army_Instance[7][19:16], Army_Instance[7][45], army_7_picNum);
+    reg [12:0] army_6_pp00, army_6_pp01, army_6_pp10, army_6_pp11, army_6_pp2;
+    reg [12:0] army_7_pp00, army_7_pp01, army_7_pp10, army_7_pp11, army_7_pp2;
+    wire [1:0] army_6_value, army_7_value;
+    always @(posedge clk_25MHz) begin
+        army_6_pp00 <= ((v_cnt_5 - Army_Instance[6][41:32]) >> 1);
+        army_6_pp01 <= ((h_cnt_5 - Army_Instance[6][51:42]) >> 1);
+        army_6_pp10 <= army_6_pp00 * army_6_pixel_value[18:12];
+        army_6_pp11 <= army_6_pp01 + army_6_diff;
+        army_6_pp2 <= (army_6_pp10 + army_6_pp11);
+    end
+    always @(posedge clk_25MHz) begin
+        army_7_pp00 <= ((v_cnt_5 - Army_Instance[7][41:32]) >> 1);
+        army_7_pp01 <= ((h_cnt_5 - Army_Instance[7][51:42]) >> 1);
+        army_7_pp10 <= army_7_pp00 * army_7_pixel_value[18:12];
+        army_7_pp11 <= army_7_pp01 + army_7_diff;
+        army_7_pp2 <= (army_7_pp10 + army_7_pp11);
+    end
+    Army_Render_Pixel Army_Render_67 (.clk(clk_25MHz), 
+        .type_a(Army_Instance[6][54:52]), .addr_a(army_6_pp2), .pixel_value_a(army_6_value),
+        .type_b(Army_Instance[7][54:52]), .addr_b(army_7_pp2), .pixel_value_b(army_7_value));
+
+
+
+    reg  [9:0] tower_enemy_pp00, tower_enemy_pp01, tower_enemy_pp10, tower_enemy_pp11, tower_enemy_pp2;
+    wire [1:0] tower_enemy_value;
+    always @(posedge clk_25MHz) begin
+        tower_enemy_pp00 <= ((v_cnt_5-90)/3);
+        tower_enemy_pp01 <= ((h_cnt_5-10)/3);
+        tower_enemy_pp10 <= tower_enemy_pp00 * 20;
+        tower_enemy_pp11 <= tower_enemy_pp01;
+        tower_enemy_pp2 <= (tower_enemy_pp10 + tower_enemy_pp11) % 800;
+    end
+    mem_Tower_Enemy mem_Tower_Enemy_0 (.clka(clk_25MHz), .wea(0), .addra(tower_enemy_pp2),  .dina(0), .douta(tower_enemy_value));
+
+    reg  [9:0] tower_army_pp00, tower_army_pp01, tower_army_pp10, tower_army_pp11, tower_army_pp2;
+    wire [1:0] tower_cat_value;
+    always @(posedge clk_25MHz) begin
+        tower_army_pp00 <= ((v_cnt_5-90)/3);
+        tower_army_pp01 <= ((h_cnt_5-570)/3);
+        tower_army_pp10 <= tower_army_pp00 * 20;
+        tower_army_pp11 <= tower_army_pp01;
+        tower_army_pp2 <= (tower_army_pp10 + tower_army_pp11) % 800;
+    end
+    mem_Tower_Cat mem_Tower_Cat_0 (.clka(clk_25MHz), .wea(0), .addra(tower_army_pp2),  .dina(0), .douta(tower_cat_value));
+
+
+
+    reg  [8:0] frame_joker_pp00, frame_joker_pp01, frame_joker_pp10, frame_joker_pp11, frame_joker_pp2;
+    wire [1:0] frame_joker_value;
+    always @(posedge clk_25MHz) begin
+        frame_joker_pp00 <= ((v_cnt_5-290)/4);
+        frame_joker_pp01 <= ((h_cnt_5-105)/4);
+        frame_joker_pp10 <= frame_joker_pp00 * 25;
+        frame_joker_pp11 <= frame_joker_pp01;
+        frame_joker_pp2 <= (frame_joker_pp10 + frame_joker_pp11) % 500;
+    end
+    reg  [8:0] frame_fish_pp00, frame_fish_pp01, frame_fish_pp10, frame_fish_pp11, frame_fish_pp2;
+    wire [1:0] frame_fish_value;
+    always @(posedge clk_25MHz) begin
+        frame_fish_pp00 <= ((v_cnt_5-290)/4);
+        frame_fish_pp01 <= ((h_cnt_5-215)/4);
+        frame_fish_pp10 <= frame_fish_pp00 * 25;
+        frame_fish_pp11 <= frame_fish_pp01;
+        frame_fish_pp2 <= (frame_fish_pp10 + frame_fish_pp11) % 500;
+    end
+    reg  [8:0] frame_trap_pp00, frame_trap_pp01, frame_trap_pp10, frame_trap_pp11, frame_trap_pp2;
+    wire [1:0] frame_trap_value;
+    always @(posedge clk_25MHz) begin
+        frame_trap_pp00 <= ((v_cnt_5-290)/4);
+        frame_trap_pp01 <= ((h_cnt_5-325)/4);
+        frame_trap_pp10 <= frame_trap_pp00 * 25;
+        frame_trap_pp11 <= frame_trap_pp01;
+        frame_trap_pp2 <= (frame_trap_pp10 + frame_trap_pp11) % 500;
+    end
+    reg  [8:0] frame_jay_pp00, frame_jay_pp01, frame_jay_pp10, frame_jay_pp11, frame_jay_pp2;
+    wire [1:0] frame_jay_value;
+    always @(posedge clk_25MHz) begin
+        frame_jay_pp00 <= ((v_cnt_5-290)/4);
+        frame_jay_pp01 <= ((h_cnt_5-435)/4);
+        frame_jay_pp10 <= frame_jay_pp00 * 25;
+        frame_jay_pp11 <= frame_jay_pp01;
+        frame_jay_pp2 <= (frame_jay_pp10 + frame_jay_pp11) % 500;
+    end
+    reg  [8:0] frame_bomb_pp00, frame_bomb_pp01, frame_bomb_pp10, frame_bomb_pp11, frame_bomb_pp2;
+    wire [1:0] frame_bomb_value;
+    always @(posedge clk_25MHz) begin
+        frame_bomb_pp00 <= ((v_cnt_5-380)/4);
+        frame_bomb_pp01 <= ((h_cnt_5-105)/4);
+        frame_bomb_pp10 <= frame_bomb_pp00 * 25;
+        frame_bomb_pp11 <= frame_bomb_pp01;
+        frame_bomb_pp2 <= (frame_bomb_pp10 + frame_bomb_pp11) % 500;
+    end
+    reg  [8:0] frame_CY_pp00, frame_CY_pp01, frame_CY_pp10, frame_CY_pp11, frame_CY_pp2;
+    wire [1:0] frame_CY_value;
+    always @(posedge clk_25MHz) begin
+        frame_CY_pp00 <= ((v_cnt_5-380)/4);
+        frame_CY_pp01 <= ((h_cnt_5-215)/4);
+        frame_CY_pp10 <= frame_CY_pp00 * 25;
+        frame_CY_pp11 <= frame_CY_pp01;
+        frame_CY_pp2 <= (frame_CY_pp10 + frame_CY_pp11) % 500;
+    end
+    reg  [8:0] frame_hacker_pp00, frame_hacker_pp01, frame_hacker_pp10, frame_hacker_pp11, frame_hacker_pp2;
+    wire [1:0] frame_hacker_value;
+    always @(posedge clk_25MHz) begin
+        frame_hacker_pp00 <= ((v_cnt_5-380)/4);
+        frame_hacker_pp01 <= ((h_cnt_5-325)/4);
+        frame_hacker_pp10 <= frame_hacker_pp00 * 25;
+        frame_hacker_pp11 <= frame_hacker_pp01;
+        frame_hacker_pp2 <= (frame_hacker_pp10 + frame_hacker_pp11) % 500;
+    end
+    reg  [8:0] frame_elephant_pp00, frame_elephant_pp01, frame_elephant_pp10, frame_elephant_pp11, frame_elephant_pp2;
+    wire [1:0] frame_elephant_value;
+    always @(posedge clk_25MHz) begin
+        frame_elephant_pp00 <= ((v_cnt_5-380)/4);
+        frame_elephant_pp01 <= ((h_cnt_5-435)/4);
+        frame_elephant_pp10 <= frame_elephant_pp00 * 25;
+        frame_elephant_pp11 <= frame_elephant_pp01;
+        frame_elephant_pp2 <= (frame_elephant_pp10 + frame_elephant_pp11) % 500;
+    end
+    mem_Frame_Joker_Cat mem_Frame_Joker_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_joker_pp2), .dina(0), .douta(frame_joker_value));
+    mem_Frame_Fish_Cat  mem_Frame_Fish_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_fish_pp2), .dina(0), .douta(frame_fish_value));
+    mem_Frame_Trap_Cat  mem_Frame_Trap_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_trap_pp2), .dina(0), .douta(frame_trap_value));
+    mem_Frame_Jay_Cat   mem_Frame_Jay_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_jay_pp2), .dina(0), .douta(frame_jay_value));
+    mem_Frame_Bomb_Cat  mem_Frame_Bomb_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_bomb_pp2), .dina(0), .douta(frame_bomb_value));
+    mem_Frame_CY_Cat    mem_Frame_CY_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_CY_pp2), .dina(0), .douta(frame_CY_value));
+    mem_Frame_Hacker_Cat mem_Frame_Hacker_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_hacker_pp2), .dina(0), .douta(frame_hacker_value));
+    mem_Frame_Elephant_Cat mem_Frame_Elephant_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_elephant_pp2), .dina(0), .douta(frame_elephant_value));
+
+
+
+    reg [12:0] btn_fire_pp00, btn_fire_pp01, btn_fire_pp10, btn_fire_pp11, btn_fire_pp2;
     wire [1:0] btn_fire_value;
-    mem_Btn_Fire mem_Btn_Fire (.clka(clk_25MHz), .wea(0), .addra(btn_fire_addr), .dina(0), .douta(btn_fire_value));
-
-    wire [11:0] btn_purse_addr_0 = ((av_cnt-380) >> 1)*50 + ((ah_cnt) >> 1);
-    reg [11:0] btn_purse_addr;
     always @(posedge clk_25MHz) begin
-        btn_purse_addr <= (btn_purse_addr_0 < 5000 ? btn_purse_addr_0 : 0);
+        btn_fire_pp00 <= ((v_cnt_5-380)/2);
+        btn_fire_pp01 <= ((h_cnt_5-540)/2);
+        btn_fire_pp10 <= btn_fire_pp00 * 50;
+        btn_fire_pp11 <= btn_fire_pp01 + 2500;          // TODO
+        btn_fire_pp2 <= (btn_fire_pp10 + btn_fire_pp11) % 5000;
     end
+    mem_Btn_Fire mem_Btn_Fire_0 (.clka(clk_25MHz), .wea(0), .addra(btn_fire_pp2),  .dina(0), .douta(btn_fire_value));
+
+    reg [12:0] btn_purse_pp00, btn_purse_pp01, btn_purse_pp10, btn_purse_pp11, btn_purse_pp2;
     wire [1:0] btn_purse_value;
-    mem_Btn_Purse mem_Btn_Purse (.clka(clk_25MHz), .wea(0), .addra(btn_purse_addr), .dina(0), .douta(btn_purse_value));
+    always @(posedge clk_25MHz) begin
+        btn_purse_pp00 <= ((v_cnt_5-380)/2);
+        btn_purse_pp01 <= ((h_cnt_5)/2);
+        btn_purse_pp10 <= btn_purse_pp00 * 50;
+        btn_purse_pp11 <= btn_purse_pp01;
+        btn_purse_pp2 <= (btn_purse_pp10 + btn_purse_pp11) % 2500;
+    end
+    mem_Btn_Purse mem_Btn_Purse_0 (.clka(clk_25MHz), .wea(0), .addra(btn_purse_pp2),  .dina(0), .douta(btn_purse_value));
+
+
 
     always @(*) begin
-        if (v_cnt<10'd270) begin    // simply cut half, this is upper half (gaming) for shortening Circuit Longest Length
+        if (v_cnt_1<10'd270) begin    // simply cut half, this is upper half (gaming) for shortening Circuit Longest Length
             if (Army_Instance[0][55] && 
-            h_cnt>=Army_Instance[0][51:42] && h_cnt<Army_Instance[0][51:42]+army_pixel_value[0][18:12] && 
-            v_cnt>=Army_Instance[0][41:32] && v_cnt<Army_Instance[0][41:32]+army_pixel_value[0][11:5] && army_value[0] != 2'b11) begin
-                case (army_value[0])
+            h_cnt_1>=Army_Instance[0][51:42] && h_cnt_1<Army_Instance[0][51:42]+army_0_pixel_value[18:12] && 
+            v_cnt_1>=Army_Instance[0][41:32] && v_cnt_1<Army_Instance[0][41:32]+army_0_pixel_value[11:5] && army_0_value != 2'b11) begin
+                case (army_0_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[1][55] && 
-            h_cnt>=Army_Instance[1][51:42] && h_cnt<Army_Instance[1][51:42]+army_pixel_value[1][18:12] &&
-            v_cnt>=Army_Instance[1][41:32] && v_cnt<Army_Instance[1][41:32]+army_pixel_value[1][11:5] && army_value[1] != 2'b11) begin
-                case (army_value[1])
+            h_cnt_1>=Army_Instance[1][51:42] && h_cnt_1<Army_Instance[1][51:42]+army_1_pixel_value[18:12] &&
+            v_cnt_1>=Army_Instance[1][41:32] && v_cnt_1<Army_Instance[1][41:32]+army_1_pixel_value[11:5] && army_1_value != 2'b11) begin
+                case (army_1_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[2][55] && 
-            h_cnt>=Army_Instance[2][51:42] && h_cnt<Army_Instance[2][51:42]+army_pixel_value[2][18:12] && 
-            v_cnt>=Army_Instance[2][41:32] && v_cnt<Army_Instance[2][41:32]+army_pixel_value[2][11:5] && army_value[2] != 2'b11) begin
-                case (army_value[2])
+            h_cnt_1>=Army_Instance[2][51:42] && h_cnt_1<Army_Instance[2][51:42]+army_2_pixel_value[18:12] && 
+            v_cnt_1>=Army_Instance[2][41:32] && v_cnt_1<Army_Instance[2][41:32]+army_2_pixel_value[11:5] && army_2_value != 2'b11) begin
+                case (army_2_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[3][55] && 
-            h_cnt>=Army_Instance[3][51:42] && h_cnt<Army_Instance[3][51:42]+army_pixel_value[3][18:12] && 
-            v_cnt>=Army_Instance[3][41:32] && v_cnt<Army_Instance[3][41:32]+army_pixel_value[3][11:5] && army_value[3] != 2'b11) begin
-                case (army_value[3])
+            h_cnt_1>=Army_Instance[3][51:42] && h_cnt_1<Army_Instance[3][51:42]+army_3_pixel_value[18:12] && 
+            v_cnt_1>=Army_Instance[3][41:32] && v_cnt_1<Army_Instance[3][41:32]+army_3_pixel_value[11:5] && army_3_value != 2'b11) begin
+                case (army_3_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[4][55] && 
-            h_cnt>=Army_Instance[4][51:42] && h_cnt<Army_Instance[4][51:42]+army_pixel_value[4][18:12] && 
-            v_cnt>=Army_Instance[4][41:32] && v_cnt<Army_Instance[4][41:32]+army_pixel_value[4][11:5] && army_value[4] != 2'b11) begin
-                case (army_value[4])
+            h_cnt_1>=Army_Instance[4][51:42] && h_cnt_1<Army_Instance[4][51:42]+army_4_pixel_value[18:12] && 
+            v_cnt_1>=Army_Instance[4][41:32] && v_cnt_1<Army_Instance[4][41:32]+army_4_pixel_value[11:5] && army_4_value != 2'b11) begin
+                case (army_4_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[5][55] && 
-            h_cnt>=Army_Instance[5][51:42] && h_cnt<Army_Instance[5][51:42]+army_pixel_value[5][18:12] && 
-            v_cnt>=Army_Instance[5][41:32] && v_cnt<Army_Instance[5][41:32]+army_pixel_value[5][11:5] && army_value[5] != 2'b11) begin
-                case (army_value[5])
+            h_cnt_1>=Army_Instance[5][51:42] && h_cnt_1<Army_Instance[5][51:42]+army_5_pixel_value[18:12] && 
+            v_cnt_1>=Army_Instance[5][41:32] && v_cnt_1<Army_Instance[5][41:32]+army_5_pixel_value[11:5] && army_5_value != 2'b11) begin
+                case (army_5_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[6][55] && 
-            h_cnt>=Army_Instance[6][51:42] && h_cnt<Army_Instance[6][51:42]+army_pixel_value[6][18:12] && 
-            v_cnt>=Army_Instance[6][41:32] && v_cnt<Army_Instance[6][41:32]+army_pixel_value[6][11:5] && army_value[6] != 2'b11) begin
-                case (army_value[6])
+            h_cnt_1>=Army_Instance[6][51:42] && h_cnt_1<Army_Instance[6][51:42]+army_6_pixel_value[18:12] && 
+            v_cnt_1>=Army_Instance[6][41:32] && v_cnt_1<Army_Instance[6][41:32]+army_6_pixel_value[11:5] && army_6_value != 2'b11) begin
+                case (army_6_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[7][55] && 
-            h_cnt>=Army_Instance[7][51:42] && h_cnt<Army_Instance[7][51:42]+army_pixel_value[7][18:12] && 
-            v_cnt>=Army_Instance[7][41:32] && v_cnt<Army_Instance[7][41:32]+army_pixel_value[7][11:5] && army_value[7] != 2'b11) begin
-                case (army_value[7])
+            h_cnt_1>=Army_Instance[7][51:42] && h_cnt_1<Army_Instance[7][51:42]+army_7_pixel_value[18:12] && 
+            v_cnt_1>=Army_Instance[7][41:32] && v_cnt_1<Army_Instance[7][41:32]+army_7_pixel_value[11:5] && army_7_value != 2'b11) begin
+                case (army_7_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[0][55] && 
-            h_cnt>=Enemy_Instance[0][51:42] && h_cnt<Enemy_Instance[0][51:42]+enemy_pixel_value[0][18:12] && 
-            v_cnt>=Enemy_Instance[0][41:32] && v_cnt<Enemy_Instance[0][41:32]+enemy_pixel_value[0][11:5] && enemy_value[0] != 2'b11) begin
-                case (enemy_value[0])
+            h_cnt_1>=Enemy_Instance[0][51:42] && h_cnt_1<Enemy_Instance[0][51:42]+enemy_0_pixel_value[18:12] && 
+            v_cnt_1>=Enemy_Instance[0][41:32] && v_cnt_1<Enemy_Instance[0][41:32]+enemy_0_pixel_value[11:5] && enemy_0_value != 2'b11) begin
+                case (enemy_0_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[1][55] && 
-            h_cnt>=Enemy_Instance[1][51:42] && h_cnt<Enemy_Instance[1][51:42]+enemy_pixel_value[1][18:12] && 
-            v_cnt>=Enemy_Instance[1][41:32] && v_cnt<Enemy_Instance[1][41:32]+enemy_pixel_value[1][11:5] && enemy_value[1] != 2'b11) begin
-                case (enemy_value[1])
+            h_cnt_1>=Enemy_Instance[1][51:42] && h_cnt_1<Enemy_Instance[1][51:42]+enemy_1_pixel_value[18:12] && 
+            v_cnt_1>=Enemy_Instance[1][41:32] && v_cnt_1<Enemy_Instance[1][41:32]+enemy_1_pixel_value[11:5] && enemy_1_value != 2'b11) begin
+                case (enemy_1_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[2][55] && 
-            h_cnt>=Enemy_Instance[2][51:42] && h_cnt<Enemy_Instance[2][51:42]+enemy_pixel_value[2][18:12] && 
-            v_cnt>=Enemy_Instance[2][41:32] && v_cnt<Enemy_Instance[2][41:32]+enemy_pixel_value[2][11:5] && enemy_value[2] != 2'b11) begin
-                case (enemy_value[2])
+            h_cnt_1>=Enemy_Instance[2][51:42] && h_cnt_1<Enemy_Instance[2][51:42]+enemy_2_pixel_value[18:12] && 
+            v_cnt_1>=Enemy_Instance[2][41:32] && v_cnt_1<Enemy_Instance[2][41:32]+enemy_2_pixel_value[11:5] && enemy_2_value != 2'b11) begin
+                case (enemy_2_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[3][55] && 
-            h_cnt>=Enemy_Instance[3][51:42] && h_cnt<Enemy_Instance[3][51:42]+enemy_pixel_value[3][18:12] && 
-            v_cnt>=Enemy_Instance[3][41:32] && v_cnt<Enemy_Instance[3][41:32]+enemy_pixel_value[3][11:5] && enemy_value[3] != 2'b11) begin
-                case (enemy_value[3])
+            h_cnt_1>=Enemy_Instance[3][51:42] && h_cnt_1<Enemy_Instance[3][51:42]+enemy_3_pixel_value[18:12] && 
+            v_cnt_1>=Enemy_Instance[3][41:32] && v_cnt_1<Enemy_Instance[3][41:32]+enemy_3_pixel_value[11:5] && enemy_3_value != 2'b11) begin
+                case (enemy_3_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[4][55] && 
-            h_cnt>=Enemy_Instance[4][51:42] && h_cnt<Enemy_Instance[4][51:42]+enemy_pixel_value[4][18:12] && 
-            v_cnt>=Enemy_Instance[4][41:32] && v_cnt<Enemy_Instance[4][41:32]+enemy_pixel_value[4][11:5] && enemy_value[4] != 2'b11) begin
-                case (enemy_value[4])
+            h_cnt_1>=Enemy_Instance[4][51:42] && h_cnt_1<Enemy_Instance[4][51:42]+enemy_4_pixel_value[18:12] && 
+            v_cnt_1>=Enemy_Instance[4][41:32] && v_cnt_1<Enemy_Instance[4][41:32]+enemy_4_pixel_value[11:5] && enemy_4_value != 2'b11) begin
+                case (enemy_4_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[5][55] && 
-            h_cnt>=Enemy_Instance[5][51:42] && h_cnt<Enemy_Instance[5][51:42]+enemy_pixel_value[5][18:12] && 
-            v_cnt>=Enemy_Instance[5][41:32] && v_cnt<Enemy_Instance[5][41:32]+enemy_pixel_value[5][11:5] && enemy_value[5] != 2'b11) begin
-                case (enemy_value[5])
+            h_cnt_1>=Enemy_Instance[5][51:42] && h_cnt_1<Enemy_Instance[5][51:42]+enemy_5_pixel_value[18:12] && 
+            v_cnt_1>=Enemy_Instance[5][41:32] && v_cnt_1<Enemy_Instance[5][41:32]+enemy_5_pixel_value[11:5] && enemy_5_value != 2'b11) begin
+                case (enemy_5_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[6][55] && 
-            h_cnt>=Enemy_Instance[6][51:42] && h_cnt<Enemy_Instance[6][51:42]+enemy_pixel_value[6][18:12] && 
-            v_cnt>=Enemy_Instance[6][41:32] && v_cnt<Enemy_Instance[6][41:32]+enemy_pixel_value[6][11:5] && enemy_value[6] != 2'b11) begin
-                case (enemy_value[6])
+            h_cnt_1>=Enemy_Instance[6][51:42] && h_cnt_1<Enemy_Instance[6][51:42]+enemy_6_pixel_value[18:12] && 
+            v_cnt_1>=Enemy_Instance[6][41:32] && v_cnt_1<Enemy_Instance[6][41:32]+enemy_6_pixel_value[11:5] && enemy_6_value != 2'b11) begin
+                case (enemy_6_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[7][55] && 
-            h_cnt>=Enemy_Instance[7][51:42] && h_cnt<Enemy_Instance[7][51:42]+enemy_pixel_value[7][18:12] && 
-            v_cnt>=Enemy_Instance[7][41:32] && v_cnt<Enemy_Instance[7][41:32]+enemy_pixel_value[7][11:5] && enemy_value[7] != 2'b11) begin
-                case (enemy_value[7])
+            h_cnt_1>=Enemy_Instance[7][51:42] && h_cnt_1<Enemy_Instance[7][51:42]+enemy_7_pixel_value[18:12] && 
+            v_cnt_1>=Enemy_Instance[7][41:32] && v_cnt_1<Enemy_Instance[7][41:32]+enemy_7_pixel_value[11:5] && enemy_7_value != 2'b11) begin
+                case (enemy_7_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd10 && h_cnt<10'd70 && v_cnt>=10'd90 && v_cnt<10'd210 && tower_enemy_value!=2'b11) begin
+            end else if (h_cnt_1>=10'd10 && h_cnt_1<10'd70 && v_cnt_1>=10'd90 && v_cnt_1<10'd210 && tower_enemy_value!=2'b11) begin
                 case (tower_enemy_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd570 && h_cnt<10'd630 && v_cnt>=10'd90 && v_cnt<10'd210 && tower_cat_value!=2'b11) begin
+            end else if (h_cnt_1>=10'd570 && h_cnt_1<10'd630 && v_cnt_1>=10'd90 && v_cnt_1<10'd210 && tower_cat_value!=2'b11) begin
                 case (tower_cat_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (v_cnt>=10'd170 && v_cnt<10'd230) begin
+            end else if (v_cnt_1>=10'd170 && v_cnt_1<10'd230) begin
                 pixel = 12'hda5;    // path
-            end else if (v_cnt>=10'd140) begin
+            end else if (v_cnt_1>=10'd140) begin
                 pixel = 12'h5b2;    // grass
             end else begin
                 pixel = 12'h2bf;    // sky
             end
         end else begin              // simply cut half, this is lower half (board) for shortening Circuit Longest Length
-            if (h_cnt>=10'd105 && h_cnt<10'd205 && v_cnt>=10'd290 && v_cnt<10'd370) begin
+            if (h_cnt_1>=10'd105 && h_cnt_1<10'd205 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_joker_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd215 && h_cnt<10'd315 && v_cnt>=10'd290 && v_cnt<10'd370) begin
+            end else if (h_cnt_1>=10'd215 && h_cnt_1<10'd315 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_fish_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd325 && h_cnt<10'd425 && v_cnt>=10'd290 && v_cnt<10'd370) begin
+            end else if (h_cnt_1>=10'd325 && h_cnt_1<10'd425 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_trap_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd435 && h_cnt<10'd535 && v_cnt>=10'd290 && v_cnt<10'd370) begin
+            end else if (h_cnt_1>=10'd435 && h_cnt_1<10'd535 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_jay_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd105 && h_cnt<10'd205 && v_cnt>=10'd380 && v_cnt<10'd460) begin
+            end else if (h_cnt_1>=10'd105 && h_cnt_1<10'd205 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_bomb_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd215 && h_cnt<10'd315 && v_cnt>=10'd380 && v_cnt<10'd460) begin
+            end else if (h_cnt_1>=10'd215 && h_cnt_1<10'd315 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_CY_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd325 && h_cnt<10'd425 && v_cnt>=10'd380 && v_cnt<10'd460) begin
+            end else if (h_cnt_1>=10'd325 && h_cnt_1<10'd425 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_hacker_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd435 && h_cnt<10'd535 && v_cnt>=10'd380 && v_cnt<10'd460) begin
+            end else if (h_cnt_1>=10'd435 && h_cnt_1<10'd535 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_elephant_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt<10'd100 && v_cnt>=10'd380 && btn_purse_value!=2'b11) begin
+            end else if (h_cnt_1<10'd100 && v_cnt_1>=10'd380 && btn_purse_value!=2'b11) begin
                 case (btn_purse_value)      // purse
                     2'b00: pixel = 12'ha63;
                     default: pixel = 12'h000;
                 endcase
-            end else if (h_cnt>=10'd540 && v_cnt>=10'd380 && btn_fire_value!=2'b11) begin
+            end else if (h_cnt_1>=10'd540 && v_cnt_1>=10'd380 && btn_fire_value!=2'b11) begin
                 case (btn_fire_value)       // fire
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;

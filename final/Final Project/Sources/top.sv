@@ -30,7 +30,7 @@ module Top (
     wire valid;
     wire clk_frame;
     wire clk_6;     // !! with respect to clk_frame
-    Clk_Divisor_6 Clk_Divisor_6(clk_frame, clk_6);
+    Clk_Divisor_6 Clk_Divisor_6_0 (clk_25MHz, clk_frame, clk_6);
     wire [9:0] h_cnt;   //640
     wire [9:0] ah_cnt;  //640
     wire [9:0] v_cnt;   //480

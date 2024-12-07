@@ -11,12 +11,19 @@ module Clk_Divisor_4 (
 endmodule
 
 module Clk_Divisor_6 (
-    input clk, 
+    input clk_25MHz,
+    input clk_frame,
     output out
 );
     reg  [2:0] num;
     wire [2:0] next_num;
-    always @(posedge clk) num <= next_num;
+
+    One_Palse OP_clk_frame (clk_25MHz, clk_frame, clk_frame_op);
+    
+    always @(posedge clk_25MHz) begin
+        if (clk_frame_op) num <= next_num;
+    end
+    
     assign next_num = ((num == 3'd5) ? 3'd0: num + 1'b1);
     assign out = (num == 3'd5);
 endmodule
