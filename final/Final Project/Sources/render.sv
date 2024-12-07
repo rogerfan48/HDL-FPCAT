@@ -22,8 +22,6 @@ module Render (
     input [9:0] mouseInFrame,
     input [55:0] Enemy_Instance [7:0],
     input [55:0] Army_Instance [7:0],
-    input game_win,
-    input game_lose,
     output reg [3:0] vgaRed,
     output reg [3:0] vgaGreen,
     output reg [3:0] vgaBlue

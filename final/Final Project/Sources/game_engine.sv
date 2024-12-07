@@ -158,32 +158,30 @@ module Game_Engine (
     wire timeToGenArmy = (gameState == `GS_GEN_A_D);
 
     always @(*) begin
-
-        if (effectiveClick[1]) next_genArmy[0] = 1'b1;
+        if (effectiveClick[1])  next_genArmy[0] = 1'b1;
         else if (timeToGenArmy) next_genArmy[0] = 1'b0;
-        else next_genArmy[0] = genArmy[0];
-        if (effectiveClick[2]) next_genArmy[1] = 1'b1;
+        else                    next_genArmy[0] = genArmy[0];
+        if (effectiveClick[2])  next_genArmy[1] = 1'b1;
         else if (timeToGenArmy) next_genArmy[1] = 1'b0;
-        else next_genArmy[1] = genArmy[1];
-        if (effectiveClick[3]) next_genArmy[2] = 1'b1;
+        else                    next_genArmy[1] = genArmy[1];
+        if (effectiveClick[3])  next_genArmy[2] = 1'b1;
         else if (timeToGenArmy) next_genArmy[2] = 1'b0;
-        else next_genArmy[2] = genArmy[2];
-        if (effectiveClick[4]) next_genArmy[3] = 1'b1;
+        else                    next_genArmy[2] = genArmy[2];
+        if (effectiveClick[4])  next_genArmy[3] = 1'b1;
         else if (timeToGenArmy) next_genArmy[3] = 1'b0;
-        else next_genArmy[3] = genArmy[3];
-        if (effectiveClick[5]) next_genArmy[4] = 1'b1;
+        else                    next_genArmy[3] = genArmy[3];
+        if (effectiveClick[5])  next_genArmy[4] = 1'b1;
         else if (timeToGenArmy) next_genArmy[4] = 1'b0;
-        else next_genArmy[4] = genArmy[4];
-        if (effectiveClick[6]) next_genArmy[5] = 1'b1;
+        else                    next_genArmy[4] = genArmy[4];
+        if (effectiveClick[6])  next_genArmy[5] = 1'b1;
         else if (timeToGenArmy) next_genArmy[5] = 1'b0;
-        else next_genArmy[5] = genArmy[5];
-        if (effectiveClick[7]) next_genArmy[6] = 1'b1;
+        else                    next_genArmy[5] = genArmy[5];
+        if (effectiveClick[7])  next_genArmy[6] = 1'b1;
         else if (timeToGenArmy) next_genArmy[6] = 1'b0;
-        else next_genArmy[6] = genArmy[6];
-        if (effectiveClick[8]) next_genArmy[7] = 1'b1;
+        else                    next_genArmy[6] = genArmy[6];
+        if (effectiveClick[8])  next_genArmy[7] = 1'b1;
         else if (timeToGenArmy) next_genArmy[7] = 1'b0;
-        else next_genArmy[7] = genArmy[7];
-
+        else                    next_genArmy[7] = genArmy[7];
     end
 
     reg next_towerFire;
@@ -212,9 +210,6 @@ module Game_Engine (
     reg [5:0] next_counter3;
     
     always @(posedge clk_25MHz) begin
-        //next_gameState = gameState;
-        //gameState <= next_gameState;
-
         Enemy_Instance[0] <= next_Enemy_Instance[0];
         Army_Instance[0] <= next_Army_Instance[0];
         Enemy_Instance[1] <= next_Enemy_Instance[1];
@@ -247,7 +242,6 @@ module Game_Engine (
     end
 
     always @(*) begin
-
         next_Enemy_Instance[0] = Enemy_Instance[0];
         next_Army_Instance[0] = Army_Instance[0];
         next_Enemy_Instance[1] = Enemy_Instance[1];
@@ -265,6 +259,7 @@ module Game_Engine (
         next_Enemy_Instance[7] = Enemy_Instance[7];
         next_Army_Instance[7] = Army_Instance[7];
 
+        next_gameState = gameState;
         next_enemyGenPtr = enemyGenPtr;
         next_money = money;
         next_purse_level = purse_level;
@@ -286,7 +281,6 @@ module Game_Engine (
             end
             `GS_INIT: begin      // ? ///// Initialization
                 next_gameState = `GS_GEN_E;
-
                 next_Enemy_Instance[0] = 56'd0;
                 next_Army_Instance[0] = 56'd0;
                 next_Enemy_Instance[1] = 56'd0;
@@ -303,7 +297,6 @@ module Game_Engine (
                 next_Army_Instance[6] = 56'd0;
                 next_Enemy_Instance[7] = 56'd0;
                 next_Army_Instance[7] = 56'd0;
-
                 next_money = 15'd0;
                 next_purse_level = 3'd0;
                 next_tower_cnt = 8'd0;

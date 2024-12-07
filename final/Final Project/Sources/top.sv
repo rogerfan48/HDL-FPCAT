@@ -171,6 +171,7 @@ module Top (
         else     scene <= next_scene;
     end
     always @(*) begin
+        next_scene = scene;
         case (scene)
             `S_START: begin
                 if (mouseL && mouseInStart) next_scene = `S_MENU;
@@ -182,20 +183,9 @@ module Top (
                 else if (mouseL && mouseInLevel3)   next_scene = `S_PLAY3;
                 else                                next_scene = `S_MENU;
             end
-            `S_PLAY1: begin
-                if(game_win) next_scene = `S_WIN;
-                else if(game_lose) next_scene = `S_LOSE;
-                else next_scene = `S_PLAY1;
-            end
-            `S_PLAY2: begin
-                if(game_win) next_scene = `S_WIN;
-                else if(game_lose) next_scene = `S_LOSE;
-                else next_scene = `S_PLAY2;
-            end
-            `S_PLAY3: begin
-                if(game_win) next_scene = `S_WIN;
-                else if(game_lose) next_scene = `S_LOSE;
-                else next_scene = `S_PLAY3;
+            `S_PLAY1, `S_PLAY2, `S_PLAY3: begin
+                if (game_win)       next_scene = `S_WIN;
+                else if (game_lose) next_scene = `S_LOSE;
             end
             `S_WIN: begin
                 next_scene = scene;
