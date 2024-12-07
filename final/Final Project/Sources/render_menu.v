@@ -1,5 +1,8 @@
 module Render_Menu (
+    input rst,
+    input clk,
     input clk_25MHz,
+    input [1:0] display_cnt,
     input [9:0] h_cnt,
     input [9:0] ah_cnt,
     input [9:0] v_cnt,

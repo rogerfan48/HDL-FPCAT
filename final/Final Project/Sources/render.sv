@@ -44,11 +44,11 @@ module Render (
     parameter S_LOSE = 3'd6;
 
     wire [11:0] pixel_start;
-    Render_Start Render_Start (clk_25MHz, h_cnt, ah_cnt, v_cnt, av_cnt,
+    Render_Start Render_Start (rst, clk, clk_25MHz, display_cnt, h_cnt, ah_cnt, v_cnt, av_cnt,
         h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, 
         mouseInStart, pixel_start);
     wire [11:0] pixel_menu;
-    Render_Menu Render_Menu (clk_25MHz, h_cnt, ah_cnt, v_cnt, av_cnt,
+    Render_Menu Render_Menu (rst, clk, clk_25MHz, display_cnt, h_cnt, ah_cnt, v_cnt, av_cnt,
         h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4,
         mouseInLevel1, mouseInLevel2, mouseInLevel3, pixel_menu);
     wire [11:0] pixel_play;

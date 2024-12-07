@@ -78,7 +78,6 @@ module Game_Engine (
     output wire game_win,
     output wire game_lose
 );
-    integer i;
 
 // ? //////////     IP: Enemy Queue     //////////////
     reg [5:0] enemyGenPtr;      // only can have 63 enemy, remaining: {12{1}, 3{0}}
