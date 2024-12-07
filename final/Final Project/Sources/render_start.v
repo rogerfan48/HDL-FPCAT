@@ -11,10 +11,14 @@ module Render_Start (
     input [9:0] h_cnt_2,
     input [9:0] h_cnt_3,
     input [9:0] h_cnt_4,
+    input [9:0] h_cnt_5,
+    input [9:0] h_cnt_6,
     input [9:0] v_cnt_1,
     input [9:0] v_cnt_2,
     input [9:0] v_cnt_3,
     input [9:0] v_cnt_4,
+    input [9:0] v_cnt_5,
+    input [9:0] v_cnt_6,
     input mouseInStart,
     output reg [11:0] pixel
 );

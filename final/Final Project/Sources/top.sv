@@ -37,8 +37,8 @@ module Top (
     wire [9:0] av_cnt;  //480
     wire [9:0] d_h_cnt;
     wire [9:0] d_v_cnt;
-    wire [9:0] h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4;
-    wire [9:0] v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4;
+    wire [9:0] h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6;
+    wire [9:0] v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, h_cnt_5, h_cnt_6;
 
     wire enable_mouse_display;
     wire [9:0] mouseX, mouseY;
@@ -128,6 +128,18 @@ module Top (
         .av_cnt(av_cnt),
         .d_h_cnt(d_h_cnt),
         .d_v_cnt(d_v_cnt),
+        .h_cnt_1(h_cnt_1),
+        .h_cnt_2(h_cnt_2),
+        .h_cnt_3(h_cnt_3),
+        .h_cnt_4(h_cnt_4),
+        .h_cnt_5(h_cnt_5),
+        .h_cnt_6(h_cnt_6),
+        .v_cnt_1(v_cnt_1),
+        .v_cnt_2(v_cnt_2),
+        .v_cnt_3(v_cnt_3),
+        .v_cnt_4(v_cnt_4),
+        .v_cnt_5(v_cnt_5),
+        .v_cnt_6(v_cnt_6),
         .mouseX(mouseX),
         .mouseY(mouseY),
         .valid(valid),
@@ -166,10 +178,14 @@ module Top (
         .h_cnt_2(h_cnt_2),
         .h_cnt_3(h_cnt_3),
         .h_cnt_4(h_cnt_4),
+        .h_cnt_5(h_cnt_5),
+        .h_cnt_6(h_cnt_6),
         .v_cnt_1(v_cnt_1),
         .v_cnt_2(v_cnt_2),
         .v_cnt_3(v_cnt_3),
         .v_cnt_4(v_cnt_4),
+        .v_cnt_5(v_cnt_5),
+        .v_cnt_6(v_cnt_6),
         .clk_frame(clk_frame)
     );
 

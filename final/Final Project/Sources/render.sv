@@ -13,10 +13,14 @@ module Render (
     input [9:0] h_cnt_2,
     input [9:0] h_cnt_3,
     input [9:0] h_cnt_4,
+    input [9:0] h_cnt_5,
+    input [9:0] h_cnt_6,
     input [9:0] v_cnt_1,
     input [9:0] v_cnt_2,
     input [9:0] v_cnt_3,
     input [9:0] v_cnt_4,
+    input [9:0] v_cnt_5,
+    input [9:0] v_cnt_6,
     input [9:0] mouseX,
     input [9:0] mouseY,
     input valid,
@@ -45,15 +49,15 @@ module Render (
 
     wire [11:0] pixel_start;
     Render_Start Render_Start (rst, clk, clk_25MHz, display_cnt, h_cnt, ah_cnt, v_cnt, av_cnt,
-        h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, 
+        h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6,
         mouseInStart, pixel_start);
     wire [11:0] pixel_menu;
     Render_Menu Render_Menu (rst, clk, clk_25MHz, display_cnt, h_cnt, ah_cnt, v_cnt, av_cnt,
-        h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4,
+        h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6,
         mouseInLevel1, mouseInLevel2, mouseInLevel3, pixel_menu);
     wire [11:0] pixel_play;
     Render_Play Render_Play (rst, clk, clk_25MHz, display_cnt, h_cnt, ah_cnt, v_cnt, av_cnt, d_h_cnt, d_v_cnt,
-        h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4,
+        h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6,
         Enemy_Instance, Army_Instance, mouseInFrame, pixel_play);
 
     always@(*) begin

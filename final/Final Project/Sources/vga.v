@@ -15,10 +15,14 @@ module VGA_Control (
     output reg [9:0] h_cnt_2,
     output reg [9:0] h_cnt_3,
     output reg [9:0] h_cnt_4,
+    output reg [9:0] h_cnt_5,
+    output reg [9:0] h_cnt_6,
     output reg [9:0] v_cnt_1,
     output reg [9:0] v_cnt_2,
     output reg [9:0] v_cnt_3,
     output reg [9:0] v_cnt_4,
+    output reg [9:0] v_cnt_5,
+    output reg [9:0] v_cnt_6,
     output reg clk_frame
     );
     
@@ -107,17 +111,21 @@ module VGA_Control (
         end
     end
 
-    reg [9:0] next_h_cnt_1, next_h_cnt_2, next_h_cnt_3, next_h_cnt_4;
-    reg [9:0] next_v_cnt_1, next_v_cnt_2, next_v_cnt_3, next_v_cnt_4;
+    reg [9:0] next_h_cnt_1, next_h_cnt_2, next_h_cnt_3, next_h_cnt_4, next_h_cnt_5, next_h_cnt_6;
+    reg [9:0] next_v_cnt_1, next_v_cnt_2, next_v_cnt_3, next_v_cnt_4, next_v_cnt_5, next_v_cnt_6;
     always @(negedge clk) begin
         h_cnt_1 <= next_h_cnt_1;
         h_cnt_2 <= next_h_cnt_2;
         h_cnt_3 <= next_h_cnt_3;
         h_cnt_4 <= next_h_cnt_4;
+        h_cnt_5 <= next_h_cnt_6;
+        h_cnt_6 <= next_h_cnt_5;
         v_cnt_1 <= next_v_cnt_1;
         v_cnt_2 <= next_v_cnt_2;
         v_cnt_3 <= next_v_cnt_3;
         v_cnt_4 <= next_v_cnt_4;
+        v_cnt_5 <= next_v_cnt_5;
+        v_cnt_6 <= next_v_cnt_6;
     end
     always @(*) begin
         if (pixel_cnt < 640) begin
@@ -183,6 +191,57 @@ module VGA_Control (
         end else begin
             next_h_cnt_4 = 10'd0;
             next_v_cnt_4 = line_cnt;
+        end
+    end
+    always @(*) begin
+        if (pixel_cnt < 636) begin
+            next_h_cnt_5 = pixel_cnt + 5;
+            next_v_cnt_5 = line_cnt;
+        end else if (pixel_cnt == 795) begin
+            next_h_cnt_5 = 10'd0;
+            next_v_cnt_5 = line_cnt + 1;
+        end else if (pixel_cnt == 796) begin
+            next_h_cnt_5 = 10'd1;
+            next_v_cnt_5 = line_cnt + 1;
+        end else if (pixel_cnt == 797) begin
+            next_h_cnt_5 = 10'd2;
+            next_v_cnt_5 = line_cnt + 1;
+        end else if (pixel_cnt == 798) begin
+            next_h_cnt_5 = 10'd3;
+            next_v_cnt_5 = line_cnt + 1;
+        end else if (pixel_cnt == 799) begin
+            next_h_cnt_5 = 10'd4;
+            next_v_cnt_5 = line_cnt + 1;
+        end else begin
+            next_h_cnt_5 = 10'd0;
+            next_v_cnt_5 = line_cnt;
+        end
+    end
+    always @(*) begin
+        if (pixel_cnt < 635) begin
+            next_h_cnt_6 = pixel_cnt + 6;
+            next_v_cnt_6 = line_cnt;
+        end else if (pixel_cnt == 794) begin
+            next_h_cnt_6 = 10'd0;
+            next_v_cnt_6 = line_cnt + 1;
+        end else if (pixel_cnt == 795) begin
+            next_h_cnt_6 = 10'd1;
+            next_v_cnt_6 = line_cnt + 1;
+        end else if (pixel_cnt == 796) begin
+            next_h_cnt_6 = 10'd2;
+            next_v_cnt_6 = line_cnt + 1;
+        end else if (pixel_cnt == 797) begin
+            next_h_cnt_6 = 10'd3;
+            next_v_cnt_6 = line_cnt + 1;
+        end else if (pixel_cnt == 798) begin
+            next_h_cnt_6 = 10'd4;
+            next_v_cnt_6 = line_cnt + 1;
+        end else if (pixel_cnt == 799) begin
+            next_h_cnt_6 = 10'd5;
+            next_v_cnt_6 = line_cnt + 1;
+        end else begin
+            next_h_cnt_6 = 10'd0;
+            next_v_cnt_6 = line_cnt;
         end
     end
 
