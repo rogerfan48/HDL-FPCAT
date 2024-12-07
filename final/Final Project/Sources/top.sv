@@ -65,14 +65,12 @@ module Top (
     wire game_win;
     wire game_lose;
 
-    assign arm_LED[0] = Army_Instance[0][55];
-    assign arm_LED[1] = Army_Instance[1][55];
-    assign arm_LED[2] = Army_Instance[2][55];
-    assign arm_LED[3] = Army_Instance[3][55];
-    assign arm_LED[4] = Army_Instance[4][55];
-    assign arm_LED[5] = Army_Instance[5][55];
-    assign arm_LED[6] = Army_Instance[6][55];
-    assign arm_LED[7] = Army_Instance[7][55];
+    wire [3:0] gameState;
+    assign arm_LED[0] = gameInit;               // 初始化信號
+    assign arm_LED[1] = (scene == `S_PLAY1);    // 遊戲場景 1
+    assign arm_LED[2] = (scene == `S_PLAY2);    // 遊戲場景 2
+    assign arm_LED[3] = (scene == `S_PLAY3);    // 遊戲場景 3
+    assign arm_LED[7:4] = gameState[3:0];       // 顯示遊戲狀態
 
     wire [9:0] mouseInFrame;    // [0]:purse, [9]:Fire
     wire [9:0] effectiveClick;
@@ -114,7 +112,8 @@ module Top (
         .Enemy_Instance(Enemy_Instance),
         .Army_Instance(Army_Instance),
         .game_win(game_win),
-        .game_lose(game_lose)
+        .game_lose(game_lose),
+        .gameState(gameState)
     );
 
     Render Render_0 (

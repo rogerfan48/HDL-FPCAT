@@ -76,7 +76,8 @@ module Game_Engine (
     output reg [55:0] Enemy_Instance [7:0],
     output reg [55:0] Army_Instance [7:0],
     output wire game_win,
-    output wire game_lose
+    output wire game_lose,
+    output reg [3:0] gameState
 );
 
 // ? //////////     IP: Enemy Queue     //////////////
@@ -115,13 +116,13 @@ module Game_Engine (
     reg [55:0] next_Army_Instance [7:0];
 
 // ? //////////     reg: Game State     //////////////
-    reg [4:0] gameState;
-    reg [4:0] next_gameState;
+    reg [3:0] next_gameState;
 
     always @(posedge clk_25MHz) begin
+        if (rst) gameState <= `GS_REST;
         if (scene==`S_MENU && gameInit) gameState <= `GS_INIT;
         else if (scene==`S_PLAY1||scene==`S_PLAY2||scene==`S_PLAY3) gameState <= next_gameState;
-        else gameState = `GS_REST;
+        else gameState <= `GS_REST;
     end
 
 // ? //////////     reg: Game Cnt = GAME TIME     //////////////
