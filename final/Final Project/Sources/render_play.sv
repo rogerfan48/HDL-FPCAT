@@ -93,50 +93,52 @@ module Render_Play (
     //   ||      |      |      |      ||  
     //   10      11     00     01     10
     always @(*) begin
+        next_enemy_value_tmp = enemy_value_tmp;
+        next_army_value_tmp = army_value_tmp;
         next_enemy_value = enemy_value;
         next_army_value = army_value;
-        case (display_cnt)
+        case (d_cnt)
             2'b11: begin
                 Enemy_Instance_0 = Enemy_Instance[0];
                 Enemy_Instance_1 = Enemy_Instance[1];
-                next_enemy_value_tmp[2] = enemy_0_pixel_value;
-                next_enemy_value_tmp[3] = enemy_1_pixel_value;
+                next_enemy_value_tmp[2] = enemy_0_value;
+                next_enemy_value_tmp[3] = enemy_1_value;
                 Army_Instance_0 = Army_Instance[0];
                 Army_Instance_1 = Army_Instance[1];
-                next_army_value_tmp[2] = army_0_pixel_value;
-                next_army_value_tmp[3] = army_1_pixel_value;
+                next_army_value_tmp[2] = army_0_value;
+                next_army_value_tmp[3] = army_1_value;
             end
             2'b00: begin
                 Enemy_Instance_0 = Enemy_Instance[2];
                 Enemy_Instance_1 = Enemy_Instance[3];
-                next_enemy_value_tmp[4] = enemy_0_pixel_value;
-                next_enemy_value_tmp[5] = enemy_1_pixel_value;
+                next_enemy_value_tmp[4] = enemy_0_value;
+                next_enemy_value_tmp[5] = enemy_1_value;
                 Army_Instance_0 = Army_Instance[2];
                 Army_Instance_1 = Army_Instance[3];
-                next_army_value_tmp[4] = army_0_pixel_value;
-                next_army_value_tmp[5] = army_1_pixel_value;
+                next_army_value_tmp[4] = army_0_value;
+                next_army_value_tmp[5] = army_1_value;
             end
             2'b01: begin
                 Enemy_Instance_0 = Enemy_Instance[4];
                 Enemy_Instance_1 = Enemy_Instance[5];
                 next_enemy_value[5:0] = enemy_value_tmp[5:0];
-                next_enemy_value[6] = enemy_0_pixel_value;
-                next_enemy_value[7] = enemy_1_pixel_value;
+                next_enemy_value[6] = enemy_0_value;
+                next_enemy_value[7] = enemy_1_value;
                 Army_Instance_0 = Army_Instance[4];
                 Army_Instance_1 = Army_Instance[5];
                 next_army_value[5:0] = army_value_tmp[5:0];
-                next_army_value[6] = army_0_pixel_value;
-                next_army_value[7] = army_1_pixel_value;
+                next_army_value[6] = army_0_value;
+                next_army_value[7] = army_1_value;
             end
             2'b10: begin
                 Enemy_Instance_0 = Enemy_Instance[6];
                 Enemy_Instance_1 = Enemy_Instance[7];
-                next_enemy_value_tmp[0] = enemy_0_pixel_value;
-                next_enemy_value_tmp[1] = enemy_1_pixel_value;
+                next_enemy_value_tmp[0] = enemy_0_value;
+                next_enemy_value_tmp[1] = enemy_1_value;
                 Army_Instance_0 = Army_Instance[6];
                 Army_Instance_1 = Army_Instance[7];
-                next_army_value_tmp[0] = army_0_pixel_value;
-                next_army_value_tmp[1] = army_1_pixel_value;
+                next_army_value_tmp[0] = army_0_value;
+                next_army_value_tmp[1] = army_1_value;
             end
         endcase
     end
@@ -421,7 +423,7 @@ module Render_Play (
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
-            end else if (v_cnt>=10'd270) begin
+            end else begin
                 pixel = 12'hfb7;    // board
             end 
         end

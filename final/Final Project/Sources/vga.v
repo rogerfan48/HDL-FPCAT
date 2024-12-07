@@ -76,7 +76,7 @@ module VGA_Control (
 
     reg [9:0] next_ah_cnt;
     reg [9:0] next_av_cnt;
-    always @(negedge clk) begin
+    always @(negedge pclk) begin
         ah_cnt <= next_ah_cnt;
         av_cnt <= next_av_cnt;
     end
@@ -105,7 +105,7 @@ module VGA_Control (
                 d_h_cnt <= h_cnt+2;
                 d_v_cnt <= (pixel_cnt==798||pixel_cnt==799) ? v_cnt+1 : v_cnt;
             end
-            2'b01: begin
+            2'b10: begin
                 d_h_cnt <= h_cnt+1;
                 d_v_cnt <= (pixel_cnt==799) ? v_cnt+1 : v_cnt;
             end

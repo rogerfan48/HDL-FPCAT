@@ -101,8 +101,8 @@ module Game_Engine (
     reg [18:0] enemy_pixel_value;
     Enemy_Stats EnemyStats0 (enemy_type_addr, enemy_stats_value);
     Enemy_Pixel EnemyPixel0 (enemy_type_addr, enemy_pixel_value);
-    reg [1:0] army_type_addr;
-    reg [1:0] next_army_type_addr;
+    reg [2:0] army_type_addr;
+    reg [2:0] next_army_type_addr;
     reg [37:0] army_stats_value;
     reg [18:0] army_pixel_value;
     reg [14:0] army_cost_value;
@@ -136,6 +136,7 @@ module Game_Engine (
     reg [2:0] next_purse_level;
     reg [14:0] next_money;
     wire [14:0] purseUpgradeNeedMoney;
+    wire [14:0] money_Max;
     Purse_Upgrade_Need_Money PUNM0(purse_level, purseUpgradeNeedMoney);
     Purse_Max_Money PMM0(purse_level, money_Max);
     assign ableToUpgrade = (money>=purseUpgradeNeedMoney);
@@ -152,7 +153,7 @@ module Game_Engine (
 // ? //////////     reg: Screen Buttons     //////////////
     reg [7:0] genArmy;
     wire genArmyValid = (genArmy!=8'd0);
-    wire [3:0] genArmyType;
+    wire [2:0] genArmyType;
     Priority_Encoder_8x3 PE83_0 (genArmy, genArmyType);
     reg [7:0] next_genArmy;
     wire timeToGenArmy = (gameState == `GS_GEN_A_D);
@@ -241,6 +242,11 @@ module Game_Engine (
         counter3 <= next_counter3;
     end
 
+    always @(negedge clk_25MHz) begin
+        enemy_type_addr <= next_enemy_type_addr;
+        army_type_addr <= next_army_type_addr;
+    end
+
     always @(*) begin
         next_Enemy_Instance[0] = Enemy_Instance[0];
         next_Army_Instance[0] = Army_Instance[0];
@@ -266,8 +272,8 @@ module Game_Engine (
         next_tower_cnt = tower_cnt;
         next_towerBlood_E = towerBlood_E;
         next_towerBlood_A = towerBlood_A;
-        enemy_type_addr = enemy_type_addr;    // just default
-        army_type_addr = army_type_addr;      // just default
+        next_enemy_type_addr = enemy_type_addr;
+        next_army_type_addr = army_type_addr;
         next_counter1 = counter1;
         next_counter2 = counter2;
         next_counter3 = counter3;
@@ -317,14 +323,14 @@ module Game_Engine (
                     end
                 end else begin
                     if (Enemy_Instance[counter1][55]==1'b0) begin   // Found A Space
-                        enemy_type_addr = enemyQueueObj[1:0];       // Record the Enemy Type, to get the right data in next clk
+                        next_enemy_type_addr = enemyQueueObj[1:0];       // Record the Enemy Type, to get the right data in next clk
                         next_counter2 = 6'd1;
                     end else next_counter1 = counter1 + 1'b1;       // This Addr No Space, find the next one
                 end
             end
             `GS_GEN_A_D: begin   // ? ///// generate Army - Detect
                 next_gameState = `GS_GEN_A_G;
-                army_type_addr = genArmyType;
+                next_army_type_addr = genArmyType;
                 if (genArmyValid) next_money = money - army_cost_value;
                 next_counter1 = 6'd0;       // Finding Space ptr
                 next_counter2 = genArmyValid;
@@ -348,8 +354,8 @@ module Game_Engine (
                     next_counter2 = 6'd0;
                 end else begin
                     if (clk_6 && Enemy_Instance[counter1][55]==1'b1) begin
-                        enemy_type_addr = Enemy_Instance[counter1][54:52];
-                        army_type_addr = Army_Instance[counter2][54:52];
+                        next_enemy_type_addr = Enemy_Instance[counter1][54:52];
+                        next_army_type_addr = Army_Instance[counter2][54:52];
     // --------------------------------------------
     case (Enemy_Instance[counter1][19:16])
         `ST_MOVE: begin
@@ -437,8 +443,8 @@ module Game_Engine (
                     next_counter2 = 6'd0;
                 end else begin
                     if (clk_6 && Army_Instance[counter1][55]==1'b1) begin
-                        army_type_addr = Army_Instance[counter1][54:52];
-                        enemy_type_addr = Enemy_Instance[counter2][54:52];
+                        next_army_type_addr = Army_Instance[counter1][54:52];
+                        next_enemy_type_addr = Enemy_Instance[counter2][54:52];
     // --------------------------------------------
     case (Army_Instance[counter1][19:16])
         `ST_MOVE: begin
@@ -543,7 +549,7 @@ module Game_Engine (
             end
             `GS_PURSE: begin     // ? ///// Purse Upgrade
                 next_gameState = `GS_MONEY;
-                if (purse_level != 3'd7 && ableToUpgrade) begin
+                if (purse_level != 3'd7 && purseUpgrade) begin
                     next_money = money - purseUpgradeNeedMoney;
                     next_purse_level = purse_level + 1'b1;
                 end 

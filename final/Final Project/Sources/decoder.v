@@ -7,14 +7,14 @@
 `define ST_REPEL  3'd6
 
 module Enemy_Stats (
-    input [1:0] addr,
+    input [2:0] addr,
     output reg [37:0] out
 );
     always @(*) begin
         case (addr)
-            2'd0:    out = 38'b00011111010000011001010000100000010100;
-            2'd1:    out = 38'b01111101000001100100010100010001010000;
-            2'd2:    out = 38'b11111010000011111010011110001000101000;
+            3'd0:    out = 38'b00011111010000011001010000100000010100;
+            3'd1:    out = 38'b01111101000001100100010100010001010000;
+            3'd2:    out = 38'b11111010000011111010011110001000101000;
             default: out = 38'b00000011001001100100000011010001010000;
         endcase
     end
@@ -57,14 +57,14 @@ module Army_Cost (
 endmodule
 
 module Enemy_Pixel (
-    input [1:0] addr,
+    input [2:0] addr,
     output reg [18:0] out   // W[7B][18:12], H[7B][11:5], D[5B][4:0]
 );
     always @(*) begin
         case (addr)
-            2'd0:    out = 19'b0100000001111011110;
-            2'd1:    out = 19'b0100000011110011000;
-            2'd2:    out = 19'b0100000010100011100;
+            3'd0:    out = 19'b0100000001111011110;
+            3'd1:    out = 19'b0100000011110011000;
+            3'd2:    out = 19'b0100000010100011100;
             default: out = 19'b0100000011110011000;
         endcase
     end
@@ -125,7 +125,7 @@ module Purse_Max_Money (
 endmodule
 
 module PicNum_By_State (
-    input [2:0] state,
+    input [3:0] state,
     input x_pos,
     output reg [2:0] pic
 );
