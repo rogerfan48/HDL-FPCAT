@@ -7,8 +7,12 @@ module Render_Start (
     input mouseInStart,
     output reg [11:0] pixel
 );
-
-    wire [10:0] FPCAT_addr = /*11'd1055*/(((av_cnt-150)/5)*60 + ((ah_cnt-170)/5)) % 1200;
+    reg [10:0] FPCAT_addr;
+    reg [10:0] GAME_START_addr;
+    always @(posedge clk) begin  // 25MHz 上升邊緣
+        FPCAT_addr <= (((av_cnt-150)/5)*60 + ((ah_cnt-170)/5)) % 1200;
+        GAME_START_addr <= (((av_cnt-280)/2)*100 + ((ah_cnt-220)/2)) % 2000;
+    end
     wire FPCAT_value;
     mem_FPCAT mem_FPCAT_0 (
         .clka(clk),         // input wire clka 輸入時鐘信號
@@ -18,7 +22,6 @@ module Render_Start (
         .douta(FPCAT_value) // output wire [0 : 0] douta 1位元的輸出資料
     );
 
-    wire [10:0] GAME_START_addr = /*11'd728*/(((av_cnt-280)/2)*100 + ((ah_cnt-220)/2)) % 2000;
     wire GAME_START_value;
     mem_GAME_START mem_GAME_START_0 (
         .clka(clk),                 // input wire clka

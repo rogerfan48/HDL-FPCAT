@@ -164,54 +164,54 @@ module Render_Play (
 
 
     wire [9:0] tower_enemy_addr_0 = ((av_cnt-90)/3)*20 + ((ah_cnt-10)/3);
-    wire [9:0] tower_enemy_addr = (tower_enemy_addr_0 < 800 ? tower_enemy_addr_0 : 0);
-    wire [1:0] tower_enemy_value;
-    mem_Tower_Enemy mem_Tower_Enemy (.clka(clk_25MHz), .wea(0), .addra(tower_enemy_addr), .dina(0), .douta(tower_enemy_value));
     wire [9:0] tower_cat_addr_0 = ((av_cnt-90)/3)*20 + ((ah_cnt-570)/3);
-    wire [9:0] tower_cat_addr = (tower_cat_addr_0 < 800 ? tower_cat_addr_0 : 0);
-    wire [1:0] tower_cat_value;
+    reg [9:0] tower_enemy_addr, tower_cat_addr;
+    always @(posedge clk_25MHz) begin
+        tower_enemy_addr <= (tower_enemy_addr_0 < 800 ? tower_enemy_addr_0 : 0);
+        tower_cat_addr <= (tower_cat_addr_0 < 800 ? tower_cat_addr_0 : 0);
+    end
+    wire [1:0] tower_enemy_value, tower_cat_value;
+    mem_Tower_Enemy mem_Tower_Enemy (.clka(clk_25MHz), .wea(0), .addra(tower_enemy_addr), .dina(0), .douta(tower_enemy_value));
     mem_Tower_Cat mem_Tower_Cat (.clka(clk_25MHz), .wea(0), .addra(tower_cat_addr), .dina(0), .douta(tower_cat_value));
 
     wire [8:0] frame_joker_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-105)/4);
-    wire [8:0] frame_joker_addr = (frame_joker_addr_0 < 500 ? frame_joker_addr_0 : 0);
-    wire [1:0] frame_joker_value;
-    mem_Frame_Joker_Cat mem_Frame_Joker_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_joker_addr), .dina(0), .douta(frame_joker_value));
     wire [8:0] frame_fish_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-215)/4);
-    wire [8:0] frame_fish_addr = (frame_fish_addr_0 < 500 ? frame_fish_addr_0 : 0);
-    wire [1:0] frame_fish_value;
-    mem_Frame_Fish_Cat mem_Frame_Fish_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_fish_addr), .dina(0), .douta(frame_fish_value));
     wire [8:0] frame_trap_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-325)/4);
-    wire [8:0] frame_trap_addr = (frame_trap_addr_0 < 500 ? frame_trap_addr_0 : 0);
-    wire [1:0] frame_trap_value;
-    mem_Frame_Trap_Cat mem_Frame_Trap_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_trap_addr), .dina(0), .douta(frame_trap_value));
     wire [8:0] frame_jay_addr_0 = ((av_cnt-290)/4)*25 + ((ah_cnt-435)/4);
-    wire [8:0] frame_jay_addr = (frame_jay_addr_0 < 500 ? frame_jay_addr_0 : 0);
-    wire [1:0] frame_jay_value;
-    mem_Frame_Jay_Cat mem_Frame_Jay_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_jay_addr), .dina(0), .douta(frame_jay_value));
     wire [8:0] frame_bomb_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-105)/4);
-    wire [8:0] frame_bomb_addr = (frame_bomb_addr_0 < 500 ? frame_bomb_addr_0 : 0);
-    wire [1:0] frame_bomb_value;
-    mem_Frame_Bomb_Cat mem_Frame_Bomb_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_bomb_addr), .dina(0), .douta(frame_bomb_value));
     wire [8:0] frame_CY_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-215)/4);
-    wire [8:0] frame_CY_addr = (frame_CY_addr_0 < 500 ? frame_CY_addr_0 : 0);
-    wire [1:0] frame_CY_value;
-    mem_Frame_CY_Cat mem_Frame_CY_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_CY_addr), .dina(0), .douta(frame_CY_value));
     wire [8:0] frame_hacker_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-325)/4);
-    wire [8:0] frame_hacker_addr = (frame_hacker_addr_0 < 500 ? frame_hacker_addr_0 : 0);
-    wire [1:0] frame_hacker_value;
-    mem_Frame_Hacker_Cat mem_Frame_Hacker_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_hacker_addr), .dina(0), .douta(frame_hacker_value));
     wire [8:0] frame_elephant_addr_0 = ((av_cnt-380)/4)*25 + ((ah_cnt-435)/4);
-    wire [8:0] frame_elephant_addr = (frame_elephant_addr_0 < 500 ? frame_elephant_addr_0 : 0);
-    wire [1:0] frame_elephant_value;
+    reg [8:0] frame_joker_addr, frame_fish_addr, frame_trap_addr, frame_jay_addr, frame_bomb_addr, frame_CY_addr, frame_hacker_addr, frame_elephant_addr;
+    always @(posedge clk_25MHz) begin
+        frame_joker_addr <= (frame_joker_addr_0 < 500 ? frame_joker_addr_0 : 0);
+        frame_fish_addr <= (frame_fish_addr_0 < 500 ? frame_fish_addr_0 : 0);
+        frame_trap_addr <= (frame_trap_addr_0 < 500 ? frame_trap_addr_0 : 0);
+        frame_jay_addr <= (frame_jay_addr_0 < 500 ? frame_jay_addr_0 : 0);
+        frame_bomb_addr <= (frame_bomb_addr_0 < 500 ? frame_bomb_addr_0 : 0);
+        frame_CY_addr <= (frame_CY_addr_0 < 500 ? frame_CY_addr_0 : 0);
+        frame_hacker_addr <= (frame_hacker_addr_0 < 500 ? frame_hacker_addr_0 : 0);
+        frame_elephant_addr <= (frame_elephant_addr_0 < 500 ? frame_elephant_addr_0 : 0);
+    end
+    wire [1:0] frame_joker_value, frame_fish_value, frame_trap_value, frame_jay_value, frame_bomb_value, frame_CY_value, frame_hacker_value, frame_elephant_value;
+    mem_Frame_Joker_Cat mem_Frame_Joker_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_joker_addr), .dina(0), .douta(frame_joker_value));
+    mem_Frame_Fish_Cat  mem_Frame_Fish_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_fish_addr), .dina(0), .douta(frame_fish_value));
+    mem_Frame_Trap_Cat  mem_Frame_Trap_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_trap_addr), .dina(0), .douta(frame_trap_value));
+    mem_Frame_Jay_Cat   mem_Frame_Jay_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_jay_addr), .dina(0), .douta(frame_jay_value));
+    mem_Frame_Bomb_Cat  mem_Frame_Bomb_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_bomb_addr), .dina(0), .douta(frame_bomb_value));
+    mem_Frame_CY_Cat    mem_Frame_CY_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_CY_addr), .dina(0), .douta(frame_CY_value));
+    mem_Frame_Hacker_Cat mem_Frame_Hacker_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_hacker_addr), .dina(0), .douta(frame_hacker_value));
     mem_Frame_Elephant_Cat mem_Frame_Elephant_Cat (.clka(clk_25MHz), .wea(0), .addra(frame_elephant_addr), .dina(0), .douta(frame_elephant_value));
 
     wire [11:0] btn_purse_addr_0 = ((av_cnt-380)/2)*50 + ((ah_cnt)/2);
-    wire [11:0] btn_purse_addr = (btn_purse_addr_0 < 5000 ? btn_purse_addr_0 : 0);
-    wire [1:0] btn_purse_value;
-    mem_Btn_Purse mem_Btn_Purse (.clka(clk_25MHz), .wea(0), .addra(btn_purse_addr), .dina(0), .douta(btn_purse_value));
     wire [12:0] btn_fire_addr_0 = ((av_cnt-380)/2)*50 + ((ah_cnt-540)/2) + 2500;
-    wire [12:0] btn_fire_addr = (btn_fire_addr_0 < 5000 ? btn_fire_addr_0 : 0);
-    wire [1:0] btn_fire_value;
+    reg [11:0] btn_purse_addr, btn_fire_addr;
+    always @(posedge clk_25MHz) begin
+        btn_purse_addr <= (btn_purse_addr_0 < 5000 ? btn_purse_addr_0 : 0);
+        btn_fire_addr <= (btn_fire_addr_0 < 5000 ? btn_fire_addr_0 : 0);
+    end
+    wire [1:0] btn_purse_value, btn_fire_value;
+    mem_Btn_Purse mem_Btn_Purse (.clka(clk_25MHz), .wea(0), .addra(btn_purse_addr), .dina(0), .douta(btn_purse_value));
     mem_Btn_Fire mem_Btn_Fire (.clka(clk_25MHz), .wea(0), .addra(btn_fire_addr), .dina(0), .douta(btn_fire_value));
 
     always @(*) begin

@@ -10,7 +10,14 @@ module Render_Menu (
     output reg [11:0] pixel
 );
 
-    wire [10:0] LEVEL_1_addr = (((av_cnt-90)/2)*60 + ((ah_cnt-240)/2)) % 1200;
+    reg [10:0] LEVEL_1_addr;
+    reg [10:0] LEVEL_2_addr;
+    reg [10:0] LEVEL_3_addr;
+    always @(posedge clk) begin
+        LEVEL_1_addr <= (((av_cnt-90)/2)*60 + ((ah_cnt-240)/2)) % 1200;
+        LEVEL_2_addr = (((av_cnt-210)/2)*60 + ((ah_cnt-240)/2)) % 1200;
+        LEVEL_3_addr = (((av_cnt-330)/2)*60 + ((ah_cnt-240)/2)) % 1200;
+    end
     wire LEVEL_1_value;
     mem_LEVEL mem_LEVEL_1 (
         .clka(clk),             // input wire clka
@@ -19,7 +26,6 @@ module Render_Menu (
         .dina(0),               // input wire [0 : 0] dina
         .douta(LEVEL_1_value)   // output wire [0 : 0] douta
     );
-    wire [10:0] LEVEL_2_addr = (((av_cnt-210)/2)*60 + ((ah_cnt-240)/2)) % 1200;
     wire LEVEL_2_value;
     mem_LEVEL mem_LEVEL_2 (
         .clka(clk),             // input wire clka
@@ -28,7 +34,6 @@ module Render_Menu (
         .dina(0),               // input wire [0 : 0] dina
         .douta(LEVEL_2_value)   // output wire [0 : 0] douta
     );
-    wire [10:0] LEVEL_3_addr = (((av_cnt-330)/2)*60 + ((ah_cnt-240)/2)) % 1200;
     wire LEVEL_3_value;
     mem_LEVEL mem_LEVEL_3 (
         .clka(clk),             // input wire clka
@@ -37,6 +42,7 @@ module Render_Menu (
         .dina(0),               // input wire [0 : 0] dina
         .douta(LEVEL_3_value)   // output wire [0 : 0] douta
     );
+    
     reg [10:0] num_menu_addr;
     wire num_menu_value;
     mem_Numbers mem_num_menu (
@@ -46,14 +52,14 @@ module Render_Menu (
         .dina(0),               // input wire [0 : 0] dina
         .douta(num_menu_value)  // output wire [0 : 0] douta
     );
-    always @(*) begin
+    always @(posedge clk) begin
         if (ah_cnt>=10'd370 && ah_cnt<10'd400 && av_cnt>=10'd87 && av_cnt<10'd132) begin
-            num_menu_addr = (((av_cnt-87)/3)*10 + ((ah_cnt-370)/3)+150) % 1650;
+            num_menu_addr <= (((av_cnt-87)/3)*10 + ((ah_cnt-370)/3)+150) % 1650;
         end else if (ah_cnt>=10'd370 && ah_cnt<10'd400 && av_cnt>=10'd207 && av_cnt<10'd252) begin
-            num_menu_addr = (((av_cnt-207)/3)*10 + ((ah_cnt-370)/3)+300) % 1650;
+            num_menu_addr <= (((av_cnt-207)/3)*10 + ((ah_cnt-370)/3)+300) % 1650;
         end else if (ah_cnt>=10'd370 && ah_cnt<10'd400 && av_cnt>=10'd327 && av_cnt<10'd372) begin
-            num_menu_addr = (((av_cnt-327)/3)*10 + ((ah_cnt-370)/3)+450) % 1650;
-        end else num_menu_addr = 11'd0;
+            num_menu_addr <= (((av_cnt-327)/3)*10 + ((ah_cnt-370)/3)+450) % 1650;
+        end else num_menu_addr <= 11'd0;
     end
 
     always @(*) begin

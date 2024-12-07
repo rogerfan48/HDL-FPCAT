@@ -119,7 +119,8 @@ module Game_Engine (
     reg [4:0] next_gameState;
 
     always @(posedge clk_25MHz) begin
-        if (scene!=`S_PLAY1&&scene!=`S_PLAY2&&scene!=`S_PLAY3) gameState <= `GS_REST;
+        if (gameInit_OP) gameState <= `GS_INIT;
+        else if (scene!=`S_PLAY1&&scene!=`S_PLAY2&&scene!=`S_PLAY3) gameState <= `GS_REST;
         else gameState <= next_gameState;
     end
 
@@ -280,10 +281,8 @@ module Game_Engine (
 
         case (gameState)
             `GS_REST: begin
-                if (v_cnt==10'd490 && h_cnt<10'd5) begin
-                    if (gameInit_OP)   next_gameState = `GS_INIT;
-                    else               next_gameState = `GS_GEN_E;
-                end else               next_gameState = gameState;
+                if (v_cnt==10'd490 && h_cnt<10'd5)  next_gameState = `GS_GEN_E;
+                else                                next_gameState = gameState;
             end
             `GS_INIT: begin      // ? ///// Initialization
                 next_gameState = `GS_GEN_E;
