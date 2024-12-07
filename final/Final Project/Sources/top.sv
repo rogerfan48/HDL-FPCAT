@@ -18,7 +18,9 @@ module Top (
     output vsync,
     inout PS2_CLK,
     inout PS2_DATA,
-    output [7:0] arm_LED
+    output [7:0] arm_LED,
+    output [6:0] display,
+    output [3:0] digit
 );
 
     wire clk_25MHz;
@@ -141,6 +143,8 @@ module Top (
         .vgaGreen(vgaGreen),
         .vgaBlue(vgaBlue)
     );
+
+    Seven_Segment Seven_Segment_0 (rst, clk, money, display, digit);
 
     VGA_Control VGA_Ctrl_0 (
         .clk(clk),

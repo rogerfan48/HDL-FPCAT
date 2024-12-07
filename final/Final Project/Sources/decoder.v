@@ -119,7 +119,7 @@ module Purse_Max_Money (
             3'd4:    out = 14'd2000;
             3'd5:    out = 14'd4000;
             3'd6:    out = 14'd6000;
-            default: out = 14'd10000;
+            default: out = 14'd9999;
         endcase
     end
 endmodule
