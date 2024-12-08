@@ -94,14 +94,14 @@ module Purse_Upgrade_Need_Money (
 );
     always @(*) begin
         case (level)
-            3'd0:    out = 14'd100;
-            3'd1:    out = 14'd200;
-            3'd2:    out = 14'd400;
-            3'd3:    out = 14'd600;
-            3'd4:    out = 14'd1000;
-            3'd5:    out = 14'd2000;
-            3'd6:    out = 14'd4000;
-            default: out = 14'd8000;
+            3'd0:    out = 15'd100;
+            3'd1:    out = 15'd200;
+            3'd2:    out = 15'd400;
+            3'd3:    out = 15'd600;
+            3'd4:    out = 15'd1000;
+            3'd5:    out = 15'd2000;
+            3'd6:    out = 15'd4000;
+            default: out = 15'd8000;
         endcase
     end
 endmodule
@@ -112,14 +112,14 @@ module Purse_Max_Money (
 );
     always @(*) begin
         case (level)
-            3'd0:    out = 14'd100;
-            3'd1:    out = 14'd300;
-            3'd2:    out = 14'd500;
-            3'd3:    out = 14'd1000;
-            3'd4:    out = 14'd2000;
-            3'd5:    out = 14'd4000;
-            3'd6:    out = 14'd6000;
-            default: out = 14'd9999;
+            3'd0:    out = 15'd150;
+            3'd1:    out = 15'd300;
+            3'd2:    out = 15'd500;
+            3'd3:    out = 15'd1000;
+            3'd4:    out = 15'd2000;
+            3'd5:    out = 15'd4000;
+            3'd6:    out = 15'd6000;
+            default: out = 15'd9999;
         endcase
     end
 endmodule

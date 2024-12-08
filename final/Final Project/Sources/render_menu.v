@@ -4,9 +4,7 @@ module Render_Menu (
     input clk_25MHz,
     input [1:0] display_cnt,
     input [9:0] h_cnt,
-    input [9:0] ah_cnt,
     input [9:0] v_cnt,
-    input [9:0] av_cnt,
     input [9:0] h_cnt_1,
     input [9:0] h_cnt_2,
     input [9:0] h_cnt_3,
@@ -87,21 +85,18 @@ module Render_Menu (
     wire num_menu_value;
     always @(posedge clk_25MHz) begin
         if (h_cnt_5>=10'd370 && h_cnt_5<10'd400 && v_cnt_5>=10'd87 && v_cnt_5<10'd132) begin
-            // num_menu_addr <= (((av_cnt-87)/3)*10 + ((ah_cnt-370)/3)+150) % 1650;
             num_menu_pp00 <= ((v_cnt_5-87)/3);
             num_menu_pp01 <= ((h_cnt_5-370)/3);
             num_menu_pp10 <= num_menu_pp00 * 10;
             num_menu_pp11 <= num_menu_pp01 + 150;
             num_menu_pp2 <= (num_menu_pp10 + num_menu_pp11) % 1650;
         end else if (h_cnt_5>=10'd370 && h_cnt_5<10'd400 && v_cnt_5>=10'd207 && v_cnt_5<10'd252) begin
-            // num_menu_addr <= (((av_cnt-207)/3)*10 + ((ah_cnt-370)/3)+300) % 1650;
             num_menu_pp00 <= ((v_cnt_5-207)/3);
             num_menu_pp01 <= ((h_cnt_5-370)/3);
             num_menu_pp10 <= num_menu_pp00 * 10;
             num_menu_pp11 <= num_menu_pp01 + 300;
             num_menu_pp2 <= (num_menu_pp10 + num_menu_pp11) % 1650;
         end else if (h_cnt_5>=10'd370 && h_cnt_5<10'd400 && v_cnt_5>=10'd327 && v_cnt_5<10'd372) begin
-            // num_menu_addr <= (((av_cnt-327)/3)*10 + ((ah_cnt-370)/3)+450) % 1650;
             num_menu_pp00 <= ((v_cnt_5-327)/3);
             num_menu_pp01 <= ((h_cnt_5-370)/3);
             num_menu_pp10 <= num_menu_pp00 * 10;

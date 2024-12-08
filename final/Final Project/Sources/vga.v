@@ -5,12 +5,9 @@ module VGA_Control (
     input pclk, reset,
     input [1:0] display_cnt,
     output hsync, vsync, valid,
+    output [9:0] line_cnt,
     output [9:0] h_cnt,
     output [9:0] v_cnt,
-    output reg [9:0] ah_cnt,
-    output reg [9:0] av_cnt,
-    output reg [9:0] d_h_cnt,
-    output reg [9:0] d_v_cnt,
     output reg [9:0] h_cnt_1,
     output reg [9:0] h_cnt_2,
     output reg [9:0] h_cnt_3,
@@ -85,31 +82,6 @@ module VGA_Control (
     
     assign h_cnt = (pixel_cnt < HD) ? pixel_cnt : 10'd0;
     assign v_cnt = (line_cnt < VD) ? line_cnt : 10'd0;
-
-    reg [9:0] next_ah_cnt;
-    reg [9:0] next_av_cnt;
-    always @(negedge pclk) begin
-        ah_cnt <= next_ah_cnt;
-        av_cnt <= next_av_cnt;
-    end
-    always @(*) begin
-        if (pixel_cnt < 638) begin
-            next_ah_cnt = pixel_cnt + 3;
-            next_av_cnt = line_cnt;
-        end else if (pixel_cnt == 797) begin
-            next_ah_cnt = 10'd0;
-            next_av_cnt = line_cnt + 1;
-        end else if (pixel_cnt == 798) begin
-            next_ah_cnt = 10'd1;
-            next_av_cnt = line_cnt + 1;
-        end else if (pixel_cnt == 799) begin
-            next_ah_cnt = 10'd2;
-            next_av_cnt = line_cnt + 1;
-        end else begin
-            next_ah_cnt = 10'd0;
-            next_av_cnt = line_cnt;
-        end
-    end
 
     reg [9:0] next_h_cnt_1, next_h_cnt_2, next_h_cnt_3, next_h_cnt_4, next_h_cnt_5, next_h_cnt_6;
     reg [9:0] next_v_cnt_1, next_v_cnt_2, next_v_cnt_3, next_v_cnt_4, next_v_cnt_5, next_v_cnt_6;
@@ -243,18 +215,5 @@ module VGA_Control (
             next_h_cnt_6 = 10'd0;
             next_v_cnt_6 = line_cnt;
         end
-    end
-
-    always @(negedge clk) begin
-        case (display_cnt)
-            2'b11, 2'b00, 2'b01: begin
-                d_h_cnt <= h_cnt+2;
-                d_v_cnt <= (pixel_cnt==798||pixel_cnt==799) ? v_cnt+1 : v_cnt;
-            end
-            2'b10: begin
-                d_h_cnt <= h_cnt+1;
-                d_v_cnt <= (pixel_cnt==799) ? v_cnt+1 : v_cnt;
-            end
-        endcase
     end
 endmodule

@@ -32,11 +32,8 @@ module Top (
     wire clk_6;     // !! with respect to clk_frame
     Clk_Divisor_6 Clk_Divisor_6_0 (clk_25MHz, clk_frame, clk_6);
     wire [9:0] h_cnt;   //640
-    wire [9:0] ah_cnt;  //640
     wire [9:0] v_cnt;   //480
-    wire [9:0] av_cnt;  //480
-    wire [9:0] d_h_cnt;
-    wire [9:0] d_v_cnt;
+    wire [9:0] line_cnt;
     wire [9:0] h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6;
     wire [9:0] v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6;
 
@@ -99,7 +96,7 @@ module Top (
         .rst(rst),
         .clk_25MHz(clk_25MHz),
         .h_cnt(h_cnt),
-        .v_cnt(v_cnt),
+        .line_cnt(line_cnt),
         .clk_6(clk_6),
         .clk_frame(clk_frame),
         .effectiveClick(effectiveClick),
@@ -122,11 +119,7 @@ module Top (
         .clk_25MHz(clk_25MHz),
         .display_cnt(display_cnt),
         .h_cnt(h_cnt),
-        .ah_cnt(ah_cnt),
         .v_cnt(v_cnt),
-        .av_cnt(av_cnt),
-        .d_h_cnt(d_h_cnt),
-        .d_v_cnt(d_v_cnt),
         .h_cnt_1(h_cnt_1),
         .h_cnt_2(h_cnt_2),
         .h_cnt_3(h_cnt_3),
@@ -157,7 +150,7 @@ module Top (
         .vgaBlue(vgaBlue)
     );
 
-    Seven_Segment Seven_Segment_0 (rst, clk, money, display, digit);
+    Seven_Segment Seven_Segment_0 (rst, clk_25MHz, money, display, digit);
 
     VGA_Control VGA_Ctrl_0 (
         .clk(clk),
@@ -167,12 +160,9 @@ module Top (
         .hsync(hsync),
         .vsync(vsync),
         .valid(valid),
+        .line_cnt(line_cnt),
         .h_cnt(h_cnt),
-        .ah_cnt(ah_cnt),
         .v_cnt(v_cnt),
-        .av_cnt(av_cnt),
-        .d_h_cnt(d_h_cnt),
-        .d_v_cnt(d_v_cnt),
         .h_cnt_1(h_cnt_1),
         .h_cnt_2(h_cnt_2),
         .h_cnt_3(h_cnt_3),

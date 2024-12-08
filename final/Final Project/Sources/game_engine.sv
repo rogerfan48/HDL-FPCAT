@@ -63,7 +63,7 @@ module Game_Engine (
     input rst,
     input clk_25MHz,
     input [9:0] h_cnt,   //640
-    input [9:0] v_cnt,   //480
+    input [9:0] line_cnt,   // 480 -> 525
     input clk_6,
     input clk_frame,
     input [9:0] effectiveClick,
@@ -120,7 +120,7 @@ module Game_Engine (
 
     always @(posedge clk_25MHz) begin
         if (rst) gameState <= `GS_REST;
-        if (scene==`S_MENU && gameInit) gameState <= `GS_INIT;
+        else if (scene==`S_MENU && gameInit) gameState <= `GS_INIT;
         else if (scene==`S_PLAY1||scene==`S_PLAY2||scene==`S_PLAY3) gameState <= next_gameState;
         else gameState <= `GS_REST;
     end
@@ -285,7 +285,7 @@ module Game_Engine (
 
         case (gameState)
             `GS_REST: begin
-                if (v_cnt==10'd490 && h_cnt<10'd5)  next_gameState = `GS_GEN_E;
+                if (line_cnt==10'd490 && h_cnt<10'd5)   next_gameState = `GS_GEN_E;
                 else                                next_gameState = gameState;
             end
             `GS_INIT: begin      // ? ///// Initialization
@@ -346,6 +346,8 @@ module Game_Engine (
                 end else begin
                     if (Army_Instance[counter1][55]==1'b0) begin    // Found A Space
                         next_gameState = `GS_ATK_E;
+                        next_counter1 = 6'd0;
+                        next_counter2 = 6'd0;
                         next_Army_Instance[counter1] = {1'b1, army_type_addr, `ARMY_SPAWN_X, `SPAWN_Y-army_pixel_value[11:5], army_stats_value[37:26], 4'd1, 4'd0, 12'd0};
                     end else next_counter1 = counter1 + 1'b1;       // This Addr No Space, find the next one
                 end
@@ -355,8 +357,7 @@ module Game_Engine (
                     next_gameState = `GS_ATK_A;
                     next_counter1 = 6'd0;
                     next_counter2 = 6'd0;
-                end else begin
-                    if (clk_6 && Enemy_Instance[counter1][55]==1'b1) begin
+                end else if (clk_6 && Enemy_Instance[counter1][55]==1'b1) begin
                         next_enemy_type_addr = Enemy_Instance[counter1][54:52];
                         next_army_type_addr = Army_Instance[counter2][54:52];
     // --------------------------------------------
@@ -436,7 +437,8 @@ module Game_Engine (
         end
     endcase
     // --------------------------------------------
-                    end
+                end else begin
+                    next_counter1 = counter1 + 1'b1;
                 end
             end
             `GS_ATK_A: begin     // ? ///// atk or move Army
@@ -444,8 +446,7 @@ module Game_Engine (
                     next_gameState = `GS_TOWER_D;
                     next_counter1 = 6'd0;
                     next_counter2 = 6'd0;
-                end else begin
-                    if (clk_6 && Army_Instance[counter1][55]==1'b1) begin
+                end else if (clk_6 && Army_Instance[counter1][55]==1'b1) begin
                         next_army_type_addr = Army_Instance[counter1][54:52];
                         next_enemy_type_addr = Enemy_Instance[counter2][54:52];
     // --------------------------------------------
@@ -526,7 +527,8 @@ module Game_Engine (
         end
     endcase
     // --------------------------------------------
-                    end
+                end else begin
+                    next_counter1 = counter1 + 1'b1;
                 end
             end
             `GS_TOWER_D: begin   // ? ///// Tower fire Detect

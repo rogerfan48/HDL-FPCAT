@@ -4,11 +4,7 @@ module Render (
     input clk_25MHz,
     input [1:0] display_cnt,
     input [9:0] h_cnt,
-    input [9:0] ah_cnt,
     input [9:0] v_cnt,
-    input [9:0] av_cnt,
-    input [9:0] d_h_cnt,
-    input [9:0] d_v_cnt,
     input [9:0] h_cnt_1,
     input [9:0] h_cnt_2,
     input [9:0] h_cnt_3,
@@ -48,18 +44,18 @@ module Render (
     parameter S_LOSE = 3'd6;
 
     wire [11:0] pixel_start;
-    Render_Start Render_Start (rst, clk, clk_25MHz, display_cnt, h_cnt, ah_cnt, v_cnt, av_cnt,
+    Render_Start Render_Start (rst, clk, clk_25MHz, display_cnt, h_cnt, v_cnt,
         h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6,
         mouseInStart, pixel_start);
     wire [11:0] pixel_menu;
-    Render_Menu Render_Menu (rst, clk, clk_25MHz, display_cnt, h_cnt, ah_cnt, v_cnt, av_cnt,
+    Render_Menu Render_Menu (rst, clk, clk_25MHz, display_cnt, h_cnt, v_cnt,
         h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6,
         mouseInLevel1, mouseInLevel2, mouseInLevel3, pixel_menu);
     wire [11:0] pixel_play;
-    Render_Play Render_Play (rst, clk, clk_25MHz, display_cnt, h_cnt, ah_cnt, v_cnt, av_cnt, d_h_cnt, d_v_cnt,
+    Render_Play Render_Play (rst, clk, clk_25MHz, display_cnt, h_cnt, v_cnt,
         h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6,
         Enemy_Instance, Army_Instance, mouseInFrame, pixel_play);
-        
+
     always @(posedge clk_25MHz) begin
         if (!valid)                    {vgaRed, vgaGreen, vgaBlue} <= 12'h0;
         else if (enable_mouse_display) {vgaRed, vgaGreen, vgaBlue} <= mouse_pixel;
