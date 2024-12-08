@@ -380,7 +380,9 @@ if (clk_6) begin
                 next_counter1 = counter1 + 1'b1;
                 next_counter2 = 6'd0;
             end else if (
-                (Enemy_Instance[counter1][51:42]+enemy_pixel_value[4:0]+enemy_stats_value[7:0]-army_pixel_value[4:0]>=Army_Instance[counter2][51:42]) ||(Enemy_Instance[counter1][51:42]+enemy_stats_value[7:0]>=`TOWER_A_X)
+                ((Army_Instance[counter2][55]==1'b1) &&
+                    (Enemy_Instance[counter1][51:42]+enemy_pixel_value[4:0]+enemy_stats_value[7:0]-army_pixel_value[4:0]>=Army_Instance[counter2][51:42])) ||
+                (Enemy_Instance[counter1][51:42]+enemy_stats_value[7:0]>=`TOWER_A_X)
             ) begin         // in atk range
                 next_Enemy_Instance[counter1][19:16] = `ST_ATK_0;
                 next_Enemy_Instance[counter1][15:12] = 4'd0;
@@ -469,7 +471,8 @@ if (clk_6) begin
                 next_counter1 = counter1 + 1'b1;
                 next_counter2 = 6'd0;
             end else if (
-                (Army_Instance[counter1][51:42]+army_pixel_value[4:0]<=Enemy_Instance[counter2][51:42]+army_stats_value[7:0]+enemy_pixel_value[4:0]) ||
+                ((Enemy_Instance[counter2][55]==1'b1) && 
+                    (Army_Instance[counter1][51:42]+army_pixel_value[4:0]<=Enemy_Instance[counter2][51:42]+army_stats_value[7:0]+enemy_pixel_value[4:0])) ||
                 (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42])
             ) begin         // in atk range
                 next_Army_Instance[counter1][19:16] = `ST_ATK_0;

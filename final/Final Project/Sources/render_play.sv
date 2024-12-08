@@ -42,8 +42,8 @@ module Render_Play (
     wire [11:0] enemy_1_diff = enemy_1_pixel_value[18:12] * enemy_1_pixel_value[11:5] * enemy_1_picNum;
     Enemy_Pixel EnemyPixel0 (Enemy_Instance[0][54:52], enemy_0_pixel_value);
     Enemy_Pixel EnemyPixel1 (Enemy_Instance[1][54:52], enemy_1_pixel_value);
-    PicNum_By_State PicNum_By_State0 (Enemy_Instance[0][19:16], Enemy_Instance[0][45], enemy_0_picNum);
-    PicNum_By_State PicNum_By_State1 (Enemy_Instance[1][19:16], Enemy_Instance[1][45], enemy_1_picNum);
+    PicNum_By_State PicNum_By_State0 (Enemy_Instance[0][19:16], Enemy_Instance[0][46], enemy_0_picNum);
+    PicNum_By_State PicNum_By_State1 (Enemy_Instance[1][19:16], Enemy_Instance[1][46], enemy_1_picNum);
     reg [11:0] enemy_0_pp00, enemy_0_pp01, enemy_0_pp10, enemy_0_pp11, enemy_0_pp2;
     reg [11:0] enemy_1_pp00, enemy_1_pp01, enemy_1_pp10, enemy_1_pp11, enemy_1_pp2;
     wire [1:0] enemy_0_value, enemy_1_value;
@@ -71,8 +71,8 @@ module Render_Play (
     wire [11:0] enemy_3_diff = enemy_3_pixel_value[18:12] * enemy_3_pixel_value[11:5] * enemy_3_picNum;
     Enemy_Pixel EnemyPixel2 (Enemy_Instance[2][54:52], enemy_2_pixel_value);
     Enemy_Pixel EnemyPixel3 (Enemy_Instance[3][54:52], enemy_3_pixel_value);
-    PicNum_By_State PicNum_By_State2 (Enemy_Instance[2][19:16], Enemy_Instance[2][45], enemy_2_picNum);
-    PicNum_By_State PicNum_By_State3 (Enemy_Instance[3][19:16], Enemy_Instance[3][45], enemy_3_picNum);
+    PicNum_By_State PicNum_By_State2 (Enemy_Instance[2][19:16], Enemy_Instance[2][46], enemy_2_picNum);
+    PicNum_By_State PicNum_By_State3 (Enemy_Instance[3][19:16], Enemy_Instance[3][46], enemy_3_picNum);
     reg [11:0] enemy_2_pp00, enemy_2_pp01, enemy_2_pp10, enemy_2_pp11, enemy_2_pp2;
     reg [11:0] enemy_3_pp00, enemy_3_pp01, enemy_3_pp10, enemy_3_pp11, enemy_3_pp2;
     wire [1:0] enemy_2_value, enemy_3_value;
@@ -100,8 +100,8 @@ module Render_Play (
     wire [11:0] enemy_5_diff = enemy_5_pixel_value[18:12] * enemy_5_pixel_value[11:5] * enemy_5_picNum;
     Enemy_Pixel EnemyPixel4 (Enemy_Instance[4][54:52], enemy_4_pixel_value);
     Enemy_Pixel EnemyPixel5 (Enemy_Instance[5][54:52], enemy_5_pixel_value);
-    PicNum_By_State PicNum_By_State4 (Enemy_Instance[4][19:16], Enemy_Instance[4][45], enemy_4_picNum);
-    PicNum_By_State PicNum_By_State5 (Enemy_Instance[5][19:16], Enemy_Instance[5][45], enemy_5_picNum);
+    PicNum_By_State PicNum_By_State4 (Enemy_Instance[4][19:16], Enemy_Instance[4][46], enemy_4_picNum);
+    PicNum_By_State PicNum_By_State5 (Enemy_Instance[5][19:16], Enemy_Instance[5][46], enemy_5_picNum);
     reg [11:0] enemy_4_pp00, enemy_4_pp01, enemy_4_pp10, enemy_4_pp11, enemy_4_pp2;
     reg [11:0] enemy_5_pp00, enemy_5_pp01, enemy_5_pp10, enemy_5_pp11, enemy_5_pp2;
     wire [1:0] enemy_4_value, enemy_5_value;
@@ -129,8 +129,8 @@ module Render_Play (
     wire [11:0] enemy_7_diff = enemy_7_pixel_value[18:12] * enemy_7_pixel_value[11:5] * enemy_7_picNum;
     Enemy_Pixel EnemyPixel6 (Enemy_Instance[6][54:52], enemy_6_pixel_value);
     Enemy_Pixel EnemyPixel7 (Enemy_Instance[7][54:52], enemy_7_pixel_value);
-    PicNum_By_State PicNum_By_State6 (Enemy_Instance[6][19:16], Enemy_Instance[6][45], enemy_6_picNum);
-    PicNum_By_State PicNum_By_State7 (Enemy_Instance[7][19:16], Enemy_Instance[7][45], enemy_7_picNum);
+    PicNum_By_State PicNum_By_State6 (Enemy_Instance[6][19:16], Enemy_Instance[6][46], enemy_6_picNum);
+    PicNum_By_State PicNum_By_State7 (Enemy_Instance[7][19:16], Enemy_Instance[7][46], enemy_7_picNum);
     reg [11:0] enemy_6_pp00, enemy_6_pp01, enemy_6_pp10, enemy_6_pp11, enemy_6_pp2;
     reg [11:0] enemy_7_pp00, enemy_7_pp01, enemy_7_pp10, enemy_7_pp11, enemy_7_pp2;
     wire [1:0] enemy_6_value, enemy_7_value;
@@ -160,8 +160,8 @@ module Render_Play (
     wire [12:0] army_1_diff = army_1_pixel_value[18:12] * army_1_pixel_value[11:5] * army_1_picNum;
     Army_Pixel ArmyPixel0 (Army_Instance[0][54:52], army_0_pixel_value);
     Army_Pixel ArmyPixel1 (Army_Instance[1][54:52], army_1_pixel_value);
-    PicNum_By_State PicNum_By_State0_ (Army_Instance[0][19:16], Army_Instance[0][45], army_0_picNum);
-    PicNum_By_State PicNum_By_State1_ (Army_Instance[1][19:16], Army_Instance[1][45], army_1_picNum);
+    PicNum_By_State PicNum_By_State0_ (Army_Instance[0][19:16], Army_Instance[0][46], army_0_picNum);
+    PicNum_By_State PicNum_By_State1_ (Army_Instance[1][19:16], Army_Instance[1][46], army_1_picNum);
     reg [12:0] army_0_pp00, army_0_pp01, army_0_pp10, army_0_pp11, army_0_pp2;
     reg [12:0] army_1_pp00, army_1_pp01, army_1_pp10, army_1_pp11, army_1_pp2;
     wire [1:0] army_0_value, army_1_value;
@@ -189,8 +189,8 @@ module Render_Play (
     wire [12:0] army_3_diff = army_3_pixel_value[18:12] * army_3_pixel_value[11:5] * army_3_picNum;
     Army_Pixel ArmyPixel2 (Army_Instance[2][54:52], army_2_pixel_value);
     Army_Pixel ArmyPixel3 (Army_Instance[3][54:52], army_3_pixel_value);
-    PicNum_By_State PicNum_By_State2_ (Army_Instance[2][19:16], Army_Instance[2][45], army_2_picNum);
-    PicNum_By_State PicNum_By_State3_ (Army_Instance[3][19:16], Army_Instance[3][45], army_3_picNum);
+    PicNum_By_State PicNum_By_State2_ (Army_Instance[2][19:16], Army_Instance[2][46], army_2_picNum);
+    PicNum_By_State PicNum_By_State3_ (Army_Instance[3][19:16], Army_Instance[3][46], army_3_picNum);
     reg [12:0] army_2_pp00, army_2_pp01, army_2_pp10, army_2_pp11, army_2_pp2;
     reg [12:0] army_3_pp00, army_3_pp01, army_3_pp10, army_3_pp11, army_3_pp2;
     wire [1:0] army_2_value, army_3_value;
@@ -218,8 +218,8 @@ module Render_Play (
     wire [12:0] army_5_diff = army_5_pixel_value[18:12] * army_5_pixel_value[11:5] * army_5_picNum;
     Army_Pixel ArmyPixel4 (Army_Instance[4][54:52], army_4_pixel_value);
     Army_Pixel ArmyPixel5 (Army_Instance[5][54:52], army_5_pixel_value);
-    PicNum_By_State PicNum_By_State4_ (Army_Instance[4][19:16], Army_Instance[4][45], army_4_picNum);
-    PicNum_By_State PicNum_By_State5_ (Army_Instance[5][19:16], Army_Instance[5][45], army_5_picNum);
+    PicNum_By_State PicNum_By_State4_ (Army_Instance[4][19:16], Army_Instance[4][46], army_4_picNum);
+    PicNum_By_State PicNum_By_State5_ (Army_Instance[5][19:16], Army_Instance[5][46], army_5_picNum);
     reg [12:0] army_4_pp00, army_4_pp01, army_4_pp10, army_4_pp11, army_4_pp2;
     reg [12:0] army_5_pp00, army_5_pp01, army_5_pp10, army_5_pp11, army_5_pp2;
     wire [1:0] army_4_value, army_5_value;
@@ -247,8 +247,8 @@ module Render_Play (
     wire [12:0] army_7_diff = army_7_pixel_value[18:12] * army_7_pixel_value[11:5] * army_7_picNum;
     Army_Pixel ArmyPixel6 (Army_Instance[6][54:52], army_6_pixel_value);
     Army_Pixel ArmyPixel7 (Army_Instance[7][54:52], army_7_pixel_value);
-    PicNum_By_State PicNum_By_State6_ (Army_Instance[6][19:16], Army_Instance[6][45], army_6_picNum);
-    PicNum_By_State PicNum_By_State7_ (Army_Instance[7][19:16], Army_Instance[7][45], army_7_picNum);
+    PicNum_By_State PicNum_By_State6_ (Army_Instance[6][19:16], Army_Instance[6][46], army_6_picNum);
+    PicNum_By_State PicNum_By_State7_ (Army_Instance[7][19:16], Army_Instance[7][46], army_7_picNum);
     reg [12:0] army_6_pp00, army_6_pp01, army_6_pp10, army_6_pp11, army_6_pp2;
     reg [12:0] army_7_pp00, army_7_pp01, army_7_pp10, army_7_pp11, army_7_pp2;
     wire [1:0] army_6_value, army_7_value;
