@@ -321,12 +321,13 @@ if (clk_6) begin
             `GS_GEN_E: begin     // ? ///// generate Enemy
                 if (enemyGenPtr == 6'd63 ||             // All Enemy Been Generated
                     enemyQueueObj[14:3]>game_cnt ||     // Not Yet to Generate
-                    counter2==6'd1 ||                         // Already Find Space, generate and to the next gameState
+                    counter2==6'd1 ||                   // Already Find Space, generate and to the next gameState
                     counter1==6'd8) begin               // No Space
                     next_gameState = `GS_GEN_A_D;
                     if (counter2) begin
                         next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, `ENEMY_SPAWN_X, `SPAWN_Y-enemy_pixel_value[11:5]-(game_cnt[2:0]<<2), 
                             enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
+                            next_enemyGenPtr = enemyGenPtr + 1'b1;
                     end
                 end else begin
                     if (Enemy_Instance[counter1][55]==1'b0) begin       // Found A Space
