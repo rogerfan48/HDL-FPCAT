@@ -78,11 +78,14 @@ module Game_Engine (
     output reg [55:0] Army_Instance [7:0],
     output wire game_win,
     output wire game_lose,
-    output reg [3:0] gameState
+    output reg [5:0] enemyGenPtr
 );
 
+    wire clk_frame_op;
+    One_Palse OP_clk_frame (clk_25MHz, clk_frame, clk_frame_op);
+
 // ? //////////     IP: Enemy Queue     //////////////
-    reg [5:0] enemyGenPtr;      // only can have 63 enemy, remaining: {12{1}, 3{0}}
+    // reg [5:0] enemyGenPtr;      // only can have 63 enemy, remaining: {12{1}, 3{0}}
     reg [5:0] next_enemyGenPtr;
     reg [14:0] enemyQueueObj;
     wire [14:0] enemyQueueObj1, enemyQueueObj2, enemyQueueObj3;
@@ -98,8 +101,8 @@ module Game_Engine (
     end
 
 // ? //////////     reg: Enemy/Army Stats/Pixel     //////////////
-    reg [1:0] enemy_type_addr;
-    reg [1:0] next_enemy_type_addr;
+    reg [2:0] enemy_type_addr;
+    reg [2:0] next_enemy_type_addr;
     reg [37:0] enemy_stats_value;
     reg [18:0] enemy_pixel_value;
     Enemy_Stats EnemyStats0 (enemy_type_addr, enemy_stats_value);
@@ -118,6 +121,7 @@ module Game_Engine (
     reg [55:0] next_Army_Instance [7:0];
 
 // ? //////////     reg: Game State     //////////////
+    reg [3:0] gameState;
     reg [3:0] next_gameState;
 
     always @(posedge clk_25MHz) begin
@@ -129,14 +133,14 @@ module Game_Engine (
 
 // ? //////////     reg: Game Cnt = GAME TIME     //////////////
     reg [11:0] game_cnt, next_game_cnt;
-    always @(posedge clk_25MHz or posedge rst) begin
+    always @(posedge clk_25MHz) begin
         if (rst)    game_cnt <= 12'd0;
         else        game_cnt <= next_game_cnt;
     end
     always @(*) begin
-        next_game_cnt = game_cnt;
-        if (gameState==`GS_INIT)    next_game_cnt = 12'd0;
-        else if (clk_6)             next_game_cnt = game_cnt + 1'b1;
+        if (gameState==`GS_INIT)        next_game_cnt = 12'd0;
+        else if (clk_frame_op && clk_6) next_game_cnt = game_cnt + 1'b1;
+        else                            next_game_cnt = game_cnt;
     end
 
 // ? //////////     reg: Money     //////////////
@@ -287,10 +291,6 @@ module Game_Engine (
 
 if (clk_6) begin
         case (gameState)
-            `GS_REST: begin
-                if (line_cnt==10'd490 && h_cnt<10'd5)   next_gameState = `GS_GEN_E;
-                else                                    next_gameState = gameState;
-            end
             `GS_INIT: begin      // ? ///// Initialization
                 next_gameState = `GS_GEN_E;
                 next_Enemy_Instance[0] = 56'd0;
@@ -317,6 +317,12 @@ if (clk_6) begin
                 next_enemyGenPtr = 6'd0;
                 next_counter1 = 6'd0;       // Finding Space ptr
                 next_counter2 = 6'd0;       // Been Generated
+            end
+            `GS_REST: begin
+                if (line_cnt==10'd490 && h_cnt<10'd5)   next_gameState = `GS_GEN_E;
+                else                                    next_gameState = gameState;
+                next_counter1 = 6'd0;       // Finding Space ptr    // for GS_GEN_E
+                next_counter2 = 6'd0;       // Been Generated       // for GS_GEN_E
             end
             `GS_GEN_E: begin     // ? ///// generate Enemy
                 if (enemyGenPtr == 6'd63 ||             // All Enemy Been Generated
