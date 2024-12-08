@@ -59,18 +59,18 @@ module Top (
     wire [14:0] money;
     wire [55:0] Enemy_Instance [7:0];
     wire [55:0] Army_Instance [7:0];
+    wire [4:0] genArmyCD [7:0];
     wire game_win;
     wire game_lose;
 
-    reg [5:0] enemyGenPtr;
     assign arm_LED[0] = Enemy_Instance[0][55];
     assign arm_LED[1] = Enemy_Instance[1][55];
-    assign arm_LED[2] = enemyGenPtr[5];
-    assign arm_LED[3] = enemyGenPtr[4];
-    assign arm_LED[4] = enemyGenPtr[3];
-    assign arm_LED[5] = enemyGenPtr[2];
-    assign arm_LED[6] = enemyGenPtr[1];
-    assign arm_LED[7] = enemyGenPtr[0];
+    assign arm_LED[2] = Enemy_Instance[2][55];
+    assign arm_LED[3] = Enemy_Instance[3][55];
+    assign arm_LED[4] = Enemy_Instance[4][55];
+    assign arm_LED[5] = Enemy_Instance[5][55];
+    assign arm_LED[6] = Enemy_Instance[6][55];
+    assign arm_LED[7] = Enemy_Instance[7][55];
 
     wire [9:0] mouseInFrame;    // [0]:purse, [9]:Fire
     wire [9:0] effectiveClick;
@@ -114,7 +114,7 @@ module Top (
         .Army_Instance(Army_Instance),
         .game_win(game_win),
         .game_lose(game_lose),
-        .enemyGenPtr(enemyGenPtr)
+        .genArmyCD(genArmyCD)
     );
 
     Render Render_0 (
@@ -149,6 +149,7 @@ module Top (
         .mouseInFrame(mouseInFrame),
         .Enemy_Instance(Enemy_Instance),
         .Army_Instance(Army_Instance),
+        .genArmyCD(genArmyCD),
         .vgaRed(vgaRed),
         .vgaGreen(vgaGreen),
         .vgaBlue(vgaBlue)

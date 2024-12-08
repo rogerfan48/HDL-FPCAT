@@ -78,14 +78,16 @@ module Game_Engine (
     output reg [55:0] Army_Instance [7:0],
     output wire game_win,
     output wire game_lose,
-    output reg [5:0] enemyGenPtr
+    output reg [4:0] genArmyCD [7:0]
 );
+
+    integer i;
 
     wire clk_frame_op;
     One_Palse OP_clk_frame (clk_25MHz, clk_frame, clk_frame_op);
 
 // ? //////////     IP: Enemy Queue     //////////////
-    // reg [5:0] enemyGenPtr;      // only can have 63 enemy, remaining: {12{1}, 3{0}}
+    reg [5:0] enemyGenPtr;      // only can have 63 enemy, remaining: {12{1}, 3{0}}
     reg [5:0] next_enemyGenPtr;
     reg [14:0] enemyQueueObj;
     wire [14:0] enemyQueueObj1, enemyQueueObj2, enemyQueueObj3;
@@ -163,37 +165,20 @@ module Game_Engine (
 
 // ? //////////     reg: Screen Buttons     //////////////
     reg [7:0] genArmy;
-    wire genArmyValid = (genArmy!=8'd0);
+    reg [7:0] next_genArmy;
     wire [2:0] genArmyType;
     Priority_Encoder_8x3 PE83_0 (genArmy, genArmyType);
-    reg [7:0] next_genArmy;
+    wire genArmyValid = (genArmy!=8'd0);
     wire timeToGenArmy = (gameState == `GS_GEN_A_D);
 
+    reg [4:0] next_genArmyCD [7:0];
+
     always @(*) begin
-        if (effectiveClick[1])  next_genArmy[0] = 1'b1;
-        else if (timeToGenArmy) next_genArmy[0] = 1'b0;
-        else                    next_genArmy[0] = genArmy[0];
-        if (effectiveClick[2])  next_genArmy[1] = 1'b1;
-        else if (timeToGenArmy) next_genArmy[1] = 1'b0;
-        else                    next_genArmy[1] = genArmy[1];
-        if (effectiveClick[3])  next_genArmy[2] = 1'b1;
-        else if (timeToGenArmy) next_genArmy[2] = 1'b0;
-        else                    next_genArmy[2] = genArmy[2];
-        if (effectiveClick[4])  next_genArmy[3] = 1'b1;
-        else if (timeToGenArmy) next_genArmy[3] = 1'b0;
-        else                    next_genArmy[3] = genArmy[3];
-        if (effectiveClick[5])  next_genArmy[4] = 1'b1;
-        else if (timeToGenArmy) next_genArmy[4] = 1'b0;
-        else                    next_genArmy[4] = genArmy[4];
-        if (effectiveClick[6])  next_genArmy[5] = 1'b1;
-        else if (timeToGenArmy) next_genArmy[5] = 1'b0;
-        else                    next_genArmy[5] = genArmy[5];
-        if (effectiveClick[7])  next_genArmy[6] = 1'b1;
-        else if (timeToGenArmy) next_genArmy[6] = 1'b0;
-        else                    next_genArmy[6] = genArmy[6];
-        if (effectiveClick[8])  next_genArmy[7] = 1'b1;
-        else if (timeToGenArmy) next_genArmy[7] = 1'b0;
-        else                    next_genArmy[7] = genArmy[7];
+        for (i=0; i<8; i=i+1) begin
+            if (effectiveClick[i+1] && genArmyCD[i]==5'd0)  next_genArmy[i] = 1'b1;
+            else if (timeToGenArmy)                         next_genArmy[i] = 1'b0;
+            else                                            next_genArmy[i] = genArmy[i];
+        end
     end
 
     reg next_towerFire;
@@ -222,22 +207,11 @@ module Game_Engine (
     reg [5:0] next_counter3;
     
     always @(posedge clk_25MHz) begin
-        Enemy_Instance[0] <= next_Enemy_Instance[0];
-        Army_Instance[0] <= next_Army_Instance[0];
-        Enemy_Instance[1] <= next_Enemy_Instance[1];
-        Army_Instance[1] <= next_Army_Instance[1];
-        Enemy_Instance[2] <= next_Enemy_Instance[2];
-        Army_Instance[2] <= next_Army_Instance[2];
-        Enemy_Instance[3] <= next_Enemy_Instance[3];
-        Army_Instance[3] <= next_Army_Instance[3];
-        Enemy_Instance[4] <= next_Enemy_Instance[4];
-        Army_Instance[4] <= next_Army_Instance[4];
-        Enemy_Instance[5] <= next_Enemy_Instance[5];
-        Army_Instance[5] <= next_Army_Instance[5];
-        Enemy_Instance[6] <= next_Enemy_Instance[6];
-        Army_Instance[6] <= next_Army_Instance[6];
-        Enemy_Instance[7] <= next_Enemy_Instance[7];
-        Army_Instance[7] <= next_Army_Instance[7];
+        for (i=0; i<8; i=i+1) begin
+            Enemy_Instance[i] <= next_Enemy_Instance[i];
+            Army_Instance[i] <= next_Army_Instance[i];
+            genArmyCD[i] <= next_genArmyCD[i];
+        end
 
         enemyGenPtr <= next_enemyGenPtr;
         genArmy <= next_genArmy;
@@ -259,22 +233,11 @@ module Game_Engine (
     end
 
     always @(*) begin
-        next_Enemy_Instance[0] = Enemy_Instance[0];
-        next_Army_Instance[0] = Army_Instance[0];
-        next_Enemy_Instance[1] = Enemy_Instance[1];
-        next_Army_Instance[1] = Army_Instance[1];
-        next_Enemy_Instance[2] = Enemy_Instance[2];
-        next_Army_Instance[2] = Army_Instance[2];
-        next_Enemy_Instance[3] = Enemy_Instance[3];
-        next_Army_Instance[3] = Army_Instance[3];
-        next_Enemy_Instance[4] = Enemy_Instance[4];
-        next_Army_Instance[4] = Army_Instance[4];
-        next_Enemy_Instance[5] = Enemy_Instance[5];
-        next_Army_Instance[5] = Army_Instance[5];
-        next_Enemy_Instance[6] = Enemy_Instance[6];
-        next_Army_Instance[6] = Army_Instance[6];
-        next_Enemy_Instance[7] = Enemy_Instance[7];
-        next_Army_Instance[7] = Army_Instance[7];
+        for (i=0; i<8; i=i+1) begin
+            next_Enemy_Instance[i] = Enemy_Instance[i];
+            next_Army_Instance[i] = Army_Instance[i];
+            next_genArmyCD[i] = genArmyCD[i];
+        end
 
         next_gameState = gameState;
         next_enemyGenPtr = enemyGenPtr;
@@ -293,22 +256,11 @@ if (clk_6) begin
         case (gameState)
             `GS_INIT: begin      // ? ///// Initialization
                 next_gameState = `GS_GEN_E;
-                next_Enemy_Instance[0] = 56'd0;
-                next_Army_Instance[0] = 56'd0;
-                next_Enemy_Instance[1] = 56'd0;
-                next_Army_Instance[1] = 56'd0;
-                next_Enemy_Instance[2] = 56'd0;
-                next_Army_Instance[2] = 56'd0;
-                next_Enemy_Instance[3] = 56'd0;
-                next_Army_Instance[3] = 56'd0;
-                next_Enemy_Instance[4] = 56'd0;
-                next_Army_Instance[4] = 56'd0;
-                next_Enemy_Instance[5] = 56'd0;
-                next_Army_Instance[5] = 56'd0;
-                next_Enemy_Instance[6] = 56'd0;
-                next_Army_Instance[6] = 56'd0;
-                next_Enemy_Instance[7] = 56'd0;
-                next_Army_Instance[7] = 56'd0;
+                for (i=0; i<8; i=i+1) begin
+                    next_Enemy_Instance[i] = 56'd0;
+                    next_Army_Instance[i] = 56'd0;
+                    next_genArmyCD[i] = 5'd0;
+                end
                 next_money = 15'd0;
                 next_purse_level = 3'd0;
                 next_tower_cnt = 8'd0;
@@ -345,6 +297,7 @@ if (clk_6) begin
             `GS_GEN_A_D: begin   // ? ///// generate Army - Detect
                 next_gameState = `GS_GEN_A_G;
                 next_army_type_addr = genArmyType;
+                next_genArmyCD[genArmyType] = 5'd1;
                 if (genArmyValid) next_money = money - army_cost_value;
                 next_counter1 = 6'd0;       // Finding Space ptr
                 next_counter2 = genArmyValid;
@@ -610,6 +563,9 @@ if (clk_6) begin
             end
             `GS_FINISH: begin
                 next_gameState = `GS_REST;
+                for (i=0; i<8; i=i+1) begin
+                    if (genArmyCD[i]!=5'd0) next_genArmyCD[i] = genArmyCD[i] + 1'b1;
+                end
             end
             default: begin
                 next_gameState = `GS_REST;

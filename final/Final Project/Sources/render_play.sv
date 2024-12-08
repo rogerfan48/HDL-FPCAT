@@ -32,6 +32,7 @@ module Render_Play (
     input [9:0] v_cnt_6,
     input [55:0] Enemy_Instance [7:0],
     input [55:0] Army_Instance [7:0],
+    input [4:0] genArmyCD [7:0],
     input [9:0] mouseInFrame,
     output reg [11:0] pixel
 );
@@ -556,49 +557,57 @@ module Render_Play (
         end else begin              // simply cut half, this is lower half (board) for shortening Circuit Longest Length
             if (h_cnt_1>=10'd105 && h_cnt_1<10'd205 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_joker_value)
-                    2'b00: pixel = 12'hfff;
+                    2'b00: pixel = (genArmyCD[0]==5'd0 ? 12'hfff : ((h_cnt-10'd105)>(genArmyCD[0]*3) ? 12'h666 : 12'hfff));
+                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd215 && h_cnt_1<10'd315 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_fish_value)
-                    2'b00: pixel = 12'hfff;
+                    2'b00: pixel = (genArmyCD[1]==5'd0 ? 12'hfff : ((h_cnt-10'd215)>(genArmyCD[1]*3) ? 12'h666 : 12'hfff));
+                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd325 && h_cnt_1<10'd425 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_trap_value)
-                    2'b00: pixel = 12'hfff;
+                    2'b00: pixel = (genArmyCD[2]==5'd0 ? 12'hfff : ((h_cnt-10'd325)>(genArmyCD[2]*3) ? 12'h666 : 12'hfff));
+                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd435 && h_cnt_1<10'd535 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_jay_value)
-                    2'b00: pixel = 12'hfff;
+                    2'b00: pixel = (genArmyCD[3]==5'd0 ? 12'hfff : ((h_cnt-10'd435)>(genArmyCD[3]*3) ? 12'h666 : 12'hfff));
+                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd105 && h_cnt_1<10'd205 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_bomb_value)
-                    2'b00: pixel = 12'hfff;
+                    2'b00: pixel = (genArmyCD[4]==5'd0 ? 12'hfff : ((h_cnt-10'd105)>(genArmyCD[4]*3) ? 12'h666 : 12'hfff));
+                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd215 && h_cnt_1<10'd315 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_CY_value)
-                    2'b00: pixel = 12'hfff;
+                    2'b00: pixel = (genArmyCD[5]==5'd0 ? 12'hfff : ((h_cnt-10'd215)>(genArmyCD[5]*3) ? 12'h666 : 12'hfff));
+                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd325 && h_cnt_1<10'd425 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_hacker_value)
-                    2'b00: pixel = 12'hfff;
+                    2'b00: pixel = (genArmyCD[6]==5'd0 ? 12'hfff : ((h_cnt-10'd325)>(genArmyCD[6]*3) ? 12'h666 : 12'hfff));
+                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd435 && h_cnt_1<10'd535 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_elephant_value)
-                    2'b00: pixel = 12'hfff;
+                    2'b00: pixel = (genArmyCD[7]==5'd0 ? 12'hfff : ((h_cnt-10'd435)>(genArmyCD[7]*3) ? 12'h666 : 12'hfff));
+                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
