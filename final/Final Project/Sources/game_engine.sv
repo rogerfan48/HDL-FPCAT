@@ -23,7 +23,7 @@
 
 `define ENEMY_SPAWN_X 10'd10
 `define ARMY_SPAWN_X  10'd570
-`define SPAWN_Y       10'd210
+`define SPAWN_Y       10'd200
 `define TOWER_E_X     10'd70
 `define TOWER_A_X     10'd570
 
@@ -324,7 +324,8 @@ if (clk_6) begin
                     counter1==6'd8) begin              // No Space
                     next_gameState = `GS_GEN_A_D;
                     if (counter2) begin
-                        next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, `ENEMY_SPAWN_X, `SPAWN_Y-enemy_pixel_value[11:5], enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
+                        next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, `ENEMY_SPAWN_X, `SPAWN_Y-enemy_pixel_value[11:5]-(game_cnt[2:0]<<2), 
+                            enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
                     end
                 end else begin
                     if (Enemy_Instance[counter1][55]==1'b0) begin   // Found A Space
@@ -350,7 +351,8 @@ if (clk_6) begin
                         next_gameState = `GS_ATK_E;
                         next_counter1 = 6'd0;
                         next_counter2 = 6'd0;
-                        next_Army_Instance[counter1] = {1'b1, army_type_addr, `ARMY_SPAWN_X, `SPAWN_Y-army_pixel_value[11:5], army_stats_value[37:26], 4'd1, 4'd0, 12'd0};
+                        next_Army_Instance[counter1] = {1'b1, army_type_addr, `ARMY_SPAWN_X, `SPAWN_Y-army_pixel_value[11:5]-(game_cnt[2:0]<<2), 
+                            army_stats_value[37:26], 4'd1, 4'd0, 12'd0};
                     end else next_counter1 = counter1 + 1'b1;       // This Addr No Space, find the next one
                 end
             end

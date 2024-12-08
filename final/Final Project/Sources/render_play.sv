@@ -406,128 +406,128 @@ module Render_Play (
     always @(*) begin
         if (v_cnt_1<10'd270) begin    // simply cut half, this is upper half (gaming) for shortening Circuit Longest Length
             if (Army_Instance[0][55] && 
-            h_cnt_1>=Army_Instance[0][51:42] && h_cnt_1<Army_Instance[0][51:42]+army_0_pixel_value[18:12] && 
-            v_cnt_1>=Army_Instance[0][41:32] && v_cnt_1<Army_Instance[0][41:32]+army_0_pixel_value[11:5] && army_0_value != 2'b11) begin
+            h_cnt_1>=Army_Instance[0][51:42] && h_cnt_1<Army_Instance[0][51:42]+(army_0_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Army_Instance[0][41:32] && v_cnt_1<Army_Instance[0][41:32]+(army_0_pixel_value[11:5] << 1) && army_0_value != 2'b11) begin
                 case (army_0_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[1][55] && 
-            h_cnt_1>=Army_Instance[1][51:42] && h_cnt_1<Army_Instance[1][51:42]+army_1_pixel_value[18:12] &&
-            v_cnt_1>=Army_Instance[1][41:32] && v_cnt_1<Army_Instance[1][41:32]+army_1_pixel_value[11:5] && army_1_value != 2'b11) begin
+            h_cnt_1>=Army_Instance[1][51:42] && h_cnt_1<Army_Instance[1][51:42]+(army_1_pixel_value[18:12] << 1) &&
+            v_cnt_1>=Army_Instance[1][41:32] && v_cnt_1<Army_Instance[1][41:32]+(army_1_pixel_value[11:5] << 1) && army_1_value != 2'b11) begin
                 case (army_1_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[2][55] && 
-            h_cnt_1>=Army_Instance[2][51:42] && h_cnt_1<Army_Instance[2][51:42]+army_2_pixel_value[18:12] && 
-            v_cnt_1>=Army_Instance[2][41:32] && v_cnt_1<Army_Instance[2][41:32]+army_2_pixel_value[11:5] && army_2_value != 2'b11) begin
+            h_cnt_1>=Army_Instance[2][51:42] && h_cnt_1<Army_Instance[2][51:42]+(army_2_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Army_Instance[2][41:32] && v_cnt_1<Army_Instance[2][41:32]+(army_2_pixel_value[11:5] << 1) && army_2_value != 2'b11) begin
                 case (army_2_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[3][55] && 
-            h_cnt_1>=Army_Instance[3][51:42] && h_cnt_1<Army_Instance[3][51:42]+army_3_pixel_value[18:12] && 
-            v_cnt_1>=Army_Instance[3][41:32] && v_cnt_1<Army_Instance[3][41:32]+army_3_pixel_value[11:5] && army_3_value != 2'b11) begin
+            h_cnt_1>=Army_Instance[3][51:42] && h_cnt_1<Army_Instance[3][51:42]+(army_3_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Army_Instance[3][41:32] && v_cnt_1<Army_Instance[3][41:32]+(army_3_pixel_value[11:5] << 1) && army_3_value != 2'b11) begin
                 case (army_3_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[4][55] && 
-            h_cnt_1>=Army_Instance[4][51:42] && h_cnt_1<Army_Instance[4][51:42]+army_4_pixel_value[18:12] && 
-            v_cnt_1>=Army_Instance[4][41:32] && v_cnt_1<Army_Instance[4][41:32]+army_4_pixel_value[11:5] && army_4_value != 2'b11) begin
+            h_cnt_1>=Army_Instance[4][51:42] && h_cnt_1<Army_Instance[4][51:42]+(army_4_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Army_Instance[4][41:32] && v_cnt_1<Army_Instance[4][41:32]+(army_4_pixel_value[11:5] << 1) && army_4_value != 2'b11) begin
                 case (army_4_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[5][55] && 
-            h_cnt_1>=Army_Instance[5][51:42] && h_cnt_1<Army_Instance[5][51:42]+army_5_pixel_value[18:12] && 
-            v_cnt_1>=Army_Instance[5][41:32] && v_cnt_1<Army_Instance[5][41:32]+army_5_pixel_value[11:5] && army_5_value != 2'b11) begin
+            h_cnt_1>=Army_Instance[5][51:42] && h_cnt_1<Army_Instance[5][51:42]+(army_5_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Army_Instance[5][41:32] && v_cnt_1<Army_Instance[5][41:32]+(army_5_pixel_value[11:5] << 1) && army_5_value != 2'b11) begin
                 case (army_5_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[6][55] && 
-            h_cnt_1>=Army_Instance[6][51:42] && h_cnt_1<Army_Instance[6][51:42]+army_6_pixel_value[18:12] && 
-            v_cnt_1>=Army_Instance[6][41:32] && v_cnt_1<Army_Instance[6][41:32]+army_6_pixel_value[11:5] && army_6_value != 2'b11) begin
+            h_cnt_1>=Army_Instance[6][51:42] && h_cnt_1<Army_Instance[6][51:42]+(army_6_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Army_Instance[6][41:32] && v_cnt_1<Army_Instance[6][41:32]+(army_6_pixel_value[11:5] << 1) && army_6_value != 2'b11) begin
                 case (army_6_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Army_Instance[7][55] && 
-            h_cnt_1>=Army_Instance[7][51:42] && h_cnt_1<Army_Instance[7][51:42]+army_7_pixel_value[18:12] && 
-            v_cnt_1>=Army_Instance[7][41:32] && v_cnt_1<Army_Instance[7][41:32]+army_7_pixel_value[11:5] && army_7_value != 2'b11) begin
+            h_cnt_1>=Army_Instance[7][51:42] && h_cnt_1<Army_Instance[7][51:42]+(army_7_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Army_Instance[7][41:32] && v_cnt_1<Army_Instance[7][41:32]+(army_7_pixel_value[11:5] << 1) && army_7_value != 2'b11) begin
                 case (army_7_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[0][55] && 
-            h_cnt_1>=Enemy_Instance[0][51:42] && h_cnt_1<Enemy_Instance[0][51:42]+enemy_0_pixel_value[18:12] && 
-            v_cnt_1>=Enemy_Instance[0][41:32] && v_cnt_1<Enemy_Instance[0][41:32]+enemy_0_pixel_value[11:5] && enemy_0_value != 2'b11) begin
+            h_cnt_1>=Enemy_Instance[0][51:42] && h_cnt_1<Enemy_Instance[0][51:42]+(enemy_0_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Enemy_Instance[0][41:32] && v_cnt_1<Enemy_Instance[0][41:32]+(enemy_0_pixel_value[11:5] << 1) && enemy_0_value != 2'b11) begin
                 case (enemy_0_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[1][55] && 
-            h_cnt_1>=Enemy_Instance[1][51:42] && h_cnt_1<Enemy_Instance[1][51:42]+enemy_1_pixel_value[18:12] && 
-            v_cnt_1>=Enemy_Instance[1][41:32] && v_cnt_1<Enemy_Instance[1][41:32]+enemy_1_pixel_value[11:5] && enemy_1_value != 2'b11) begin
+            h_cnt_1>=Enemy_Instance[1][51:42] && h_cnt_1<Enemy_Instance[1][51:42]+(enemy_1_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Enemy_Instance[1][41:32] && v_cnt_1<Enemy_Instance[1][41:32]+(enemy_1_pixel_value[11:5] << 1) && enemy_1_value != 2'b11) begin
                 case (enemy_1_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[2][55] && 
-            h_cnt_1>=Enemy_Instance[2][51:42] && h_cnt_1<Enemy_Instance[2][51:42]+enemy_2_pixel_value[18:12] && 
-            v_cnt_1>=Enemy_Instance[2][41:32] && v_cnt_1<Enemy_Instance[2][41:32]+enemy_2_pixel_value[11:5] && enemy_2_value != 2'b11) begin
+            h_cnt_1>=Enemy_Instance[2][51:42] && h_cnt_1<Enemy_Instance[2][51:42]+(enemy_2_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Enemy_Instance[2][41:32] && v_cnt_1<Enemy_Instance[2][41:32]+(enemy_2_pixel_value[11:5] << 1) && enemy_2_value != 2'b11) begin
                 case (enemy_2_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[3][55] && 
-            h_cnt_1>=Enemy_Instance[3][51:42] && h_cnt_1<Enemy_Instance[3][51:42]+enemy_3_pixel_value[18:12] && 
-            v_cnt_1>=Enemy_Instance[3][41:32] && v_cnt_1<Enemy_Instance[3][41:32]+enemy_3_pixel_value[11:5] && enemy_3_value != 2'b11) begin
+            h_cnt_1>=Enemy_Instance[3][51:42] && h_cnt_1<Enemy_Instance[3][51:42]+(enemy_3_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Enemy_Instance[3][41:32] && v_cnt_1<Enemy_Instance[3][41:32]+(enemy_3_pixel_value[11:5] << 1) && enemy_3_value != 2'b11) begin
                 case (enemy_3_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[4][55] && 
-            h_cnt_1>=Enemy_Instance[4][51:42] && h_cnt_1<Enemy_Instance[4][51:42]+enemy_4_pixel_value[18:12] && 
-            v_cnt_1>=Enemy_Instance[4][41:32] && v_cnt_1<Enemy_Instance[4][41:32]+enemy_4_pixel_value[11:5] && enemy_4_value != 2'b11) begin
+            h_cnt_1>=Enemy_Instance[4][51:42] && h_cnt_1<Enemy_Instance[4][51:42]+(enemy_4_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Enemy_Instance[4][41:32] && v_cnt_1<Enemy_Instance[4][41:32]+(enemy_4_pixel_value[11:5] << 1) && enemy_4_value != 2'b11) begin
                 case (enemy_4_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[5][55] && 
-            h_cnt_1>=Enemy_Instance[5][51:42] && h_cnt_1<Enemy_Instance[5][51:42]+enemy_5_pixel_value[18:12] && 
-            v_cnt_1>=Enemy_Instance[5][41:32] && v_cnt_1<Enemy_Instance[5][41:32]+enemy_5_pixel_value[11:5] && enemy_5_value != 2'b11) begin
+            h_cnt_1>=Enemy_Instance[5][51:42] && h_cnt_1<Enemy_Instance[5][51:42]+(enemy_5_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Enemy_Instance[5][41:32] && v_cnt_1<Enemy_Instance[5][41:32]+(enemy_5_pixel_value[11:5] << 1) && enemy_5_value != 2'b11) begin
                 case (enemy_5_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[6][55] && 
-            h_cnt_1>=Enemy_Instance[6][51:42] && h_cnt_1<Enemy_Instance[6][51:42]+enemy_6_pixel_value[18:12] && 
-            v_cnt_1>=Enemy_Instance[6][41:32] && v_cnt_1<Enemy_Instance[6][41:32]+enemy_6_pixel_value[11:5] && enemy_6_value != 2'b11) begin
+            h_cnt_1>=Enemy_Instance[6][51:42] && h_cnt_1<Enemy_Instance[6][51:42]+(enemy_6_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Enemy_Instance[6][41:32] && v_cnt_1<Enemy_Instance[6][41:32]+(enemy_6_pixel_value[11:5] << 1) && enemy_6_value != 2'b11) begin
                 case (enemy_6_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (Enemy_Instance[7][55] && 
-            h_cnt_1>=Enemy_Instance[7][51:42] && h_cnt_1<Enemy_Instance[7][51:42]+enemy_7_pixel_value[18:12] && 
-            v_cnt_1>=Enemy_Instance[7][41:32] && v_cnt_1<Enemy_Instance[7][41:32]+enemy_7_pixel_value[11:5] && enemy_7_value != 2'b11) begin
+            h_cnt_1>=Enemy_Instance[7][51:42] && h_cnt_1<Enemy_Instance[7][51:42]+(enemy_7_pixel_value[18:12] << 1) && 
+            v_cnt_1>=Enemy_Instance[7][41:32] && v_cnt_1<Enemy_Instance[7][41:32]+(enemy_7_pixel_value[11:5] << 1) && enemy_7_value != 2'b11) begin
                 case (enemy_7_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
