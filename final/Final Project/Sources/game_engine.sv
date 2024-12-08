@@ -232,6 +232,9 @@ module Game_Engine (
         army_type_addr <= next_army_type_addr;
     end
 
+    wire full = (Army_Instance[7][55]==1'b1 && Army_Instance[6][55]==1'b1 && Army_Instance[5][55]==1'b1 && Army_Instance[4][55]==1'b1 && 
+                 Army_Instance[3][55]==1'b1 && Army_Instance[2][55]==1'b1 && Army_Instance[1][55]==1'b1 && Army_Instance[0][55]==1'b1);
+
     always @(*) begin
         for (i=0; i<8; i=i+1) begin
             next_Enemy_Instance[i] = Enemy_Instance[i];
@@ -295,10 +298,13 @@ if (clk_6) begin
                 end
             end
             `GS_GEN_A_D: begin   // ? ///// generate Army - Detect
+            // TODO: genArmyCD[0] keep being reset to 1
                 next_gameState = `GS_GEN_A_G;
                 next_army_type_addr = genArmyType;
-                next_genArmyCD[genArmyType] = 5'd1;
-                if (genArmyValid) next_money = money - army_cost_value;
+                if (genArmyValid && !full) begin
+                    next_money = money - army_cost_value;
+                    next_genArmyCD[genArmyType] = 5'd1;
+                end
                 next_counter1 = 6'd0;       // Finding Space ptr
                 next_counter2 = genArmyValid;
             end
@@ -317,7 +323,7 @@ if (clk_6) begin
                     end else next_counter1 = counter1 + 1'b1;       // This Addr No Space, find the next one
                 end
             end
-            `GS_ATK_E: begin     // ? ///// atk or move Enemy
+`GS_ATK_E: begin     // ? ///// atk or move Enemy
                 if (counter1==6'd8) begin              // No Space
                     next_gameState = `GS_ATK_A;
                     next_counter1 = 6'd0;
@@ -408,7 +414,7 @@ if (clk_6) begin
                     next_counter1 = counter1 + 1'b1;
                 end
             end
-            `GS_ATK_A: begin     // ? ///// atk or move Army
+`GS_ATK_A: begin     // ? ///// atk or move Army
                 if (counter1==6'd8) begin              // No Space
                     next_gameState = `GS_TOWER_D;
                     next_counter1 = 6'd0;
@@ -417,83 +423,83 @@ if (clk_6) begin
                         next_army_type_addr = Army_Instance[counter1][54:52];
                         next_enemy_type_addr = Enemy_Instance[counter2][54:52];
     // --------------------------------------------
-    case (Army_Instance[counter1][19:16])
-        `ST_MOVE: begin
-            if (counter2 == 6'd8) begin
-                next_Army_Instance[counter1][51:42] = Army_Instance[counter1][51:42] - army_stats_value[12:8];
-                next_counter1 = counter1 + 1'b1;
-                next_counter2 = 6'd0;
-            end else if (
-                ((Enemy_Instance[counter2][55]==1'b1) && 
-                    (Army_Instance[counter1][51:42]+army_pixel_value[4:0]<=Enemy_Instance[counter2][51:42]+army_stats_value[7:0]+enemy_pixel_value[4:0])) ||
-                (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42])
-            ) begin         // in atk range
-                next_Army_Instance[counter1][19:16] = `ST_ATK_0;
-                next_Army_Instance[counter1][15:12] = 4'd0;
-                next_counter1 = counter1 + 1'b1;
-                next_counter2 = 6'd0;
-            end else begin
-                next_counter2 = counter2 + 1'b1;
-            end
-        end
-        `ST_ATK_0: begin
-            if (Army_Instance[counter1][15:12]==army_stats_value[16:13]) begin
-                next_Army_Instance[counter1][19:16] = `ST_ATK_1;
-                next_Army_Instance[counter1][15:12] = 4'd0;
-            end else begin
-                next_Army_Instance[counter1][15:12] = Army_Instance[counter1][15:12] + 1'b1;
-            end
-            next_counter1 = counter1 + 1'b1;
-        end
-        `ST_ATK_1: begin
-            if (counter2==6'd8) begin
-                if (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42])
-                    next_towerBlood_E = (army_stats_value[25:17]>towerBlood_E ? 12'd0 : towerBlood_E-army_stats_value[25:17]);
-                next_Army_Instance[counter1][19:16] = `ST_ATK_2;
-                next_Army_Instance[counter1][15:12] = 4'd0;
-                next_counter1 = counter1 + 1'b1;
-                next_counter2 = 6'd0;
-            end else begin
-                if (Army_Instance[counter1][51:42]+army_pixel_value[4:0]<=Enemy_Instance[counter2][51:42]+army_stats_value[7:0]+enemy_pixel_value[4:0]) begin
-                    next_Enemy_Instance[counter2][11:0] = Enemy_Instance[counter2][11:0] + army_stats_value[25:17];
-                end
-                next_counter2 = counter2 + 1'b1;
-            end
-        end
-        `ST_ATK_2: begin
-            if (Army_Instance[counter1][15:12]==army_stats_value[16:13]) begin
-                next_Army_Instance[counter1][19:16] = `ST_ATK_3;
-                next_Army_Instance[counter1][15:12] = 4'd0;
-            end else begin
-                next_Army_Instance[counter1][15:12] = Army_Instance[counter1][15:12] + 1'b1;
-            end
-            next_counter1 = counter1 + 1'b1;
-        end
-        `ST_ATK_3: begin
-            if (Army_Instance[counter1][15:12]==army_stats_value[16:13]) begin
-                next_Army_Instance[counter1][19:16] = `ST_MOVE;
-                next_Army_Instance[counter1][15:12] = 4'd0;
-            end else begin
-                next_Army_Instance[counter1][15:12] = Army_Instance[counter1][15:12] + 1'b1;
-            end
-            next_counter1 = counter1 + 1'b1;
-        end
-        `ST_REPEL: begin
-            if (Army_Instance[counter1][15:12]==4'd10) begin
-                next_Army_Instance[counter1][19:16] = `ST_MOVE;
-                next_Army_Instance[counter1][15:12] = 4'd0;
-            end else begin
-                next_Army_Instance[counter1][15:12] = Army_Instance[counter1][15:12] + 1'b1;
-                next_Army_Instance[counter1][51:42] = Army_Instance[counter1][51:42] + 10'd3;
-            end
-            next_counter1 = counter1 + 1'b1;
-        end
-        default: begin
-            next_Army_Instance[counter1][19:16] = `ST_MOVE;
-            next_Army_Instance[counter1][15:12] = 4'd0;
-            next_counter1 = counter1 + 1'b1;
-        end
-    endcase
+                        case (Army_Instance[counter1][19:16])
+                            `ST_MOVE: begin
+                                if (counter2 == 6'd8) begin
+                                    next_Army_Instance[counter1][51:42] = Army_Instance[counter1][51:42] - army_stats_value[12:8];
+                                    next_counter1 = counter1 + 1'b1;
+                                    next_counter2 = 6'd0;
+                                end else if (
+                                    ((Enemy_Instance[counter2][55]==1'b1) && 
+                                        (Army_Instance[counter1][51:42]+army_pixel_value[4:0]<=Enemy_Instance[counter2][51:42]+army_stats_value[7:0]+enemy_pixel_value[4:0])) ||
+                                    (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42])
+                                ) begin         // in atk range
+                                    next_Army_Instance[counter1][19:16] = `ST_ATK_0;
+                                    next_Army_Instance[counter1][15:12] = 4'd0;
+                                    next_counter1 = counter1 + 1'b1;
+                                    next_counter2 = 6'd0;
+                                end else begin
+                                    next_counter2 = counter2 + 1'b1;
+                                end
+                            end
+                            `ST_ATK_0: begin
+                                if (Army_Instance[counter1][15:12]==army_stats_value[16:13]) begin
+                                    next_Army_Instance[counter1][19:16] = `ST_ATK_1;
+                                    next_Army_Instance[counter1][15:12] = 4'd0;
+                                end else begin
+                                    next_Army_Instance[counter1][15:12] = Army_Instance[counter1][15:12] + 1'b1;
+                                end
+                                next_counter1 = counter1 + 1'b1;
+                            end
+                            `ST_ATK_1: begin
+                                if (counter2==6'd8) begin
+                                    if (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42])
+                                        next_towerBlood_E = (army_stats_value[25:17]>towerBlood_E ? 12'd0 : towerBlood_E-army_stats_value[25:17]);
+                                    next_Army_Instance[counter1][19:16] = `ST_ATK_2;
+                                    next_Army_Instance[counter1][15:12] = 4'd0;
+                                    next_counter1 = counter1 + 1'b1;
+                                    next_counter2 = 6'd0;
+                                end else begin
+                                    if (Army_Instance[counter1][51:42]+army_pixel_value[4:0]<=Enemy_Instance[counter2][51:42]+army_stats_value[7:0]+enemy_pixel_value[4:0]) begin
+                                        next_Enemy_Instance[counter2][11:0] = Enemy_Instance[counter2][11:0] + army_stats_value[25:17];
+                                    end
+                                    next_counter2 = counter2 + 1'b1;
+                                end
+                            end
+                            `ST_ATK_2: begin
+                                if (Army_Instance[counter1][15:12]==army_stats_value[16:13]) begin
+                                    next_Army_Instance[counter1][19:16] = `ST_ATK_3;
+                                    next_Army_Instance[counter1][15:12] = 4'd0;
+                                end else begin
+                                    next_Army_Instance[counter1][15:12] = Army_Instance[counter1][15:12] + 1'b1;
+                                end
+                                next_counter1 = counter1 + 1'b1;
+                            end
+                            `ST_ATK_3: begin
+                                if (Army_Instance[counter1][15:12]==army_stats_value[16:13]) begin
+                                    next_Army_Instance[counter1][19:16] = `ST_MOVE;
+                                    next_Army_Instance[counter1][15:12] = 4'd0;
+                                end else begin
+                                    next_Army_Instance[counter1][15:12] = Army_Instance[counter1][15:12] + 1'b1;
+                                end
+                                next_counter1 = counter1 + 1'b1;
+                            end
+                            `ST_REPEL: begin
+                                if (Army_Instance[counter1][15:12]==4'd10) begin
+                                    next_Army_Instance[counter1][19:16] = `ST_MOVE;
+                                    next_Army_Instance[counter1][15:12] = 4'd0;
+                                end else begin
+                                    next_Army_Instance[counter1][15:12] = Army_Instance[counter1][15:12] + 1'b1;
+                                    next_Army_Instance[counter1][51:42] = Army_Instance[counter1][51:42] + 10'd3;
+                                end
+                                next_counter1 = counter1 + 1'b1;
+                            end
+                            default: begin
+                                next_Army_Instance[counter1][19:16] = `ST_MOVE;
+                                next_Army_Instance[counter1][15:12] = 4'd0;
+                                next_counter1 = counter1 + 1'b1;
+                            end
+                        endcase
     // --------------------------------------------
                 end else begin
                     next_counter1 = counter1 + 1'b1;
@@ -546,6 +552,7 @@ if (clk_6) begin
                     if (Enemy_Instance[counter1][55] == 1'b1) begin
                         if (Enemy_Instance[counter1][11:0] >= Enemy_Instance[counter1][31:20]) next_Enemy_Instance[counter1][55] = 1'b0;
                         else next_Enemy_Instance[counter1][31:20] = Enemy_Instance[counter1][31:20] - Enemy_Instance[counter1][11:0];
+                        next_Enemy_Instance[counter1][11:0] = 12'd0;
                     end
                     next_counter1 = counter1 + 1'b1;
                 end
@@ -557,6 +564,7 @@ if (clk_6) begin
                     if (Army_Instance[counter1][55] == 1'b1) begin
                         if (Army_Instance[counter1][11:0] >= Army_Instance[counter1][31:20]) next_Army_Instance[counter1][55] = 1'b0;
                         else next_Army_Instance[counter1][31:20] = Army_Instance[counter1][31:20] - Army_Instance[counter1][11:0];
+                        next_Army_Instance[counter1][11:0] = 12'd0;
                     end
                     next_counter1 = counter1 + 1'b1;
                 end

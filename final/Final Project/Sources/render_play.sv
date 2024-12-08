@@ -405,7 +405,6 @@ module Render_Play (
 
 
     always @(*) begin
-        // TODO: if random spawn y is too low, it may cause rendering error
         if (v_cnt_1<10'd270) begin    // simply cut half, this is upper half (gaming) for shortening Circuit Longest Length
             if (Army_Instance[0][55] && 
             h_cnt_1>=Army_Instance[0][51:42] && h_cnt_1<Army_Instance[0][51:42]+(army_0_pixel_value[18:12] << 1) && 
