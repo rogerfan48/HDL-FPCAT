@@ -5,7 +5,7 @@ module VGA_Control (
     input pclk, reset,
     input [1:0] display_cnt,
     output hsync, vsync, valid,
-    output [9:0] line_cnt,
+    output reg [9:0] line_cnt,
     output [9:0] h_cnt,
     output [9:0] v_cnt,
     output reg [9:0] h_cnt_1,
@@ -24,7 +24,6 @@ module VGA_Control (
     );
     
     reg [9:0] pixel_cnt;
-    reg [9:0] line_cnt;
     reg hsync_i,vsync_i;
     wire hsync_default, vsync_default;
     wire [9:0] HD, HF, HS, HB, HT, VD, VF, VS, VB, VT;

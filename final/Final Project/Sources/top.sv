@@ -71,16 +71,17 @@ module Top (
 
     wire [9:0] mouseInFrame;    // [0]:purse, [9]:Fire
     wire [9:0] effectiveClick;
-    assign mouseInFrame[0] = (mouseX<10'd100 && mouseY>=10'd380 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
-    assign mouseInFrame[1] = (mouseX>=10'd105 && mouseX<10'd205 && mouseY>=10'd290 && mouseY<10'd370 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
-    assign mouseInFrame[2] = (mouseX>=10'd215 && mouseX<10'd315 && mouseY>=10'd290 && mouseY<10'd370 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
-    assign mouseInFrame[3] = (mouseX>=10'd325 && mouseX<10'd425 && mouseY>=10'd290 && mouseY<10'd370 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
-    assign mouseInFrame[4] = (mouseX>=10'd435 && mouseX<10'd535 && mouseY>=10'd290 && mouseY<10'd370 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
-    assign mouseInFrame[5] = (mouseX>=10'd105 && mouseX<10'd205 && mouseY>=10'd380 && mouseY<10'd460 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
-    assign mouseInFrame[6] = (mouseX>=10'd215 && mouseX<10'd315 && mouseY>=10'd380 && mouseY<10'd460 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
-    assign mouseInFrame[7] = (mouseX>=10'd325 && mouseX<10'd425 && mouseY>=10'd380 && mouseY<10'd460 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
-    assign mouseInFrame[8] = (mouseX>=10'd435 && mouseX<10'd535 && mouseY>=10'd380 && mouseY<10'd460 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
-    assign mouseInFrame[9] = (mouseX>=10'd540 && mouseY>=10'd380 && (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3));
+    wire inPlayScene = (scene == `S_PLAY1 || scene == `S_PLAY2 || scene == `S_PLAY3);
+    assign mouseInFrame[0] = (mouseX<10'd100 && mouseY>=10'd380 && inPlayScene);
+    assign mouseInFrame[1] = (mouseX>=10'd105 && mouseX<10'd205 && mouseY>=10'd290 && mouseY<10'd370 && inPlayScene);
+    assign mouseInFrame[2] = (mouseX>=10'd215 && mouseX<10'd315 && mouseY>=10'd290 && mouseY<10'd370 && inPlayScene);
+    assign mouseInFrame[3] = (mouseX>=10'd325 && mouseX<10'd425 && mouseY>=10'd290 && mouseY<10'd370 && inPlayScene);
+    assign mouseInFrame[4] = (mouseX>=10'd435 && mouseX<10'd535 && mouseY>=10'd290 && mouseY<10'd370 && inPlayScene);
+    assign mouseInFrame[5] = (mouseX>=10'd105 && mouseX<10'd205 && mouseY>=10'd380 && mouseY<10'd460 && inPlayScene);
+    assign mouseInFrame[6] = (mouseX>=10'd215 && mouseX<10'd315 && mouseY>=10'd380 && mouseY<10'd460 && inPlayScene);
+    assign mouseInFrame[7] = (mouseX>=10'd325 && mouseX<10'd425 && mouseY>=10'd380 && mouseY<10'd460 && inPlayScene);
+    assign mouseInFrame[8] = (mouseX>=10'd435 && mouseX<10'd535 && mouseY>=10'd380 && mouseY<10'd460 && inPlayScene);
+    assign mouseInFrame[9] = (mouseX>=10'd540 && mouseY>=10'd380 && inPlayScene);
     assign effectiveClick[0] = (mouseL && mouseInFrame[0] && ableToUpgrade);
     assign effectiveClick[1] = (mouseL && mouseInFrame[1] && money>=15'd75);
     assign effectiveClick[2] = (mouseL && mouseInFrame[2] && money>=15'd150);

@@ -390,7 +390,7 @@ module Render_Play (
     end
     mem_Btn_Fire mem_Btn_Fire_0 (.clka(clk_25MHz), .wea(0), .addra(btn_fire_pp2),  .dina(0), .douta(btn_fire_value));
 
-    reg [12:0] btn_purse_pp00, btn_purse_pp01, btn_purse_pp10, btn_purse_pp11, btn_purse_pp2;
+    reg [11:0] btn_purse_pp00, btn_purse_pp01, btn_purse_pp10, btn_purse_pp11, btn_purse_pp2;
     wire [1:0] btn_purse_value;
     always @(posedge clk_25MHz) begin
         btn_purse_pp00 <= ((v_cnt_5-380)/2);

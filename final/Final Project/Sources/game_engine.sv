@@ -84,7 +84,8 @@ module Game_Engine (
 // ? //////////     IP: Enemy Queue     //////////////
     reg [5:0] enemyGenPtr;      // only can have 63 enemy, remaining: {12{1}, 3{0}}
     reg [5:0] next_enemyGenPtr;
-    reg [14:0] enemyQueueObj, enemyQueueObj1, enemyQueueObj2, enemyQueueObj3;
+    reg [14:0] enemyQueueObj;
+    wire [14:0] enemyQueueObj1, enemyQueueObj2, enemyQueueObj3;
     mem_Enemy_Queue_1 mem_EQ1 (.clka(clk_25MHz), .wea(0), .addra(enemyGenPtr), .dina(0), .douta(enemyQueueObj1));
     mem_Enemy_Queue_2 mem_EQ2 (.clka(clk_25MHz), .wea(0), .addra(enemyGenPtr), .dina(0), .douta(enemyQueueObj2));
     mem_Enemy_Queue_3 mem_EQ3 (.clka(clk_25MHz), .wea(0), .addra(enemyGenPtr), .dina(0), .douta(enemyQueueObj3));
@@ -320,18 +321,18 @@ if (clk_6) begin
             `GS_GEN_E: begin     // ? ///// generate Enemy
                 if (enemyGenPtr == 6'd63 ||             // All Enemy Been Generated
                     enemyQueueObj[14:3]>game_cnt ||     // Not Yet to Generate
-                    counter2 ||                         // Already Find Space, generate and to the next gameState
-                    counter1==6'd8) begin              // No Space
+                    counter2==6'd1 ||                         // Already Find Space, generate and to the next gameState
+                    counter1==6'd8) begin               // No Space
                     next_gameState = `GS_GEN_A_D;
                     if (counter2) begin
                         next_Enemy_Instance[counter1] = {1'b1, enemy_type_addr, `ENEMY_SPAWN_X, `SPAWN_Y-enemy_pixel_value[11:5]-(game_cnt[2:0]<<2), 
                             enemy_stats_value[37:26], 4'd1, 4'd0, 12'd0};
                     end
                 end else begin
-                    if (Enemy_Instance[counter1][55]==1'b0) begin   // Found A Space
-                        next_enemy_type_addr = enemyQueueObj[1:0];       // Record the Enemy Type, to get the right data in next clk
+                    if (Enemy_Instance[counter1][55]==1'b0) begin       // Found A Space
+                        next_enemy_type_addr = enemyQueueObj[2:0];      // Record the Enemy Type, to get the right data in next clk
                         next_counter2 = 6'd1;
-                    end else next_counter1 = counter1 + 1'b1;       // This Addr No Space, find the next one
+                    end else next_counter1 = counter1 + 1'b1;           // This Addr No Space, find the next one
                 end
             end
             `GS_GEN_A_D: begin   // ? ///// generate Army - Detect
