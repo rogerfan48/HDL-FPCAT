@@ -58,7 +58,7 @@ module Render_Play (
         enemy_1_pp00 <= ((v_cnt_5 - Enemy_Instance[1][41:32]) >> 1);
         enemy_1_pp01 <= ((h_cnt_5 - Enemy_Instance[1][51:42]) >> 1);
         enemy_1_pp10 <= enemy_1_pp00 * enemy_1_pixel_value[18:12];
-        enemy_1_pp11 <= enemy_1_pp01 + enemy_0_diff;
+        enemy_1_pp11 <= enemy_1_pp01 + enemy_1_diff;
         enemy_1_pp2 <= (enemy_1_pp10 + enemy_1_pp11);
     end
     Enemy_Render_Pixel Enemy_Render_01 (.clk(clk_25MHz), 
@@ -176,7 +176,7 @@ module Render_Play (
         army_1_pp00 <= ((v_cnt_5 - Army_Instance[1][41:32]) >> 1);
         army_1_pp01 <= ((h_cnt_5 - Army_Instance[1][51:42]) >> 1);
         army_1_pp10 <= army_1_pp00 * army_1_pixel_value[18:12];
-        army_1_pp11 <= army_1_pp01 + army_0_diff;
+        army_1_pp11 <= army_1_pp01 + army_1_diff;
         army_1_pp2 <= (army_1_pp10 + army_1_pp11);
     end
     Army_Render_Pixel Army_Render_01 (.clk(clk_25MHz), 
@@ -404,6 +404,7 @@ module Render_Play (
 
 
     always @(*) begin
+        // TODO: if random spawn y is too low, it may cause rendering error
         if (v_cnt_1<10'd270) begin    // simply cut half, this is upper half (gaming) for shortening Circuit Longest Length
             if (Army_Instance[0][55] && 
             h_cnt_1>=Army_Instance[0][51:42] && h_cnt_1<Army_Instance[0][51:42]+(army_0_pixel_value[18:12] << 1) && 
