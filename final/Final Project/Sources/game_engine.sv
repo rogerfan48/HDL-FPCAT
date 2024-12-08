@@ -19,6 +19,7 @@
 `define    GS_MONEY 4'd10
 `define   GS_HURT_E 4'd11
 `define   GS_HURT_A 4'd12
+`define   GS_FINISH 4'd13
 
 `define ENEMY_SPAWN_X 10'd10
 `define ARMY_SPAWN_X  10'd570
@@ -152,8 +153,8 @@ module Game_Engine (
 // ? //////////     reg:TowerBlood     //////////////
     reg [11:0] towerBlood_E, towerBlood_A;
     reg [11:0] next_towerBlood_E, next_towerBlood_A;
-    assign game_win = (towerBlood_E == 12'd0);
-    assign game_lose = (towerBlood_A == 12'd0);
+    assign game_win = (gameState==`GS_FINISH && towerBlood_E == 12'd0);
+    assign game_lose = (gameState==`GS_FINISH && towerBlood_A == 12'd0);
 
 // ? //////////     reg: Screen Buttons     //////////////
     reg [7:0] genArmy;
@@ -283,10 +284,11 @@ module Game_Engine (
         next_counter2 = counter2;
         next_counter3 = counter3;
 
+if (clk_6) begin
         case (gameState)
             `GS_REST: begin
                 if (line_cnt==10'd490 && h_cnt<10'd5)   next_gameState = `GS_GEN_E;
-                else                                next_gameState = gameState;
+                else                                    next_gameState = gameState;
             end
             `GS_INIT: begin      // ? ///// Initialization
                 next_gameState = `GS_GEN_E;
@@ -584,7 +586,7 @@ module Game_Engine (
             end
             `GS_HURT_A: begin    // ? ///// Army Update HP
                 if (counter1==6'd8) begin
-                    next_gameState = `GS_REST;
+                    next_gameState = `GS_FINISH;
                 end else begin
                     if (Army_Instance[counter1][55] == 1'b1) begin
                         if (Army_Instance[counter1][11:0] >= Army_Instance[counter1][31:20]) next_Army_Instance[counter1][55] = 1'b0;
@@ -593,9 +595,13 @@ module Game_Engine (
                     next_counter1 = counter1 + 1'b1;
                 end
             end
+            `GS_FINISH: begin
+                next_gameState = `GS_REST;
+            end
             default: begin
                 next_gameState = `GS_REST;
             end
         endcase
+end
     end
 endmodule

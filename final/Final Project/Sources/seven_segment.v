@@ -22,38 +22,38 @@ module Seven_Segment(
         end else begin
             case (display_clk)
                 2'd0: begin
-                    display_num <= nums[3:0];
+                    display_num <= nums % 10;
                     digit <= 4'b1110;
                 end
                 2'd1: begin
-                    display_num <= (nums/10);
+                    display_num <= (nums/10)%10;
                     digit <= 4'b1101;
                 end
                 2'd2: begin
-                    display_num <= (nums/100);
+                    display_num <= (nums/100)%10;
                     digit <= 4'b1011;
                 end
                 default: begin  // 2'd3
-                    display_num <= (nums/1000);
+                    display_num <= (nums/1000)%10;
                     digit <= 4'b0111;
                 end	
             endcase
         end
     end
     
-    always @ (*) begin
+    always @(*) begin
         case (display_num)
-            0 : display = 7'b1000000;	//0000
-            1 : display = 7'b1111001;   //0001                                                
-            2 : display = 7'b0100100;   //0010                                                
-            3 : display = 7'b0110000;   //0011                                             
-            4 : display = 7'b0011001;   //0100                                               
-            5 : display = 7'b0010010;   //0101                                               
-            6 : display = 7'b0000010;   //0110
-            7 : display = 7'b1111000;   //0111
-            8 : display = 7'b0000000;   //1000
-            9 : display = 7'b0010000;	//1001
-            default : display = 7'b1111111;
+            4'd0: display = 7'b1000000;  // 0
+            4'd1: display = 7'b1111001;  // 1
+            4'd2: display = 7'b0100100;  // 2
+            4'd3: display = 7'b0110000;  // 3
+            4'd4: display = 7'b0011001;  // 4
+            4'd5: display = 7'b0010010;  // 5
+            4'd6: display = 7'b0000010;  // 6
+            4'd7: display = 7'b1111000;  // 7
+            4'd8: display = 7'b0000000;  // 8
+            4'd9: display = 7'b0010000;  // 9
+            default: display = 7'b1111111;
         endcase
     end
 endmodule
