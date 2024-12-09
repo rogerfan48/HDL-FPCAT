@@ -59,6 +59,8 @@ module Top (
     wire [2:0] purse_level;
     wire [7:0] tower_cnt;
     wire [14:0] money;
+    wire [5:0] towerBlood_E_tr;
+    wire [5:0] towerBlood_A_tr;
     wire [55:0] Enemy_Instance [7:0];
     wire [55:0] Army_Instance [7:0];
     wire [4:0] genArmyCD [7:0];
@@ -115,11 +117,13 @@ module Top (
         .purse_level(purse_level),
         .tower_cnt(tower_cnt),
         .money(money),
+        .towerBlood_E_tr(towerBlood_E_tr),
+        .towerBlood_A_tr(towerBlood_A_tr),
         .Enemy_Instance(Enemy_Instance),
         .Army_Instance(Army_Instance),
+        .genArmyCD(genArmyCD),
         .game_win(game_win),
-        .game_lose(game_lose),
-        .genArmyCD(genArmyCD)
+        .game_lose(game_lose)
     );
 
     Render Render_0 (
@@ -152,6 +156,8 @@ module Top (
         .mouseInLevel2(mouseInLevel2),
         .mouseInLevel3(mouseInLevel3),
         .mouseInFrame(mouseInFrame),
+        .towerBlood_E_tr(towerBlood_E_tr),
+        .towerBlood_A_tr(towerBlood_A_tr),
         .Enemy_Instance(Enemy_Instance),
         .Army_Instance(Army_Instance),
         .genArmyCD(genArmyCD),

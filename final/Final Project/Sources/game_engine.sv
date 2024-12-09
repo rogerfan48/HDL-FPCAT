@@ -74,6 +74,8 @@ module Game_Engine (
     output reg [2:0] purse_level,
     output reg [7:0] tower_cnt,
     output reg [14:0] money,
+    output [5:0] towerBlood_E_tr,
+    output [5:0] towerBlood_A_tr,
     output reg [55:0] Enemy_Instance [7:0],
     output reg [55:0] Army_Instance [7:0],
     output wire game_win,
@@ -159,6 +161,8 @@ module Game_Engine (
 
 // ? //////////     reg:TowerBlood     //////////////
     reg [11:0] towerBlood_E, towerBlood_A;
+    assign towerBlood_E_tr = towerBlood_E[11:6];
+    assign towerBlood_A_tr = towerBlood_A[11:6];
     reg [11:0] next_towerBlood_E, next_towerBlood_A;
     assign game_win = (gameState==`GS_FINISH && towerBlood_E == 12'd0);
     assign game_lose = (gameState==`GS_FINISH && towerBlood_A == 12'd0);
@@ -267,8 +271,8 @@ if (clk_6) begin
                 next_money = 15'd0;
                 next_purse_level = 3'd0;
                 next_tower_cnt = 8'd0;
-                next_towerBlood_E = 12'd4000;
-                next_towerBlood_A = 12'd4000;
+                next_towerBlood_E = 12'd4095;
+                next_towerBlood_A = 12'd4095;
                 next_enemyGenPtr = 6'd0;
                 next_counter1 = 6'd0;       // Finding Space ptr
                 next_counter2 = 6'd0;       // Been Generated
@@ -340,7 +344,7 @@ if (clk_6) begin
             end else if (
                 ((Army_Instance[counter2][55]==1'b1) &&
                     (Enemy_Instance[counter1][51:42]+enemy_pixel_value[4:0]+enemy_stats_value[7:0]-army_pixel_value[4:0]>=Army_Instance[counter2][51:42])) ||
-                (Enemy_Instance[counter1][51:42]+enemy_stats_value[7:0]>=`TOWER_A_X)
+                (Enemy_Instance[counter1][51:42]+army_pixel_value[4:0]+enemy_stats_value[7:0]>=`TOWER_A_X)
             ) begin         // in atk range
                 next_Enemy_Instance[counter1][19:16] = `ST_ATK_0;
                 next_Enemy_Instance[counter1][15:12] = 4'd0;
@@ -431,7 +435,7 @@ if (clk_6) begin
                                 end else if (
                                     ((Enemy_Instance[counter2][55]==1'b1) && 
                                         (Army_Instance[counter1][51:42]+army_pixel_value[4:0]<=Enemy_Instance[counter2][51:42]+army_stats_value[7:0]+enemy_pixel_value[4:0])) ||
-                                    (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42])
+                                    (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42]+army_pixel_value[4:0])
                                 ) begin         // in atk range
                                     next_Army_Instance[counter1][19:16] = `ST_ATK_0;
                                     next_Army_Instance[counter1][15:12] = 4'd0;

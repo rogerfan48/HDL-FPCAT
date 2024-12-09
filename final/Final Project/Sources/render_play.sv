@@ -32,6 +32,8 @@ module Render_Play (
     input [9:0] v_cnt_4,
     input [9:0] v_cnt_5,
     input [9:0] v_cnt_6,
+    input [5:0] towerBlood_E_tr,
+    input [5:0] towerBlood_A_tr,
     input [55:0] Enemy_Instance [7:0],
     input [55:0] Army_Instance [7:0],
     input [4:0] genArmyCD [7:0],
@@ -540,12 +542,22 @@ module Render_Play (
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
+            end else if (h_cnt_1>=10'd6 && h_cnt_1<10'd74 && v_cnt_1>=10'd70 && v_cnt_1<10'd80) begin
+                if (h_cnt_1>=10'd8 && h_cnt_1<10'd72 && v_cnt_1>=10'd72 && v_cnt_1<10'd78) begin
+                    if (h_cnt_1 < towerBlood_E_tr + 10'd8) pixel = 12'he34;     // enemy blood
+                    else pixel = 12'h000;
+                end else pixel = 12'h000;
             end else if (h_cnt_1>=10'd10 && h_cnt_1<10'd70 && v_cnt_1>=10'd90 && v_cnt_1<10'd210 && tower_enemy_value!=2'b11) begin
                 case (tower_enemy_value)
                     2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
+            end else if (h_cnt_1>=10'd566 && h_cnt_1<10'd634 && v_cnt_1>=10'd70 && v_cnt_1<10'd80) begin
+                if (h_cnt_1>=10'd568 && h_cnt_1<10'd632 && v_cnt_1>=10'd72 && v_cnt_1<10'd78) begin
+                    if (h_cnt_1 + towerBlood_A_tr >= 10'd632) pixel = 12'h38F;     // army blood
+                    else pixel = 12'h000;
+                end else pixel = 12'h000;
             end else if (h_cnt_1>=10'd570 && h_cnt_1<10'd630 && v_cnt_1>=10'd90 && v_cnt_1<10'd210 && tower_cat_value!=2'b11) begin
                 case (tower_cat_value)
                     2'b00: pixel = 12'hfff;
@@ -563,56 +575,48 @@ module Render_Play (
             if (h_cnt_1>=10'd105 && h_cnt_1<10'd205 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_joker_value)
                     2'b00: pixel = (genArmyCD[0]==5'd0 ? 12'hfff : ((h_cnt-10'd105)>(genArmyCD[0]*3) ? 12'h666 : 12'hfff));
-                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd215 && h_cnt_1<10'd315 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_fish_value)
                     2'b00: pixel = (genArmyCD[1]==5'd0 ? 12'hfff : ((h_cnt-10'd215)>(genArmyCD[1]*3) ? 12'h666 : 12'hfff));
-                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd325 && h_cnt_1<10'd425 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_trap_value)
                     2'b00: pixel = (genArmyCD[2]==5'd0 ? 12'hfff : ((h_cnt-10'd325)>(genArmyCD[2]*3) ? 12'h666 : 12'hfff));
-                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd435 && h_cnt_1<10'd535 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_jay_value)
                     2'b00: pixel = (genArmyCD[3]==5'd0 ? 12'hfff : ((h_cnt-10'd435)>(genArmyCD[3]*3) ? 12'h666 : 12'hfff));
-                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd105 && h_cnt_1<10'd205 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_bomb_value)
                     2'b00: pixel = (genArmyCD[4]==5'd0 ? 12'hfff : ((h_cnt-10'd105)>(genArmyCD[4]*3) ? 12'h666 : 12'hfff));
-                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd215 && h_cnt_1<10'd315 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_CY_value)
                     2'b00: pixel = (genArmyCD[5]==5'd0 ? 12'hfff : ((h_cnt-10'd215)>(genArmyCD[5]*3) ? 12'h666 : 12'hfff));
-                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd325 && h_cnt_1<10'd425 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_hacker_value)
                     2'b00: pixel = (genArmyCD[6]==5'd0 ? 12'hfff : ((h_cnt-10'd325)>(genArmyCD[6]*3) ? 12'h666 : 12'hfff));
-                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd435 && h_cnt_1<10'd535 && v_cnt_1>=10'd380 && v_cnt_1<10'd460) begin
                 case (frame_elephant_value)
                     2'b00: pixel = (genArmyCD[7]==5'd0 ? 12'hfff : ((h_cnt-10'd435)>(genArmyCD[7]*3) ? 12'h666 : 12'hfff));
-                    // 2'b00: pixel = 12'hfff;
                     2'b10: pixel = 12'hf00;
                     default: pixel = 12'h000;
                 endcase
@@ -623,11 +627,11 @@ module Render_Play (
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd540 && v_cnt_1>=10'd380 && btn_fire_value!=2'b11) begin
-                if (tower_cnt==7'd255) begin
+                if (tower_cnt==`TOWER_CNT_MAX) begin
                     case (btn_fire_value)       // fire
                         2'b00: pixel = 12'hfff;
                         2'b10: pixel = 12'hf00;
-                        default: pixel = 12'hf00;
+                        default: pixel = 12'h000;
                     endcase
                 end else begin
                     case (btn_fire_value)       // fire
