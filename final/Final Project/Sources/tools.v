@@ -16,8 +16,8 @@ module Clk_Divisor_6 (
     input clk_frame,
     output out
 );
-    reg  [2:0] num;
-    wire [2:0] next_num;
+    reg  [3:0] num;
+    wire [3:0] next_num;
 
     wire clk_frame_db;
     Debounce DB_clk_frame (clk, clk_frame, clk_frame_db);
@@ -27,8 +27,8 @@ module Clk_Divisor_6 (
         if (clk_frame_op) num <= next_num;
     end
     
-    assign next_num = ((num == 3'd5) ? 3'd0: num + 1'b1);
-    assign out = (num == 3'd5);
+    assign next_num = ((num == 4'd8) ? 4'd0: num + 1'b1);
+    assign out = (num == 4'd8);
 endmodule
 
 module Debounce(clk, pb, pb_d);
