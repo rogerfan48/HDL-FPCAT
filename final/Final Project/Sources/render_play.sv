@@ -11,6 +11,8 @@
 // `define   STATE_CNT_P  15:12
 // `define  BE_DAMAGED_P  11:0
 
+`define TOWER_CNT_MAX 8'd255
+
 module Render_Play (
     input rst,
     input clk,
@@ -33,7 +35,9 @@ module Render_Play (
     input [55:0] Enemy_Instance [7:0],
     input [55:0] Army_Instance [7:0],
     input [4:0] genArmyCD [7:0],
-    input [6:0] tower_cnt,
+    input ableToUpgrade,
+    input [2:0] purse_level,
+    input [7:0] tower_cnt,
     input [9:0] mouseInFrame,
     output reg [11:0] pixel
 );
@@ -387,19 +391,20 @@ module Render_Play (
         btn_fire_pp00 <= ((v_cnt_5-380)/2);
         btn_fire_pp01 <= ((h_cnt_5-540)/2);
         btn_fire_pp10 <= btn_fire_pp00 * 50;
-        btn_fire_pp11 <= btn_fire_pp01 + 2500;          // TODO
+        btn_fire_pp11 <= btn_fire_pp01 + ((tower_cnt==`TOWER_CNT_MAX) ? 2500 : 0);
         btn_fire_pp2 <= (btn_fire_pp10 + btn_fire_pp11) % 5000;
     end
     mem_Btn_Fire mem_Btn_Fire_0 (.clka(clk_25MHz), .wea(0), .addra(btn_fire_pp2),  .dina(0), .douta(btn_fire_value));
 
-    reg [11:0] btn_purse_pp00, btn_purse_pp01, btn_purse_pp10, btn_purse_pp11, btn_purse_pp2;
+    reg [14:0] btn_purse_pp00, btn_purse_pp01, btn_purse_pp10, btn_purse_pp11, btn_purse_pp2;
+    wire [14:0] btn_diff = 15'd2500*purse_level;
     wire [1:0] btn_purse_value;
     always @(posedge clk_25MHz) begin
         btn_purse_pp00 <= ((v_cnt_5-380)/2);
         btn_purse_pp01 <= ((h_cnt_5)/2);
         btn_purse_pp10 <= btn_purse_pp00 * 50;
-        btn_purse_pp11 <= btn_purse_pp01;
-        btn_purse_pp2 <= (btn_purse_pp10 + btn_purse_pp11) % 2500;
+        btn_purse_pp11 <= btn_purse_pp01 + btn_diff;
+        btn_purse_pp2 <= ((btn_purse_pp10 + btn_purse_pp11)>20000 ? 0 : (btn_purse_pp10 + btn_purse_pp11));
     end
     mem_Btn_Purse mem_Btn_Purse_0 (.clka(clk_25MHz), .wea(0), .addra(btn_purse_pp2),  .dina(0), .douta(btn_purse_value));
 
@@ -613,15 +618,23 @@ module Render_Play (
                 endcase
             end else if (h_cnt_1<10'd100 && v_cnt_1>=10'd380 && btn_purse_value!=2'b11) begin
                 case (btn_purse_value)      // purse
-                    2'b00: pixel = 12'ha63;
+                    2'b00: pixel = (ableToUpgrade ? 12'ha73 : 12'h666);
+                    2'b10: pixel = 12'hf13;
                     default: pixel = 12'h000;
                 endcase
             end else if (h_cnt_1>=10'd540 && v_cnt_1>=10'd380 && btn_fire_value!=2'b11) begin
-                case (btn_fire_value)       // fire
-                    2'b00: pixel = 12'hfff;
-                    2'b10: pixel = 12'hf00;
-                    default: pixel = 12'h000;
-                endcase
+                if (tower_cnt==7'd255) begin
+                    case (btn_fire_value)       // fire
+                        2'b00: pixel = 12'hfff;
+                        2'b10: pixel = 12'hf00;
+                        default: pixel = 12'h000;
+                    endcase
+                end else begin
+                    case (btn_fire_value)       // fire
+                        2'b00: pixel = ((tower_cnt[7:5]*12 >= 10'd480-v_cnt_1) ? 12'hccc : 12'h666);
+                        default: pixel = 12'h000;
+                    endcase
+                end
             end else begin
                 pixel = 12'hfb7;    // board
             end 

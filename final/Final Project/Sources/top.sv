@@ -6,7 +6,7 @@
 `define   S_WIN 3'd5
 `define  S_LOSE 3'd6
 
-`define TOWER_CNT_MAX 8'd150
+`define TOWER_CNT_MAX 8'd255
 
 module Top (
     input clk,
@@ -30,7 +30,7 @@ module Top (
     wire valid;
     wire clk_frame;
     wire clk_6;     // !! with respect to clk_frame
-    Clk_Divisor_6 Clk_Divisor_6_0 (clk_25MHz, clk_frame, clk_6);
+    Clk_Divisor_6 Clk_Divisor_6_0 (clk, clk_25MHz, clk_frame, clk_6);
     wire [9:0] h_cnt;   //640
     wire [9:0] v_cnt;   //480
     wire [9:0] line_cnt;
@@ -55,7 +55,7 @@ module Top (
 
     wire ableToUpgrade;
     wire [2:0] purse_level;
-    wire [6:0] tower_cnt;
+    wire [7:0] tower_cnt;
     wire [14:0] money;
     wire [55:0] Enemy_Instance [7:0];
     wire [55:0] Army_Instance [7:0];
@@ -150,6 +150,8 @@ module Top (
         .Enemy_Instance(Enemy_Instance),
         .Army_Instance(Army_Instance),
         .genArmyCD(genArmyCD),
+        .ableToUpgrade(ableToUpgrade),
+        .purse_level(purse_level),
         .tower_cnt(tower_cnt),
         .vgaRed(vgaRed),
         .vgaGreen(vgaGreen),

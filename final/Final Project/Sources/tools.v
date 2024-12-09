@@ -11,6 +11,7 @@ module Clk_Divisor_4 (
 endmodule
 
 module Clk_Divisor_6 (
+    input clk,
     input clk_25MHz,
     input clk_frame,
     output out
@@ -18,7 +19,9 @@ module Clk_Divisor_6 (
     reg  [2:0] num;
     wire [2:0] next_num;
 
-    One_Palse OP_clk_frame (clk_25MHz, clk_frame, clk_frame_op);
+    wire clk_frame_db;
+    Debounce DB_clk_frame (clk, clk_frame, clk_frame_db);
+    One_Palse OP_clk_frame (clk_25MHz, clk_frame_db, clk_frame_op);
     
     always @(posedge clk_25MHz) begin
         if (clk_frame_op) num <= next_num;

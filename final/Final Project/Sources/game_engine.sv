@@ -30,7 +30,7 @@
 `define REPEL_CD 4'd10
 `define REPEL_SPEED 2'd3
 
-`define TOWER_CNT_MAX 8'd127
+`define TOWER_CNT_MAX 8'd255
 
 `define  ST_NONE  3'd0
 `define  ST_MOVE  3'd1
@@ -72,7 +72,7 @@ module Game_Engine (
     input gameInit,
     output ableToUpgrade,
     output reg [2:0] purse_level,
-    output reg [6:0] tower_cnt,
+    output reg [7:0] tower_cnt,
     output reg [14:0] money,
     output reg [55:0] Enemy_Instance [7:0],
     output reg [55:0] Army_Instance [7:0],
@@ -155,7 +155,7 @@ module Game_Engine (
     assign ableToUpgrade = (money>=purseUpgradeNeedMoney);
 
 // ? //////////     reg:TowerFire     //////////////
-    reg [6:0] next_tower_cnt;
+    reg [7:0] next_tower_cnt;
 
 // ? //////////     reg:TowerBlood     //////////////
     reg [11:0] towerBlood_E, towerBlood_A;
@@ -266,7 +266,7 @@ if (clk_6) begin
                 end
                 next_money = 15'd0;
                 next_purse_level = 3'd0;
-                next_tower_cnt = 7'd0;
+                next_tower_cnt = 8'd0;
                 next_towerBlood_E = 12'd4000;
                 next_towerBlood_A = 12'd4000;
                 next_enemyGenPtr = 6'd0;
@@ -507,7 +507,7 @@ if (clk_6) begin
             `GS_TOWER_D: begin   // ? ///// Tower fire Detect
                 next_gameState = `GS_TOWER_O;
                 if (towerFire) begin
-                    next_tower_cnt = 7'd0;
+                    next_tower_cnt = 8'd0;
                     next_counter1 = 6'd0;
                 end else begin
                     if (clk_6 && tower_cnt < `TOWER_CNT_MAX) next_tower_cnt = tower_cnt + 1'b1;
