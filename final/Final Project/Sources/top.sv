@@ -28,7 +28,9 @@ module Top (
     Clk_Divisor_4 Clk_Div_4 (clk, clk_25MHz, display_cnt);
 
     wire valid;
-    wire clk_frame;
+    wire clk_frame, clk_frame_db, clk_frame_op;
+    Debounce DB_clk_frame (clk, clk_frame, clk_frame_db);
+    One_Palse OP_clk_frame (clk_25MHz, clk_frame_db, clk_frame_op);
     wire clk_6;     // !! with respect to clk_frame
     Clk_Divisor_6 Clk_Divisor_6_0 (clk, clk_25MHz, clk_frame, clk_6);
     wire [9:0] h_cnt;   //640
@@ -62,6 +64,9 @@ module Top (
     wire [4:0] genArmyCD [7:0];
     wire game_win;
     wire game_lose;
+
+    reg [4:0] winLose_cnt;
+    reg [4:0] next_winLose_cnt;
 
     assign arm_LED[0] = Enemy_Instance[0][55];
     assign arm_LED[1] = Enemy_Instance[1][55];
@@ -153,6 +158,7 @@ module Top (
         .ableToUpgrade(ableToUpgrade),
         .purse_level(purse_level),
         .tower_cnt(tower_cnt),
+        .winLose_cnt(winLose_cnt),
         .vgaRed(vgaRed),
         .vgaGreen(vgaGreen),
         .vgaBlue(vgaBlue)
@@ -204,11 +210,17 @@ module Top (
 
     // Scene
     always @(posedge clk_25MHz) begin
-        if (rst) scene <= `S_START;
-        else     scene <= next_scene;
+        if (rst) begin
+            scene <= `S_START;
+            winLose_cnt <= 5'd0;
+        end else begin
+            scene <= next_scene;
+            if (clk_frame_op && clk_6) winLose_cnt <= next_winLose_cnt;
+        end
     end
     always @(*) begin
         next_scene = scene;
+        next_winLose_cnt = winLose_cnt;
         case (scene)
             `S_START: begin
                 if (mouseL && mouseInStart) next_scene = `S_MENU;
@@ -224,11 +236,9 @@ module Top (
                 if (game_win)       next_scene = `S_WIN;
                 else if (game_lose) next_scene = `S_LOSE;
             end
-            `S_WIN: begin
-                next_scene = scene;
-            end
-            `S_LOSE: begin
-                next_scene = scene;
+            `S_WIN, `S_LOSE: begin
+                next_scene = ((mouseL && winLose_cnt == 5'd0) ? `S_START : scene);
+                next_winLose_cnt = winLose_cnt + 1'b1;
             end
             default: next_scene = scene;
         endcase

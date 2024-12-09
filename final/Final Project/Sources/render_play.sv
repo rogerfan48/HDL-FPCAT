@@ -627,7 +627,7 @@ module Render_Play (
                     case (btn_fire_value)       // fire
                         2'b00: pixel = 12'hfff;
                         2'b10: pixel = 12'hf00;
-                        default: pixel = 12'h000;
+                        default: pixel = 12'hf00;
                     endcase
                 end else begin
                     case (btn_fire_value)       // fire

@@ -34,6 +34,7 @@ module Render (
     input ableToUpgrade,
     input [2:0] purse_level,
     input [7:0] tower_cnt,
+    input [4:0] winLose_cnt,
     output reg [3:0] vgaRed,
     output reg [3:0] vgaGreen,
     output reg [3:0] vgaBlue
@@ -59,19 +60,25 @@ module Render (
     Render_Play Render_Play (rst, clk, clk_25MHz, display_cnt, h_cnt, v_cnt,
         h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6,
         Enemy_Instance, Army_Instance, genArmyCD, ableToUpgrade, purse_level, tower_cnt, mouseInFrame, pixel_play);
+    wire [11:0] pixel_winLose;
+    Render_WinLose Render_WinLose (rst, clk, clk_25MHz, h_cnt_1, v_cnt_1, h_cnt_5, v_cnt_5,
+        scene, winLose_cnt, pixel_winLose);
+
+    parameter DIFF_V = 4'd5;
+    wire [3:0] pixel_play_r = pixel_play[11:8] + DIFF_V;
+    wire [3:0] pixel_play_g = pixel_play[7:4] + DIFF_V;
+    wire [3:0] pixel_play_b = pixel_play[3:0] + DIFF_V;
+    wire [11:0] pixel_play_tint = {((pixel_play_r<DIFF_V)?4'd15:pixel_play_r), ((pixel_play_g<DIFF_V)?4'd15:pixel_play_g), ((pixel_play_b<DIFF_V)?4'd15:pixel_play_b)};
 
     always @(posedge clk_25MHz) begin
         if (!valid)                    {vgaRed, vgaGreen, vgaBlue} <= 12'h0;
         else if (enable_mouse_display) {vgaRed, vgaGreen, vgaBlue} <= mouse_pixel;
         else begin
             case(scene)
-                S_START: {vgaRed, vgaGreen, vgaBlue} <= pixel_start;
-                S_MENU:  {vgaRed, vgaGreen, vgaBlue} <= pixel_menu;
-                S_PLAY1: {vgaRed, vgaGreen, vgaBlue} <= pixel_play;
-                S_PLAY2: {vgaRed, vgaGreen, vgaBlue} <= pixel_play;
-                S_PLAY3: {vgaRed, vgaGreen, vgaBlue} <= pixel_play;
-                S_WIN:   {vgaRed, vgaGreen, vgaBlue} <= 12'h0;
-                S_LOSE:  {vgaRed, vgaGreen, vgaBlue} <= 12'h0;
+                S_START:         {vgaRed, vgaGreen, vgaBlue} <= pixel_start;
+                S_MENU:          {vgaRed, vgaGreen, vgaBlue} <= pixel_menu;
+                S_PLAY1, S_PLAY2, S_PLAY3 : {vgaRed, vgaGreen, vgaBlue} <= pixel_play;
+                S_WIN, S_LOSE:   {vgaRed, vgaGreen, vgaBlue} <= (pixel_winLose!=12'heee) ? pixel_winLose : pixel_play_tint;
                 default: {vgaRed, vgaGreen, vgaBlue} <= 12'h0;
             endcase
         end

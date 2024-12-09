@@ -19,7 +19,7 @@ module Clk_Divisor_6 (
     reg  [3:0] num;
     wire [3:0] next_num;
 
-    wire clk_frame_db;
+    wire clk_frame_db, clk_frame_op;
     Debounce DB_clk_frame (clk, clk_frame, clk_frame_db);
     One_Palse OP_clk_frame (clk_25MHz, clk_frame_db, clk_frame_op);
     
