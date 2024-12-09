@@ -30,7 +30,7 @@
 `define REPEL_CD 4'd10
 `define REPEL_SPEED 2'd3
 
-`define TOWER_CNT_MAX 8'd150
+`define TOWER_CNT_MAX 8'd127
 
 `define  ST_NONE  3'd0
 `define  ST_MOVE  3'd1
@@ -72,7 +72,7 @@ module Game_Engine (
     input gameInit,
     output ableToUpgrade,
     output reg [2:0] purse_level,
-    output reg [7:0] tower_cnt,
+    output reg [6:0] tower_cnt,
     output reg [14:0] money,
     output reg [55:0] Enemy_Instance [7:0],
     output reg [55:0] Army_Instance [7:0],
@@ -155,7 +155,7 @@ module Game_Engine (
     assign ableToUpgrade = (money>=purseUpgradeNeedMoney);
 
 // ? //////////     reg:TowerFire     //////////////
-    reg [7:0] next_tower_cnt;
+    reg [6:0] next_tower_cnt;
 
 // ? //////////     reg:TowerBlood     //////////////
     reg [11:0] towerBlood_E, towerBlood_A;
@@ -266,7 +266,7 @@ if (clk_6) begin
                 end
                 next_money = 15'd0;
                 next_purse_level = 3'd0;
-                next_tower_cnt = 8'd0;
+                next_tower_cnt = 7'd0;
                 next_towerBlood_E = 12'd4000;
                 next_towerBlood_A = 12'd4000;
                 next_enemyGenPtr = 6'd0;
@@ -298,7 +298,6 @@ if (clk_6) begin
                 end
             end
             `GS_GEN_A_D: begin   // ? ///// generate Army - Detect
-            // TODO: genArmyCD[0] keep being reset to 1
                 next_gameState = `GS_GEN_A_G;
                 next_army_type_addr = genArmyType;
                 if (genArmyValid && !full) begin
@@ -399,7 +398,7 @@ if (clk_6) begin
                 next_Enemy_Instance[counter1][15:12] = 4'd0;
             end else begin
                 next_Enemy_Instance[counter1][15:12] = Enemy_Instance[counter1][15:12] + 1'b1;
-                next_Enemy_Instance[counter1][51:42] = Enemy_Instance[counter1][51:42] - 10'd3;
+                next_Enemy_Instance[counter1][51:42] = Enemy_Instance[counter1][51:42] - 10'd5;
             end
             next_counter1 = counter1 + 1'b1;
         end
@@ -490,7 +489,7 @@ if (clk_6) begin
                                     next_Army_Instance[counter1][15:12] = 4'd0;
                                 end else begin
                                     next_Army_Instance[counter1][15:12] = Army_Instance[counter1][15:12] + 1'b1;
-                                    next_Army_Instance[counter1][51:42] = Army_Instance[counter1][51:42] + 10'd3;
+                                    next_Army_Instance[counter1][51:42] = Army_Instance[counter1][51:42] + 10'd5;
                                 end
                                 next_counter1 = counter1 + 1'b1;
                             end
@@ -508,7 +507,7 @@ if (clk_6) begin
             `GS_TOWER_D: begin   // ? ///// Tower fire Detect
                 next_gameState = `GS_TOWER_O;
                 if (towerFire) begin
-                    next_tower_cnt = 8'd0;
+                    next_tower_cnt = 7'd0;
                     next_counter1 = 6'd0;
                 end else begin
                     if (clk_6 && tower_cnt < `TOWER_CNT_MAX) next_tower_cnt = tower_cnt + 1'b1;
@@ -536,6 +535,7 @@ if (clk_6) begin
             `GS_MONEY: begin     // ? ///// Money Add with Time
                 next_gameState = `GS_HURT_E;
                 next_counter1 = 6'd0;
+                next_enemy_type_addr = Enemy_Instance[next_counter1][54:52];
                 if (clk_6) begin
                     if (purse_level==3'd0)      next_money = ((money + 1'b1 > money_Max) ? money_Max : money + 1'd1);
                     else if (purse_level<3'd3)  next_money = ((money + 2'd2 > money_Max) ? money_Max : money + 2'd2);
@@ -548,13 +548,22 @@ if (clk_6) begin
                 if (counter1==6'd8) begin
                     next_gameState = `GS_HURT_A;
                     next_counter1 = 6'd0;
+                    next_army_type_addr = Army_Instance[next_counter1][54:52];
                 end else begin
                     if (Enemy_Instance[counter1][55] == 1'b1) begin
                         if (Enemy_Instance[counter1][11:0] >= Enemy_Instance[counter1][31:20]) next_Enemy_Instance[counter1][55] = 1'b0;
-                        else next_Enemy_Instance[counter1][31:20] = Enemy_Instance[counter1][31:20] - Enemy_Instance[counter1][11:0];
+                        else begin 
+                            next_Enemy_Instance[counter1][31:20] = Enemy_Instance[counter1][31:20] - Enemy_Instance[counter1][11:0];
+                            if (next_Enemy_Instance[counter1][31:20]<(enemy_stats_value[37:26]>>1) && 
+                                Enemy_Instance[counter1][31:20]>=(enemy_stats_value[37:26]>>1)) begin
+                                    next_Enemy_Instance[counter1][19:16] = 3'd6;
+                                    next_Enemy_Instance[counter1][15:12] = 4'd0;
+                                end
+                        end
                         next_Enemy_Instance[counter1][11:0] = 12'd0;
                     end
                     next_counter1 = counter1 + 1'b1;
+                    next_enemy_type_addr = Enemy_Instance[(next_counter1>7?7:next_counter1)][54:52];
                 end
             end
             `GS_HURT_A: begin    // ? ///// Army Update HP
@@ -563,10 +572,18 @@ if (clk_6) begin
                 end else begin
                     if (Army_Instance[counter1][55] == 1'b1) begin
                         if (Army_Instance[counter1][11:0] >= Army_Instance[counter1][31:20]) next_Army_Instance[counter1][55] = 1'b0;
-                        else next_Army_Instance[counter1][31:20] = Army_Instance[counter1][31:20] - Army_Instance[counter1][11:0];
+                        else begin
+                            next_Army_Instance[counter1][31:20] = Army_Instance[counter1][31:20] - Army_Instance[counter1][11:0];
+                            if (next_Army_Instance[counter1][31:20]<(army_stats_value[37:26]>>1) && 
+                                Army_Instance[counter1][31:20]>=(army_stats_value[37:26]>>1)) begin
+                                    next_Army_Instance[counter1][19:16] = 3'd6;
+                                    next_Army_Instance[counter1][15:12] = 4'd0;
+                                end
+                        end
                         next_Army_Instance[counter1][11:0] = 12'd0;
                     end
                     next_counter1 = counter1 + 1'b1;
+                    next_army_type_addr = Army_Instance[(next_counter1>7?7:next_counter1)][54:52];
                 end
             end
             `GS_FINISH: begin

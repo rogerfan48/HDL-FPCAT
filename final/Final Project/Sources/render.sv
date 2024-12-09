@@ -31,6 +31,7 @@ module Render (
     input [55:0] Enemy_Instance [7:0],
     input [55:0] Army_Instance [7:0],
     input [4:0] genArmyCD [7:0],
+    input [6:0] tower_cnt,
     output reg [3:0] vgaRed,
     output reg [3:0] vgaGreen,
     output reg [3:0] vgaBlue
@@ -55,7 +56,7 @@ module Render (
     wire [11:0] pixel_play;
     Render_Play Render_Play (rst, clk, clk_25MHz, display_cnt, h_cnt, v_cnt,
         h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6,
-        Enemy_Instance, Army_Instance, genArmyCD, mouseInFrame, pixel_play);
+        Enemy_Instance, Army_Instance, genArmyCD, tower_cnt, mouseInFrame, pixel_play);
 
     always @(posedge clk_25MHz) begin
         if (!valid)                    {vgaRed, vgaGreen, vgaBlue} <= 12'h0;

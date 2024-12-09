@@ -33,6 +33,7 @@ module Render_Play (
     input [55:0] Enemy_Instance [7:0],
     input [55:0] Army_Instance [7:0],
     input [4:0] genArmyCD [7:0],
+    input [6:0] tower_cnt,
     input [9:0] mouseInFrame,
     output reg [11:0] pixel
 );
