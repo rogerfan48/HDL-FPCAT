@@ -34,7 +34,7 @@ module Render (
     input ableToUpgrade,
     input [2:0] purse_level,
     input [7:0] tower_cnt,
-    input [4:0] winLose_cnt,
+    input [3:0] winLose_cnt,
     output reg [3:0] vgaRed,
     output reg [3:0] vgaGreen,
     output reg [3:0] vgaBlue

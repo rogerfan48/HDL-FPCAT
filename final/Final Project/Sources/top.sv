@@ -65,8 +65,8 @@ module Top (
     wire game_win;
     wire game_lose;
 
-    reg [4:0] winLose_cnt;
-    reg [4:0] next_winLose_cnt;
+    reg [3:0] winLose_cnt;
+    reg [3:0] next_winLose_cnt;
 
     assign arm_LED[0] = Enemy_Instance[0][55];
     assign arm_LED[1] = Enemy_Instance[1][55];
@@ -212,7 +212,7 @@ module Top (
     always @(posedge clk_25MHz) begin
         if (rst) begin
             scene <= `S_START;
-            winLose_cnt <= 5'd0;
+            winLose_cnt <= 4'd9;
         end else begin
             scene <= next_scene;
             if (clk_frame_op && clk_6) winLose_cnt <= next_winLose_cnt;
@@ -237,7 +237,7 @@ module Top (
                 else if (game_lose) next_scene = `S_LOSE;
             end
             `S_WIN, `S_LOSE: begin
-                next_scene = ((mouseL && winLose_cnt == 5'd0) ? `S_START : scene);
+                next_scene = ((mouseL) ? `S_START : scene);
                 next_winLose_cnt = winLose_cnt + 1'b1;
             end
             default: next_scene = scene;
