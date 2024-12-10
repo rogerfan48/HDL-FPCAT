@@ -440,13 +440,13 @@ module Render_Play (
 
 
 
-    reg [10:0] d_money_Max_pp00, d_money_Max_pp01, d_money_Max_pp10, d_money_Max_pp11, d_money_Max_pp2;
+    reg [12:0] d_money_Max_pp00, d_money_Max_pp01, d_money_Max_pp10, d_money_Max_pp11, d_money_Max_pp2;
     wire d_money_Max_value;
     always @(posedge clk_25MHz) begin
         d_money_Max_pp00 <= ((v_cnt_5-15)/2);
         d_money_Max_pp01 <= ((h_cnt_5-525)/2);
         d_money_Max_pp10 <= d_money_Max_pp00 * 50;
-        d_money_Max_pp11 <= d_money_Max_pp01 + purse_level*150;
+        d_money_Max_pp11 <= d_money_Max_pp01 + purse_level*750;
         d_money_Max_pp2 <= (d_money_Max_pp10 + d_money_Max_pp11) % 6000;
     end
     mem_Money_Max mem_Money_Max_0 (.clka(clk_25MHz), .wea(0), .addra(d_money_Max_pp2),  .dina(0), .douta(d_money_Max_value));
