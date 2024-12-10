@@ -15,9 +15,11 @@
 
 module Render_Play (
     input rst,
+    input pause,
     input clk,
     input clk_25MHz,
     input [1:0] display_cnt,
+    input [2:0] scene,
     input [9:0] h_cnt,
     input [9:0] v_cnt,
     input [9:0] h_cnt_1,
@@ -38,6 +40,7 @@ module Render_Play (
     input [55:0] Army_Instance [7:0],
     input [4:0] genArmyCD [7:0],
     input ableToUpgrade,
+    input [14:0] money,
     input [2:0] purse_level,
     input [7:0] tower_cnt,
     input [9:0] mouseInFrame,
@@ -412,8 +415,118 @@ module Render_Play (
 
 
 
+    reg [10:0] d_LEVEL_pp00, d_LEVEL_pp01, d_LEVEL_pp10, d_LEVEL_pp11, d_LEVEL_pp2;
+    wire d_LEVEL_value;
+    always @(posedge clk_25MHz) begin
+        d_LEVEL_pp00 <= ((v_cnt_5-10) >> 1);
+        d_LEVEL_pp01 <= ((h_cnt_5-10) >> 1);
+        d_LEVEL_pp10 <= d_LEVEL_pp00 * 60;
+        d_LEVEL_pp11 <= d_LEVEL_pp01;
+        d_LEVEL_pp2 <= (d_LEVEL_pp10 + d_LEVEL_pp11) % 1200;
+    end
+    mem_LEVEL mem_d_LEVEL (.clka(clk_25MHz), .wea(0), .addra(d_LEVEL_pp2),  .dina(0), .douta(d_LEVEL_value));
+
+    reg [10:0] d_LEVEL_num_pp00, d_LEVEL_num_pp01, d_LEVEL_num_pp10, d_LEVEL_num_pp11, d_LEVEL_num_pp2;
+    wire d_LEVEL_num_value;
+    wire [3:0] whichSceneNum = (scene==`S_PLAY1 ? 4'd1 : (scene==`S_PLAY2 ? 4'd2 : 4'd3));
+    always @(posedge clk_25MHz) begin
+        d_LEVEL_num_pp00 <= ((v_cnt_5-7)/3);
+        d_LEVEL_num_pp01 <= ((h_cnt_5-140)/3);
+        d_LEVEL_num_pp10 <= d_LEVEL_num_pp00 * 10;
+        d_LEVEL_num_pp11 <= d_LEVEL_num_pp01 + whichSceneNum*150;
+        d_LEVEL_num_pp2 <= (d_LEVEL_num_pp10 + d_LEVEL_num_pp11) % 1650;
+    end
+    mem_Numbers mem_LEVEL_Num (.clka(clk_25MHz), .wea(0), .addra(d_LEVEL_num_pp2),  .dina(0), .douta(d_LEVEL_num_value));
+
+
+
+    reg [10:0] d_money_Max_pp00, d_money_Max_pp01, d_money_Max_pp10, d_money_Max_pp11, d_money_Max_pp2;
+    wire d_money_Max_value;
+    always @(posedge clk_25MHz) begin
+        d_money_Max_pp00 <= ((v_cnt_5-15)/2);
+        d_money_Max_pp01 <= ((h_cnt_5-525)/2);
+        d_money_Max_pp10 <= d_money_Max_pp00 * 50;
+        d_money_Max_pp11 <= d_money_Max_pp01 + purse_level*150;
+        d_money_Max_pp2 <= (d_money_Max_pp10 + d_money_Max_pp11) % 6000;
+    end
+    mem_Money_Max mem_Money_Max_0 (.clka(clk_25MHz), .wea(0), .addra(d_money_Max_pp2),  .dina(0), .douta(d_money_Max_value));
+
+
+    wire [3:0] ones = money % 10;
+    wire [3:0] tens = (money/10) % 10;
+    wire [3:0] hundreds = (money/100) % 10;
+    wire [3:0] thousands = (money/1000) % 10;
+
+    reg [10:0] d_money_num_0_pp00, d_money_num_0_pp01, d_money_num_0_pp10, d_money_num_0_pp11, d_money_num_0_pp2;
+    wire d_money_num_0_value;
+    always @(posedge clk_25MHz) begin
+        d_money_num_0_pp00 <= ((v_cnt_5-15)/2);
+        d_money_num_0_pp01 <= ((h_cnt_5-505)/2);
+        d_money_num_0_pp10 <= d_money_num_0_pp00 * 10;
+        d_money_num_0_pp11 <= d_money_num_0_pp01 + ones*150;
+        d_money_num_0_pp2 <= (d_money_num_0_pp10 + d_money_num_0_pp11) % 1650;
+    end
+    mem_Numbers mem_Money_Num_0 (.clka(clk_25MHz), .wea(0), .addra(d_money_num_0_pp2),  .dina(0), .douta(d_money_num_0_value));
+    
+    reg [10:0] d_money_num_1_pp00, d_money_num_1_pp01, d_money_num_1_pp10, d_money_num_1_pp11, d_money_num_1_pp2;
+    wire d_money_num_1_value;
+    always @(posedge clk_25MHz) begin
+        d_money_num_1_pp00 <= ((v_cnt_5-15)/2);
+        d_money_num_1_pp01 <= ((h_cnt_5-485)/2);
+        d_money_num_1_pp10 <= d_money_num_1_pp00 * 10;
+        d_money_num_1_pp11 <= d_money_num_1_pp01 + (tens==0&&hundreds==0&&thousands==0?4'd10:tens)*150;
+        d_money_num_1_pp2 <= (d_money_num_1_pp10 + d_money_num_1_pp11) % 1650;
+    end
+    mem_Numbers mem_Money_Num_1 (.clka(clk_25MHz), .wea(0), .addra(d_money_num_1_pp2),  .dina(0), .douta(d_money_num_1_value));
+    
+    reg [10:0] d_money_num_2_pp00, d_money_num_2_pp01, d_money_num_2_pp10, d_money_num_2_pp11, d_money_num_2_pp2;
+    wire d_money_num_2_value;
+    always @(posedge clk_25MHz) begin
+        d_money_num_2_pp00 <= ((v_cnt_5-15)/2);
+        d_money_num_2_pp01 <= ((h_cnt_5-465)/2);
+        d_money_num_2_pp10 <= d_money_num_2_pp00 * 10;
+        d_money_num_2_pp11 <= d_money_num_2_pp01 + + (hundreds==0&&thousands==0?4'd10:hundreds)*150;
+        d_money_num_2_pp2 <= ((tens==0&&hundreds==0&&thousands==0) ? 13'd0 : (d_money_num_2_pp10 + d_money_num_2_pp11) % 1650);
+    end
+    mem_Numbers mem_Money_Num_2 (.clka(clk_25MHz), .wea(0), .addra(d_money_num_2_pp2),  .dina(0), .douta(d_money_num_2_value));
+    
+    reg [10:0] d_money_num_3_pp00, d_money_num_3_pp01, d_money_num_3_pp10, d_money_num_3_pp11, d_money_num_3_pp2;
+    wire d_money_num_3_value;
+    always @(posedge clk_25MHz) begin
+        d_money_num_3_pp00 <= ((v_cnt_5-15)/2);
+        d_money_num_3_pp01 <= ((h_cnt_5-445)/2);
+        d_money_num_3_pp10 <= d_money_num_3_pp00 * 10;
+        d_money_num_3_pp11 <= d_money_num_3_pp01 + (thousands==0?4'd10:thousands)*150;
+        d_money_num_3_pp2 <= ((hundreds==0&&thousands==0) ? 13'd0 : (d_money_num_3_pp10 + d_money_num_3_pp11) % 1650);
+    end
+    mem_Numbers mem_Money_Num_3 (.clka(clk_25MHz), .wea(0), .addra(d_money_num_3_pp2),  .dina(0), .douta(d_money_num_3_value));
+
+    reg [10:0] d_money_num_4_pp00, d_money_num_4_pp01, d_money_num_4_pp10, d_money_num_4_pp11, d_money_num_4_pp2;
+    wire d_money_num_4_value;
+    always @(posedge clk_25MHz) begin
+        d_money_num_4_pp00 <= ((v_cnt_5-15)/2);
+        d_money_num_4_pp01 <= ((h_cnt_5-425)/2);
+        d_money_num_4_pp10 <= d_money_num_4_pp00 * 10;
+        d_money_num_4_pp11 <= d_money_num_4_pp01 + 1500;
+        d_money_num_4_pp2 <= ((thousands==0) ? 13'd0 : (d_money_num_4_pp10 + d_money_num_4_pp11) % 1650);
+    end
+    mem_Numbers mem_Money_Num_4 (.clka(clk_25MHz), .wea(0), .addra(d_money_num_4_pp2),  .dina(0), .douta(d_money_num_4_value));
+
+
+
     always @(*) begin
-        if (v_cnt_1<10'd270) begin    // simply cut half, this is upper half (gaming) for shortening Circuit Longest Length
+        if (v_cnt_1<10'd50) begin
+            if (h_cnt_1>=10'd300 && h_cnt_1<10'd340 && v_cnt_1>=10'd10 && v_cnt_1<10'd50 && pause==1'b1) pixel = 12'hf00;
+            else if (h_cnt_1>=10'd10 && h_cnt_1<10'd130 && v_cnt_1>=10'd10 && v_cnt_1<10'd50 && d_LEVEL_value==1'b1) pixel = 12'h000;
+            else if (h_cnt_1>=10'd140 && h_cnt_1<10'd170 && v_cnt_1>=10'd7 && v_cnt_1<10'd52 && d_LEVEL_num_value==1'b1) pixel = 12'h000;
+            else if (h_cnt_1>=10'd525 && h_cnt_1<10'd625 && v_cnt_1>=10'd15 && v_cnt_1<10'd45 && d_money_Max_value==1'b1) pixel = 12'h000;
+            else if (h_cnt_1>=10'd505 && h_cnt_1<10'd525 && v_cnt_1>=10'd15 && v_cnt_1<10'd45 && d_money_num_0_value==1'b1) pixel = 12'h000;
+            else if (h_cnt_1>=10'd485 && h_cnt_1<10'd505 && v_cnt_1>=10'd15 && v_cnt_1<10'd45 && d_money_num_1_value==1'b1) pixel = 12'h000;
+            else if (h_cnt_1>=10'd465 && h_cnt_1<10'd485 && v_cnt_1>=10'd15 && v_cnt_1<10'd45 && d_money_num_2_value==1'b1) pixel = 12'h000;
+            else if (h_cnt_1>=10'd445 && h_cnt_1<10'd465 && v_cnt_1>=10'd15 && v_cnt_1<10'd45 && d_money_num_3_value==1'b1) pixel = 12'h000;
+            else if (h_cnt_1>=10'd425 && h_cnt_1<10'd445 && v_cnt_1>=10'd15 && v_cnt_1<10'd45 && d_money_num_4_value==1'b1) pixel = 12'h000;
+            else pixel = 12'h2bf;    // sky
+        end else if (v_cnt_1<10'd270) begin    // simply cut half, this is upper half (gaming) for shortening Circuit Longest Length
             if (Army_Instance[0][55] && 
             h_cnt_1>=Army_Instance[0][51:42] && h_cnt_1<Army_Instance[0][51:42]+(army_0_pixel_value[18:12] << 1) && 
             v_cnt_1>=Army_Instance[0][41:32] && v_cnt_1<Army_Instance[0][41:32]+(army_0_pixel_value[11:5] << 1) && army_0_value != 2'b11) begin

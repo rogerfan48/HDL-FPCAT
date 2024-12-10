@@ -113,23 +113,23 @@ module Render_Menu (
     );
 
     always @(*) begin
-        if ((h_cnt>=10'd240 && h_cnt<10'd360 && v_cnt>=10'd90 && v_cnt<10'd130 && LEVEL_1_value==1'b1) ||
-            (h_cnt>=10'd240 && h_cnt<10'd360 && v_cnt>=10'd210 && v_cnt<10'd250 && LEVEL_2_value==1'b1) ||
-            (h_cnt>=10'd240 && h_cnt<10'd360 && v_cnt>=10'd330 && v_cnt<10'd370 && LEVEL_3_value==1'b1)) begin
+        if ((h_cnt_1>=10'd240 && h_cnt_1<10'd360 && v_cnt_1>=10'd90 && v_cnt_1<10'd130 && LEVEL_1_value==1'b1) ||
+            (h_cnt_1>=10'd240 && h_cnt_1<10'd360 && v_cnt_1>=10'd210 && v_cnt_1<10'd250 && LEVEL_2_value==1'b1) ||
+            (h_cnt_1>=10'd240 && h_cnt_1<10'd360 && v_cnt_1>=10'd330 && v_cnt_1<10'd370 && LEVEL_3_value==1'b1)) begin
             pixel = 12'hfff;        // LEVEL x3
         end else if (
-            ((h_cnt>=10'd370 && h_cnt<10'd400 && v_cnt>=10'd87 && v_cnt<10'd132) ||
-            (h_cnt>=10'd370 && h_cnt<10'd400 && v_cnt>=10'd207 && v_cnt<10'd252) ||
-            (h_cnt>=10'd370 && h_cnt<10'd400 && v_cnt>=10'd327 && v_cnt<10'd372)) && num_menu_value == 1
+            ((h_cnt_1>=10'd370 && h_cnt_1<10'd400 && v_cnt_1>=10'd87 && v_cnt_1<10'd132) ||
+            (h_cnt_1>=10'd370 && h_cnt_1<10'd400 && v_cnt_1>=10'd207 && v_cnt_1<10'd252) ||
+            (h_cnt_1>=10'd370 && h_cnt_1<10'd400 && v_cnt_1>=10'd327 && v_cnt_1<10'd372)) && num_menu_value == 1
         ) begin
             pixel = 12'hfff;        // numbers x3
-        end else if (h_cnt>=10'd160 && h_cnt<10'd480 && v_cnt>=10'd80 && v_cnt<10'd140) begin
+        end else if (h_cnt_1>=10'd160 && h_cnt_1<10'd480 && v_cnt_1>=10'd80 && v_cnt_1<10'd140) begin
             if (mouseInLevel1) pixel = 12'h632;
             else               pixel = 12'h521;
-        end else if (h_cnt>=10'd160 && h_cnt<10'd480 && v_cnt>=10'd200 && v_cnt<10'd260) begin
+        end else if (h_cnt_1>=10'd160 && h_cnt_1<10'd480 && v_cnt_1>=10'd200 && v_cnt_1<10'd260) begin
             if (mouseInLevel2) pixel = 12'h632;
             else               pixel = 12'h521;
-        end else if (h_cnt>=10'd160 && h_cnt<10'd480 && v_cnt>=10'd320 && v_cnt<10'd380) begin
+        end else if (h_cnt_1>=10'd160 && h_cnt_1<10'd480 && v_cnt_1>=10'd320 && v_cnt_1<10'd380) begin
             if (mouseInLevel3) pixel = 12'h632;
             else               pixel = 12'h521;
         end else begin

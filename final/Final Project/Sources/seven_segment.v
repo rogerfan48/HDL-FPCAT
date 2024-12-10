@@ -9,10 +9,6 @@ module Seven_Segment(
     wire [1:0] display_clk;
     reg [3:0] display_num;
 
-    reg [3:0] ones;
-    reg [3:0] tens;
-    reg [3:0] hundreds;
-
     Display_Clk_Gen DCG(clk, display_clk);
 
     always @ (posedge clk, posedge rst) begin

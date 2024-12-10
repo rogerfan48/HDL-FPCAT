@@ -62,6 +62,7 @@
 
 module Game_Engine (
     input rst,
+    input pause,
     input clk_25MHz,
     input [9:0] h_cnt,   //640
     input [9:0] line_cnt,   // 480 -> 525
@@ -278,7 +279,7 @@ if (clk_6) begin
                 next_counter2 = 6'd0;       // Been Generated
             end
             `GS_REST: begin
-                if (line_cnt==10'd490 && h_cnt<10'd5)   next_gameState = `GS_GEN_E;
+                if (line_cnt==10'd490 && h_cnt<10'd5 && !pause)   next_gameState = `GS_GEN_E;
                 else                                    next_gameState = gameState;
                 next_counter1 = 6'd0;       // Finding Space ptr    // for GS_GEN_E
                 next_counter2 = 6'd0;       // Been Generated       // for GS_GEN_E

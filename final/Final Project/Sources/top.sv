@@ -11,6 +11,7 @@
 module Top (
     input clk,
     input rst,
+    input pause,
     output [3:0] vgaRed,
     output [3:0] vgaGreen,
     output [3:0] vgaBlue,
@@ -18,7 +19,7 @@ module Top (
     output vsync,
     inout PS2_CLK,
     inout PS2_DATA,
-    output [7:0] arm_LED,
+    output [15:0] LED,
     output [6:0] display,
     output [3:0] digit
 );
@@ -70,14 +71,22 @@ module Top (
     reg [3:0] winLose_cnt;
     reg [3:0] next_winLose_cnt;
 
-    assign arm_LED[0] = Enemy_Instance[0][55];
-    assign arm_LED[1] = Enemy_Instance[1][55];
-    assign arm_LED[2] = Enemy_Instance[2][55];
-    assign arm_LED[3] = Enemy_Instance[3][55];
-    assign arm_LED[4] = Enemy_Instance[4][55];
-    assign arm_LED[5] = Enemy_Instance[5][55];
-    assign arm_LED[6] = Enemy_Instance[6][55];
-    assign arm_LED[7] = Enemy_Instance[7][55];
+    assign LED[0] = Enemy_Instance[0][55];
+    assign LED[1] = Enemy_Instance[1][55];
+    assign LED[2] = Enemy_Instance[2][55];
+    assign LED[3] = Enemy_Instance[3][55];
+    assign LED[4] = Enemy_Instance[4][55];
+    assign LED[5] = Enemy_Instance[5][55];
+    assign LED[6] = Enemy_Instance[6][55];
+    assign LED[7] = Enemy_Instance[7][55];
+    assign LED[8] =  Army_Instance[7][55];
+    assign LED[9] =  Army_Instance[6][55];
+    assign LED[10] = Army_Instance[5][55];
+    assign LED[11] = Army_Instance[4][55];
+    assign LED[12] = Army_Instance[3][55];
+    assign LED[13] = Army_Instance[2][55];
+    assign LED[14] = Army_Instance[1][55];
+    assign LED[15] = Army_Instance[0][55];
 
     wire [9:0] mouseInFrame;    // [0]:purse, [9]:Fire
     wire [9:0] effectiveClick;
@@ -105,6 +114,7 @@ module Top (
 
     Game_Engine Game_Engine_0 (
         .rst(rst),
+        .pause(pause),
         .clk_25MHz(clk_25MHz),
         .h_cnt(h_cnt),
         .line_cnt(line_cnt),
@@ -128,6 +138,7 @@ module Top (
 
     Render Render_0 (
         .rst(rst),
+        .pause(pause),
         .clk(clk),
         .clk_25MHz(clk_25MHz),
         .display_cnt(display_cnt),
@@ -162,6 +173,7 @@ module Top (
         .Army_Instance(Army_Instance),
         .genArmyCD(genArmyCD),
         .ableToUpgrade(ableToUpgrade),
+        .money(money),
         .purse_level(purse_level),
         .tower_cnt(tower_cnt),
         .winLose_cnt(winLose_cnt),
