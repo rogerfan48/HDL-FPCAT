@@ -24,7 +24,7 @@
 `define ENEMY_SPAWN_X 10'd10
 `define ARMY_SPAWN_X  10'd570
 `define SPAWN_Y       10'd200
-`define TOWER_E_X     10'd70
+`define TOWER_E_X     10'd65
 `define TOWER_A_X     10'd570
 
 `define REPEL_CD 4'd10
@@ -344,8 +344,8 @@ if (clk_6) begin
                 next_counter2 = 6'd0;
             end else if (
                 ((Army_Instance[counter2][55]==1'b1) &&
-                    (Enemy_Instance[counter1][51:42]+enemy_pixel_value[4:0]+enemy_stats_value[7:0]-army_pixel_value[4:0]>=Army_Instance[counter2][51:42])) ||
-                (Enemy_Instance[counter1][51:42]+army_pixel_value[4:0]+enemy_stats_value[7:0]>=`TOWER_A_X)
+                    (Enemy_Instance[counter1][51:42]+enemy_pixel_value[4:0]+enemy_stats_value[7:0]>Army_Instance[counter2][51:42]+army_pixel_value[4:0])) ||
+                (Enemy_Instance[counter1][51:42]+enemy_pixel_value[4:0]+enemy_stats_value[7:0]>`TOWER_A_X)
             ) begin         // in atk range
                 next_Enemy_Instance[counter1][19:16] = `ST_ATK_0;
                 next_Enemy_Instance[counter1][15:12] = 4'd0;
@@ -366,7 +366,7 @@ if (clk_6) begin
         end
         `ST_ATK_1: begin
             if (counter2==6'd8) begin
-                if (Enemy_Instance[counter1][51:42]+enemy_stats_value[7:0] >= `TOWER_A_X)
+                if (Enemy_Instance[counter1][51:42]+enemy_pixel_value[4:0]+enemy_stats_value[7:0]>=`TOWER_A_X)
                     next_towerBlood_A = (enemy_stats_value[25:17]>towerBlood_A ? 12'd0 : towerBlood_A-enemy_stats_value[25:17]);
                 next_Enemy_Instance[counter1][19:16] = `ST_ATK_2;
                 next_Enemy_Instance[counter1][15:12] = 4'd0;
@@ -435,8 +435,8 @@ if (clk_6) begin
                                     next_counter2 = 6'd0;
                                 end else if (
                                     ((Enemy_Instance[counter2][55]==1'b1) && 
-                                        (Army_Instance[counter1][51:42]+army_pixel_value[4:0]<=Enemy_Instance[counter2][51:42]+army_stats_value[7:0]+enemy_pixel_value[4:0])) ||
-                                    (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42]+army_pixel_value[4:0])
+                                        (Army_Instance[counter1][51:42]+army_pixel_value[4:0]<Enemy_Instance[counter2][51:42]+army_stats_value[7:0]+enemy_pixel_value[4:0])) ||
+                                    (`TOWER_E_X+army_stats_value[7:0]>Army_Instance[counter1][51:42]+army_pixel_value[4:0])
                                 ) begin         // in atk range
                                     next_Army_Instance[counter1][19:16] = `ST_ATK_0;
                                     next_Army_Instance[counter1][15:12] = 4'd0;
@@ -457,7 +457,7 @@ if (clk_6) begin
                             end
                             `ST_ATK_1: begin
                                 if (counter2==6'd8) begin
-                                    if (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42])
+                                    if (`TOWER_E_X+army_stats_value[7:0]>=Army_Instance[counter1][51:42]+army_pixel_value[4:0])
                                         next_towerBlood_E = (army_stats_value[25:17]>towerBlood_E ? 12'd0 : towerBlood_E-army_stats_value[25:17]);
                                     next_Army_Instance[counter1][19:16] = `ST_ATK_2;
                                     next_Army_Instance[counter1][15:12] = 4'd0;
