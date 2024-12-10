@@ -44,6 +44,7 @@ module Render_Play (
     input [2:0] purse_level,
     input [7:0] tower_cnt,
     input [9:0] mouseInFrame,
+    input twinkle,
     output reg [11:0] pixel
 );
 
@@ -513,6 +514,11 @@ module Render_Play (
     mem_Numbers mem_Money_Num_4 (.clka(clk_25MHz), .wea(0), .addra(d_money_num_4_pp2),  .dina(0), .douta(d_money_num_4_value));
 
 
+    wire isEnemyFull = (Enemy_Instance[0][55]&&Enemy_Instance[1][55]&&Enemy_Instance[2][55]&&Enemy_Instance[3][55]&&
+                        Enemy_Instance[4][55]&&Enemy_Instance[5][55]&&Enemy_Instance[6][55]&&Enemy_Instance[7][55]);
+    wire isArmyFull = (Army_Instance[0][55]&&Army_Instance[1][55]&&Army_Instance[2][55]&&Army_Instance[3][55]&&
+                        Army_Instance[4][55]&&Army_Instance[5][55]&&Army_Instance[6][55]&&Army_Instance[7][55]);
+
 
     always @(*) begin
         if (v_cnt_1<10'd50) begin
@@ -657,7 +663,7 @@ module Render_Play (
                 endcase
             end else if (h_cnt_1>=10'd6 && h_cnt_1<10'd74 && v_cnt_1>=10'd70 && v_cnt_1<10'd80) begin
                 if (h_cnt_1>=10'd8 && h_cnt_1<10'd72 && v_cnt_1>=10'd72 && v_cnt_1<10'd78) begin
-                    if (h_cnt_1 < towerBlood_E_tr + 10'd8) pixel = 12'he34;     // enemy blood
+                    if (h_cnt_1 < towerBlood_E_tr + 10'd8) pixel = 12'hf59;     // enemy blood
                     else pixel = 12'h000;
                 end else pixel = 12'h000;
             end else if (h_cnt_1>=10'd10 && h_cnt_1<10'd70 && v_cnt_1>=10'd90 && v_cnt_1<10'd210 && tower_enemy_value!=2'b11) begin
@@ -685,7 +691,51 @@ module Render_Play (
                 pixel = 12'h2bf;    // sky
             end
         end else begin              // simply cut half, this is lower half (board) for shortening Circuit Longest Length
-            if (h_cnt_1>=10'd105 && h_cnt_1<10'd205 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
+            if (h_cnt_1>=10'd13 && h_cnt_1<10'd87 && v_cnt_1>=10'd288 && v_cnt_1<10'd322) begin 
+                if (isEnemyFull==1'b1 && twinkle==1'b1) begin
+                    if (h_cnt_1>=10'd15 && h_cnt_1<10'd85 && v_cnt_1>=10'd290 && v_cnt_1<10'd320) pixel = 12'hf59;      // enemy blood
+                    else pixel = 12'h000;
+                end
+                else if (h_cnt_1>=10'd15 && h_cnt_1<10'd25 && v_cnt_1>=10'd290 && v_cnt_1<10'd300 && Enemy_Instance[0][55]==1'b1) pixel = 12'hf6a;
+                else if (h_cnt_1>=10'd13 && h_cnt_1<10'd27 && v_cnt_1>=10'd288 && v_cnt_1<10'd302 && Enemy_Instance[0][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd35 && h_cnt_1<10'd45 && v_cnt_1>=10'd290 && v_cnt_1<10'd300 && Enemy_Instance[1][55]==1'b1) pixel = 12'hf6a;
+                else if (h_cnt_1>=10'd33 && h_cnt_1<10'd47 && v_cnt_1>=10'd288 && v_cnt_1<10'd302 && Enemy_Instance[1][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd55 && h_cnt_1<10'd65 && v_cnt_1>=10'd290 && v_cnt_1<10'd300 && Enemy_Instance[2][55]==1'b1) pixel = 12'hf6a;
+                else if (h_cnt_1>=10'd53 && h_cnt_1<10'd67 && v_cnt_1>=10'd288 && v_cnt_1<10'd302 && Enemy_Instance[2][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd75 && h_cnt_1<10'd85 && v_cnt_1>=10'd290 && v_cnt_1<10'd300 && Enemy_Instance[3][55]==1'b1) pixel = 12'hf6a;
+                else if (h_cnt_1>=10'd73 && h_cnt_1<10'd87 && v_cnt_1>=10'd288 && v_cnt_1<10'd302 && Enemy_Instance[3][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd15 && h_cnt_1<10'd25 && v_cnt_1>=10'd310 && v_cnt_1<10'd320 && Enemy_Instance[4][55]==1'b1) pixel = 12'hf6a;
+                else if (h_cnt_1>=10'd13 && h_cnt_1<10'd27 && v_cnt_1>=10'd308 && v_cnt_1<10'd322 && Enemy_Instance[4][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd35 && h_cnt_1<10'd45 && v_cnt_1>=10'd310 && v_cnt_1<10'd320 && Enemy_Instance[5][55]==1'b1) pixel = 12'hf6a;
+                else if (h_cnt_1>=10'd33 && h_cnt_1<10'd47 && v_cnt_1>=10'd308 && v_cnt_1<10'd322 && Enemy_Instance[5][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd55 && h_cnt_1<10'd65 && v_cnt_1>=10'd310 && v_cnt_1<10'd320 && Enemy_Instance[6][55]==1'b1) pixel = 12'hf6a;
+                else if (h_cnt_1>=10'd53 && h_cnt_1<10'd67 && v_cnt_1>=10'd308 && v_cnt_1<10'd322 && Enemy_Instance[6][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd75 && h_cnt_1<10'd85 && v_cnt_1>=10'd310 && v_cnt_1<10'd320 && Enemy_Instance[7][55]==1'b1) pixel = 12'hf6a;
+                else if (h_cnt_1>=10'd73 && h_cnt_1<10'd87 && v_cnt_1>=10'd308 && v_cnt_1<10'd322 && Enemy_Instance[7][55]==1'b1) pixel = 12'h000;
+                else pixel = 12'hfb7;    // board
+            end else if (h_cnt_1>=10'd553 && h_cnt_1<10'd627 && v_cnt_1>=10'd288 && v_cnt_1<10'd322) begin
+                if (isArmyFull==1'b1 && twinkle==1'b1) begin
+                    if (h_cnt_1>=10'd555 && h_cnt_1<10'd625 && v_cnt_1>=10'd290 && v_cnt_1<10'd320) pixel = 12'h38F;       // army blood
+                    else pixel = 12'h000;
+                end
+                else if (h_cnt_1>=10'd555 && h_cnt_1<10'd565 && v_cnt_1>=10'd290 && v_cnt_1<10'd300 && Army_Instance[0][55]==1'b1) pixel = 12'h49F;
+                else if (h_cnt_1>=10'd553 && h_cnt_1<10'd567 && v_cnt_1>=10'd288 && v_cnt_1<10'd302 && Army_Instance[0][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd575 && h_cnt_1<10'd585 && v_cnt_1>=10'd290 && v_cnt_1<10'd300 && Army_Instance[1][55]==1'b1) pixel = 12'h49F;
+                else if (h_cnt_1>=10'd573 && h_cnt_1<10'd587 && v_cnt_1>=10'd288 && v_cnt_1<10'd302 && Army_Instance[1][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd595 && h_cnt_1<10'd605 && v_cnt_1>=10'd290 && v_cnt_1<10'd300 && Army_Instance[2][55]==1'b1) pixel = 12'h49F;
+                else if (h_cnt_1>=10'd593 && h_cnt_1<10'd607 && v_cnt_1>=10'd288 && v_cnt_1<10'd302 && Army_Instance[2][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd615 && h_cnt_1<10'd625 && v_cnt_1>=10'd290 && v_cnt_1<10'd300 && Army_Instance[3][55]==1'b1) pixel = 12'h49F;
+                else if (h_cnt_1>=10'd613 && h_cnt_1<10'd627 && v_cnt_1>=10'd288 && v_cnt_1<10'd302 && Army_Instance[3][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd555 && h_cnt_1<10'd565 && v_cnt_1>=10'd310 && v_cnt_1<10'd320 && Army_Instance[4][55]==1'b1) pixel = 12'h49F;
+                else if (h_cnt_1>=10'd553 && h_cnt_1<10'd567 && v_cnt_1>=10'd308 && v_cnt_1<10'd322 && Army_Instance[4][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd575 && h_cnt_1<10'd585 && v_cnt_1>=10'd310 && v_cnt_1<10'd320 && Army_Instance[5][55]==1'b1) pixel = 12'h49F;
+                else if (h_cnt_1>=10'd573 && h_cnt_1<10'd587 && v_cnt_1>=10'd308 && v_cnt_1<10'd322 && Army_Instance[5][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd595 && h_cnt_1<10'd605 && v_cnt_1>=10'd310 && v_cnt_1<10'd320 && Army_Instance[6][55]==1'b1) pixel = 12'h49F;
+                else if (h_cnt_1>=10'd593 && h_cnt_1<10'd607 && v_cnt_1>=10'd308 && v_cnt_1<10'd322 && Army_Instance[6][55]==1'b1) pixel = 12'h000;
+                else if (h_cnt_1>=10'd615 && h_cnt_1<10'd625 && v_cnt_1>=10'd310 && v_cnt_1<10'd320 && Army_Instance[7][55]==1'b1) pixel = 12'h49F;
+                else if (h_cnt_1>=10'd613 && h_cnt_1<10'd627 && v_cnt_1>=10'd308 && v_cnt_1<10'd322 && Army_Instance[7][55]==1'b1) pixel = 12'h000;
+                else pixel = 12'hfb7;    // board
+            end else if (h_cnt_1>=10'd105 && h_cnt_1<10'd205 && v_cnt_1>=10'd290 && v_cnt_1<10'd370) begin
                 case (frame_joker_value)
                     2'b00: pixel = (genArmyCD[0]==5'd0 ? 12'hfff : ((h_cnt-10'd105)>(genArmyCD[0]*3) ? 12'h666 : 12'hfff));
                     2'b10: pixel = 12'hf00;

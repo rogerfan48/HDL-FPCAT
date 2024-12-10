@@ -15,7 +15,7 @@ module Render_WinLose (
     input [9:0] h_cnt_5,
     input [9:0] v_cnt_5,
     input [2:0] scene,
-    input [3:0] winLose_cnt,
+    input twinkle,
     output reg [11:0] pixel
 );
 
@@ -56,7 +56,7 @@ module Render_WinLose (
         if (scene == `S_WIN) begin
             if (h_cnt_1>=10'd160 && h_cnt_1<10'd480 && v_cnt_1>=10'd212 && v_cnt_1<10'd268 && YOU_WIN_value==1'b1) begin
                 pixel = 12'h000;        // YOU WIN
-            end else if (winLose_cnt[3]==1'b1 && h_cnt_1>=10'd200 && h_cnt_1<10'd440 && v_cnt_1>=10'd285 && v_cnt_1<10'd306 && TAP_TO_CONTINUE_value==1'b1) begin
+            end else if (twinkle==1'b1 && h_cnt_1>=10'd200 && h_cnt_1<10'd440 && v_cnt_1>=10'd285 && v_cnt_1<10'd306 && TAP_TO_CONTINUE_value==1'b1) begin
                 pixel = 12'h000;        // Tap To Continue
             end else if (v_cnt_1>=10'd160 && v_cnt_1<10'd320) begin
                 pixel = 12'hF90;        // banner
@@ -66,7 +66,7 @@ module Render_WinLose (
         end else begin
             if (h_cnt_1>=10'd160 && h_cnt_1<10'd480 && v_cnt_1>=10'd212 && v_cnt_1<10'd268 && YOU_LOSE_value==1'b1) begin
                 pixel = 12'hfff;        // YOU LOSE
-            end else if (winLose_cnt[3]==1'b1 && h_cnt_1>=10'd200 && h_cnt_1<10'd440 && v_cnt_1>=10'd285 && v_cnt_1<10'd306 && TAP_TO_CONTINUE_value==1'b1) begin
+            end else if (twinkle==1'b1 && h_cnt_1>=10'd200 && h_cnt_1<10'd440 && v_cnt_1>=10'd285 && v_cnt_1<10'd306 && TAP_TO_CONTINUE_value==1'b1) begin
                 pixel = 12'hfff;        // Tap To Continue
             end else if (v_cnt_1>=10'd160 && v_cnt_1<10'd320) begin
                 pixel = 12'h000;        // banner

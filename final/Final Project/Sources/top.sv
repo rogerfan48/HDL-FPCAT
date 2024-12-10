@@ -68,8 +68,9 @@ module Top (
     wire game_win;
     wire game_lose;
 
-    reg [3:0] winLose_cnt;
-    reg [3:0] next_winLose_cnt;
+    reg [2:0] twinkle_cnt;
+    reg [2:0] next_twinkle_cnt;
+    wire twinkle = twinkle_cnt[2];
 
     assign LED[0] = Enemy_Instance[0][55];
     assign LED[1] = Enemy_Instance[1][55];
@@ -176,7 +177,7 @@ module Top (
         .money(money),
         .purse_level(purse_level),
         .tower_cnt(tower_cnt),
-        .winLose_cnt(winLose_cnt),
+        .twinkle(twinkle),
         .vgaRed(vgaRed),
         .vgaGreen(vgaGreen),
         .vgaBlue(vgaBlue)
@@ -230,15 +231,14 @@ module Top (
     always @(posedge clk_25MHz) begin
         if (rst) begin
             scene <= `S_START;
-            winLose_cnt <= 4'd9;
         end else begin
             scene <= next_scene;
-            if (clk_frame_op && clk_6) winLose_cnt <= next_winLose_cnt;
+            if (clk_frame_op && clk_6) twinkle_cnt <= next_twinkle_cnt;
         end
     end
     always @(*) begin
         next_scene = scene;
-        next_winLose_cnt = winLose_cnt;
+        next_twinkle_cnt = twinkle_cnt + 1'b1;
         case (scene)
             `S_START: begin
                 if (mouseL && mouseInStart) next_scene = `S_MENU;
@@ -256,7 +256,6 @@ module Top (
             end
             `S_WIN, `S_LOSE: begin
                 next_scene = ((mouseL) ? `S_START : scene);
-                next_winLose_cnt = winLose_cnt + 1'b1;
             end
             default: next_scene = scene;
         endcase

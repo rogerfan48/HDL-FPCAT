@@ -38,7 +38,7 @@ module Render (
     input [14:0] money,
     input [2:0] purse_level,
     input [7:0] tower_cnt,
-    input [3:0] winLose_cnt,
+    input twinkle,
     output reg [3:0] vgaRed,
     output reg [3:0] vgaGreen,
     output reg [3:0] vgaBlue
@@ -63,10 +63,10 @@ module Render (
     wire [11:0] pixel_play;
     Render_Play Render_Play (rst, pause, clk, clk_25MHz, display_cnt, scene, h_cnt, v_cnt,
         h_cnt_1, h_cnt_2, h_cnt_3, h_cnt_4, h_cnt_5, h_cnt_6, v_cnt_1, v_cnt_2, v_cnt_3, v_cnt_4, v_cnt_5, v_cnt_6,
-        towerBlood_E_tr, towerBlood_A_tr, Enemy_Instance, Army_Instance, genArmyCD, ableToUpgrade, money, purse_level, tower_cnt, mouseInFrame, pixel_play);
+        towerBlood_E_tr, towerBlood_A_tr, Enemy_Instance, Army_Instance, genArmyCD, ableToUpgrade, money, purse_level, tower_cnt, mouseInFrame, twinkle, pixel_play);
     wire [11:0] pixel_winLose;
     Render_WinLose Render_WinLose (rst, clk, clk_25MHz, h_cnt_1, v_cnt_1, h_cnt_5, v_cnt_5,
-        scene, winLose_cnt, pixel_winLose);
+        scene, twinkle, pixel_winLose);
 
     parameter DIFF_V = 4'd5;
     wire [3:0] pixel_play_r = pixel_play[11:8] + DIFF_V;
