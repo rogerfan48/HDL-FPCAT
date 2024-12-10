@@ -429,7 +429,17 @@ module Render_Play (
 
     reg [10:0] d_LEVEL_num_pp00, d_LEVEL_num_pp01, d_LEVEL_num_pp10, d_LEVEL_num_pp11, d_LEVEL_num_pp2;
     wire d_LEVEL_num_value;
-    wire [3:0] whichSceneNum = (scene==`S_PLAY1 ? 4'd1 : (scene==`S_PLAY2 ? 4'd2 : 4'd3));
+    reg [3:0] whichSceneNum;
+    reg [3:0] next_whichSceneNum;
+    always @(posedge clk_25MHz) whichSceneNum <= next_whichSceneNum;
+    always @(*) begin
+        case (scene)
+            `S_PLAY1: next_whichSceneNum = 4'd1;
+            `S_PLAY2: next_whichSceneNum = 4'd2;
+            `S_PLAY3: next_whichSceneNum = 4'd3;
+            default: next_whichSceneNum = whichSceneNum;
+        endcase
+    end
     always @(posedge clk_25MHz) begin
         d_LEVEL_num_pp00 <= ((v_cnt_5-7)/3);
         d_LEVEL_num_pp01 <= ((h_cnt_5-140)/3);
