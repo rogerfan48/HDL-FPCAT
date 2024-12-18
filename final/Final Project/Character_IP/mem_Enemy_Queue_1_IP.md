@@ -8,13 +8,6 @@
 115_Killer_Bird
 125_Killer_Bird
 135_Killer_Bird
-185_Killer_Bird
-195_Killer_Bird
-205_Killer_Bird
-215_Killer_Bird
-225_Killer_Bird
-275_Killer_Bird
-285_Killer_Bird
-295_Killer_Bird
-305_Killer_Bird
-315_Killer_Bird
+185_White_Bear
+235_Metal_Duck
+285_Black_Bear
