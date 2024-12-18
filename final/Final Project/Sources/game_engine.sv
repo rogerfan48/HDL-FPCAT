@@ -593,6 +593,17 @@ if (clk_6) begin
             end
             `GS_FINISH: begin
                 next_gameState = `GS_REST;
+                if(towerBlood_A == 12'd0 || towerBlood_E == 12'd0) begin
+                    next_money = 0;
+                    next_purse_level = 0;
+                    next_tower_cnt = 0;
+                    for (i=0; i<8; i=i+1) begin
+                        next_Army_Instance[i] = 56'd0;
+                    end
+                    for (i=0; i<8; i=i+1) begin
+                        next_Enemy_Instance[i] = 56'd0;
+                    end
+                end
                 for (i=0; i<8; i=i+1) begin
                     if (genArmyCD[i]!=5'd0) next_genArmyCD[i] = genArmyCD[i] + 1'b1;
                 end
