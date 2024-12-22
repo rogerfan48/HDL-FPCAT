@@ -25,8 +25,7 @@ module Top (
 );
 
     wire clk_25MHz;
-    wire [1:0] display_cnt;
-    Clk_Divisor_4 Clk_Div_4 (clk, clk_25MHz, display_cnt);
+    Clk_Divisor_4 Clk_Div_4 (clk, clk_25MHz);
 
     wire valid;
     wire clk_frame, clk_frame_db, clk_frame_op;
@@ -142,7 +141,6 @@ module Top (
         .pause(pause),
         .clk(clk),
         .clk_25MHz(clk_25MHz),
-        .display_cnt(display_cnt),
         .h_cnt(h_cnt),
         .v_cnt(v_cnt),
         .h_cnt_1(h_cnt_1),
@@ -188,7 +186,6 @@ module Top (
     VGA_Control VGA_Ctrl_0 (
         .clk(clk),
         .pclk(clk_25MHz),
-        .display_cnt(display_cnt),
         .reset(rst),
         .hsync(hsync),
         .vsync(vsync),

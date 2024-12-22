@@ -3,7 +3,6 @@
 module VGA_Control (
     input clk,
     input pclk, reset,
-    input [1:0] display_cnt,
     output hsync, vsync, valid,
     output reg [9:0] line_cnt,
     output [9:0] h_cnt,
