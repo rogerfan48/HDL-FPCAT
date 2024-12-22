@@ -101,7 +101,7 @@ module Purse_Upgrade_Need_Money (
             3'd4:    out = 15'd1400;
             3'd5:    out = 15'd3000;
             3'd6:    out = 15'd5000;
-            default: out = 15'd8000;
+            default: out = 15'd10000;
         endcase
     end
 endmodule
