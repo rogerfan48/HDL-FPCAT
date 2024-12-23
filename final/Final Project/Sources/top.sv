@@ -252,7 +252,7 @@ module Top (
                 else if (game_lose) next_scene = `S_LOSE;
             end
             `S_WIN, `S_LOSE: begin
-                next_scene = ((mouseL) ? `S_START : scene);
+                next_scene = ((mouseL) ? `S_MENU : scene);
             end
             default: next_scene = scene;
         endcase
