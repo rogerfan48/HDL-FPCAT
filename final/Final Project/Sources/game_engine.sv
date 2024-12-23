@@ -593,6 +593,9 @@ if (clk_6) begin
             end
             `GS_FINISH: begin
                 next_gameState = `GS_REST;
+                for (i=0; i<8; i=i+1) begin
+                    if (genArmyCD[i]!=5'd0) next_genArmyCD[i] = genArmyCD[i] + 1'b1;
+                end
             end
             default: begin
                 next_gameState = `GS_REST;
