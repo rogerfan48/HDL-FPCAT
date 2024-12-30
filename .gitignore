@@ -11,10 +11,10 @@
 **/myenv/
 **/venv/
 
-/final/Final\ Project/projectRG/projectRG.gen/
-/final/Final\ Project/projectRG/projectRG.runs/
-/final/Final\ Project/projectRG/projectRG.cache/
+/final/Final_Project/projectRG/projectRG.gen/
+/final/Final_Project/projectRG/projectRG.runs/
+/final/Final_Project/projectRG/projectRG.cache/
 
-/final/Final\ Project/projectRG/*.str
-/final/Final\ Project/projectRG/*.jou
-/final/Final\ Project/projectRG/*.log
+/final/Final_Project/projectRG/*.str
+/final/Final_Project/projectRG/*.jou
+/final/Final_Project/projectRG/*.log
